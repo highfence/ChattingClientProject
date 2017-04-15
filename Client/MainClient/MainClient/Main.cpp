@@ -1,9 +1,9 @@
 ﻿
-# include <Siv3D.hpp>
-# include <HamFramework.hpp>
+# include "stdafx.h"
 # include "Main.h"
 # include "LoginScene.h"
 # include "LobbyScene.h"
+# include "RoomList.h"
 
 
 void Main()
@@ -20,6 +20,7 @@ void Main()
 	/* Add Scenes into Manager */
 	sceneManager.add<Login>(L"Login");
 	sceneManager.add<Lobby>(L"Lobby");
+	sceneManager.add<RoomList>(L"RoomList");
 
 	while (System::Update())
 	{
