@@ -3,6 +3,7 @@
 # include <HamFramework.hpp>
 # include "Main.h"
 # include "LoginScene.h"
+# include "LobbyScene.h"
 
 
 void Main()
@@ -18,6 +19,7 @@ void Main()
 
 	/* Add Scenes into Manager */
 	sceneManager.add<Login>(L"Login");
+	sceneManager.add<Lobby>(L"Lobby");
 
 	while (System::Update())
 	{
