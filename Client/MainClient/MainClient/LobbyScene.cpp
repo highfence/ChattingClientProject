@@ -5,7 +5,6 @@
 
 const int lobbyMaxUserNumber = 300;
 const int lobbyMaxNumber = 5;
-
 const int roomNameWidth = 200;
 const int roomUserWidth = 95;
 const int infoWidth = 150;
@@ -35,12 +34,7 @@ void Lobby::init()
 void Lobby::update()
 {
 	/* if lobby entry button pushed */
-	if (m_LobbyGui.button(L"ENTER1").pushed)
-	{
-		/* changeScene to chattingRoom */
-		exitScene();
-		changeScene(L"ChattingRoom");
-	}
+	checkButtonClicked();
 }
 
 void Lobby::draw() const 
@@ -88,4 +82,15 @@ void Lobby::makeLobbys()
 void Lobby::exitScene()
 {
 	m_LobbyVector.clear();
+}
+
+void Lobby::checkButtonClicked()
+{
+	for (const auto i : m_LobbyVector)
+	{
+		if (m_LobbyGui.button(i->LobbyButtonName).pushed)
+		{
+			changeScene(L"RoomList");
+		}
+	}
 }

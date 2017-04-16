@@ -36,4 +36,6 @@ struct Lobby : MyApp::Scene
 	/* Function which must be called when the scene changed */
 	void exitScene();
 
+	/* Check which button clicked */
+	void checkButtonClicked();
 };
