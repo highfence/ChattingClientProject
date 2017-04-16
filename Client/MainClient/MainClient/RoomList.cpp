@@ -42,10 +42,12 @@ void RoomList::update()
 
 void RoomList::draw() const
 {
+
 }
 
 void RoomList::refresh()
 {
+
 }
 
 void RoomList::roomInfoSetting()
@@ -102,12 +104,13 @@ void RoomList::makeChattingGui()
 {
 	/* Add Chatting Window */
 	m_ChattingGui.addln(L"ChattingWindow", GUITextArea::Create(5, 33));
+	//m_pChatFrame = &InlineFrame(Rect(0, chattingInfoHeight, 100, 100));
 
 	/* Add Divide Line */
 	m_ChattingGui.add(L"Divider", GUIHorizontalLine::Create(1));
 	m_ChattingGui.horizontalLine(L"Divider").style.color = Color(127);
 
-	/* Add Input Window */
+	//* Add Input Window */
 	m_ChattingGui.add(L"InputField", GUITextArea::Create(1, 26));
 	m_ChattingGui.add(L"InputButton", GUIButton::Create(L"Send"));
 }

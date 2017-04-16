@@ -4,6 +4,9 @@
 #include <HamFramework.hpp>
 #include <vector>
 #include <string>
+#include <stack>
+#include <array>
+#include "InlineFrame.h"
 
 /* 씬에서 사용할 공용 데이터 구조체. */
 struct SceneData

@@ -16,7 +16,7 @@ void Lobby::init()
 	m_InfoGui = GUI(GUIStyle::Default);
 	m_InfoGui.setTitle(L"My Info");
 
-	/* Set Lobby infomations */
+	/* Set Lobby information */
 	lobbyInfoSetting();
 
 	/* Setting InfoGui Position & Background Color */

@@ -1,5 +1,4 @@
 #pragma once
-#include <stack>
 
 struct RoomInfo
 {
@@ -20,6 +19,7 @@ struct RoomList : MyApp::Scene
 	std::vector<RoomInfo*> m_RoomInfoVector;
 	std::vector<UserInfo*> m_UserInfoVector;
 	std::stack<std::wstring*> m_ChatStack;
+	InlineFrame* m_pChatFrame;
 
 	/* Required Initializer for Siv3D */
 	void init() override;

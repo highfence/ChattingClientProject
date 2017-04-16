@@ -422,5 +422,8 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="InlineFrame.h">
+      <Filter>Header</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
