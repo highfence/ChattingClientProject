@@ -1,4 +1,5 @@
 #pragma once
+#include <stack>
 
 struct RoomInfo
 {
@@ -18,6 +19,7 @@ struct RoomList : MyApp::Scene
 	GUI m_ChattingGui;
 	std::vector<RoomInfo*> m_RoomInfoVector;
 	std::vector<UserInfo*> m_UserInfoVector;
+	std::stack<std::wstring*> m_ChatStack;
 
 	/* Required Initializer for Siv3D */
 	void init() override;
@@ -36,6 +38,9 @@ struct RoomList : MyApp::Scene
 	/* Make Room and Users accord with data */
 	void makeRooms();
 	void makeUsers();
+	void makeChattingGui();
+
+	/* Update Functions */
 
 	/* Function must be called when scene changed */
 	void exitScene();
