@@ -3,16 +3,21 @@
 
 const int roomWidth = 250;
 const int buttonWidth = 50;
+const int userInfoWidth = 200;
 
 void RoomList::init()
 {
 	m_RoomListGui = GUI(GUIStyle::Default);
-	m_UserListGui = GUI(GUIStyle::Default);
-	m_ChattingGui = GUI(GUIStyle::Default);
-	Graphics::SetBackground(Color(200, 160, 100));
-
 	m_RoomListGui.setTitle(L"Room List");
+
+	m_UserListGui = GUI(GUIStyle::Default);
 	m_UserListGui.setTitle(L"User List");
+	Point userGuiPos = Point(roomWidth + buttonWidth + 110, 0);
+	m_UserListGui.setPos(userGuiPos);
+
+	m_ChattingGui = GUI(GUIStyle::Default);
+
+	Graphics::SetBackground(Color(200, 160, 100));
 
 	/* Data Setting */
 	roomInfoSetting();
@@ -67,7 +72,6 @@ void RoomList::userInfoSetting()
 
 void RoomList::makeRooms()
 {
-	int idx = 0;
 	for (const auto& i : m_RoomInfoVector)
 	{
 		/* Make Rooms */
@@ -80,7 +84,11 @@ void RoomList::makeRooms()
 
 void RoomList::makeUsers()
 {
-
+	for (const auto& i : m_UserInfoVector)
+	{
+		/* Make Users */
+		m_UserListGui.addln(i->userName, GUIText::Create(i->userName, userInfoWidth));
+	}
 }
 
 void RoomList::exitScene()
