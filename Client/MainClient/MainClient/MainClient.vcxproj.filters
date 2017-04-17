@@ -93,6 +93,9 @@
     <ClCompile Include="RoomList.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="TextScrollBox.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">
@@ -423,6 +426,9 @@
       <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="InlineFrame.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="TextScrollBox.h">
       <Filter>Header</Filter>
     </ClInclude>
   </ItemGroup>

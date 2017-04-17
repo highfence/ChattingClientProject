@@ -38,6 +38,11 @@ void RoomList::update()
 	{
 		m_ChattingGui.textArea(L"InputField").setText(L"");
 	}
+
+	const InlineFrameData frameData = m_pChatFrame->getFrameData();
+	frameData.contentsArea.draw(Palette::White);
+	m_pChatFrame->draw();
+	frameData.region.drawFrame(0, 1.5, Color(200));
 }
 
 void RoomList::draw() const
@@ -103,16 +108,16 @@ void RoomList::makeUsers()
 void RoomList::makeChattingGui()
 {
 	/* Add Chatting Window */
-	m_ChattingGui.addln(L"ChattingWindow", GUITextArea::Create(5, 33));
-	//m_pChatFrame = &InlineFrame(Rect(0, chattingInfoHeight, 100, 100));
+	//m_ChattingGui.addln(L"ChattingWindow", GUITextArea::Create(5, 33));
+	m_pChatFrame = &InlineFrame(Rect(0, chattingInfoHeight, 100, 100));
 
 	/* Add Divide Line */
-	m_ChattingGui.add(L"Divider", GUIHorizontalLine::Create(1));
-	m_ChattingGui.horizontalLine(L"Divider").style.color = Color(127);
+	//m_ChattingGui.add(L"Divider", GUIHorizontalLine::Create(1));
+	//m_ChattingGui.horizontalLine(L"Divider").style.color = Color(127);
 
 	//* Add Input Window */
-	m_ChattingGui.add(L"InputField", GUITextArea::Create(1, 26));
-	m_ChattingGui.add(L"InputButton", GUIButton::Create(L"Send"));
+	//m_ChattingGui.add(L"InputField", GUITextArea::Create(1, 26));
+	//m_ChattingGui.add(L"InputButton", GUIButton::Create(L"Send"));
 }
 
 void RoomList::exitScene()

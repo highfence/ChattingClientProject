@@ -7,6 +7,8 @@
 #include <stack>
 #include <array>
 #include "InlineFrame.h"
+#include "Network.h"
+
 
 /* 씬에서 사용할 공용 데이터 구조체. */
 struct SceneData
@@ -15,3 +17,5 @@ struct SceneData
 };
 
 using MyApp = SceneManager<String, SceneData>;
+
+static ClientLogic::ClientNetwork* clientNetwork;

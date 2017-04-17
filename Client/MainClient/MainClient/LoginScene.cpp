@@ -52,6 +52,8 @@ bool Login::tryLogin()
 		m_IdStr = m_LoginGui.textField(L"idField").text;
 		m_PasswordStr = m_LoginGui.textField(L"PasswordField").text;
 
+		clientNetwork = new ClientLogic::ClientNetwork();
+
 		/* If connect successed, change Lobby Scene */
 		changeScene(L"Lobby");
 		return true;

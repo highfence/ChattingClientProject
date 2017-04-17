@@ -71,7 +71,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SIV3D_20160812)\Inc;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\NEXT\Desktop\Project\ChattingClientProject\Client\ClientLogic\ClientLogic;$(SIV3D_20160812)\Inc;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\NEXT\Desktop\Project\Chatting\Client\ClientLib\ClientLogic\Debug;$(SIV3D_20160812)\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -176,6 +176,9 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="TextScrollBox.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -297,6 +300,7 @@
     <ClInclude Include="Main.h" />
     <ClInclude Include="RoomList.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TextScrollBox.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
