@@ -10,10 +10,13 @@ class TextScorllBox
 {
 public :
 
+	TextScorllBox(const Rect);
+	~TextScorllBox();
+
 	void Update();
 	void Draw();
 	void SetBackgroundColor(const Color);
-
+	void GetText(std::wstring);
 
 private :
 

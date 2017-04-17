@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "RoomList.h"
+#include "TextScrollBox.h"
 
 const int roomWidth = 250;
 const int buttonWidth = 50;
@@ -36,18 +37,27 @@ void RoomList::update()
 {
 	if (m_ChattingGui.button(L"InputButton").pressed || Input::KeyEnter.clicked)
 	{
+		if (m_ChattingGui.textArea(L"InputField").text == L"")
+		{
+			return;
+		}
+
+		if (m_ChatString == L"")
+		{
+			m_ChatString = m_ChatString + m_ChattingGui.textArea(L"InputField").text;
+		}
+		else
+		{
+			m_ChatString = m_ChatString + L"\n" + m_ChattingGui.textArea(L"InputField").text;
+		}
+
+		m_ChattingGui.textArea(L"ChattingWindow").setText(m_ChatString);
 		m_ChattingGui.textArea(L"InputField").setText(L"");
 	}
-
-	const InlineFrameData frameData = m_pChatFrame->getFrameData();
-	frameData.contentsArea.draw(Palette::White);
-	m_pChatFrame->draw();
-	frameData.region.drawFrame(0, 1.5, Color(200));
 }
 
 void RoomList::draw() const
 {
-
 }
 
 void RoomList::refresh()
@@ -108,16 +118,17 @@ void RoomList::makeUsers()
 void RoomList::makeChattingGui()
 {
 	/* Add Chatting Window */
-	//m_ChattingGui.addln(L"ChattingWindow", GUITextArea::Create(5, 33));
-	m_pChatFrame = &InlineFrame(Rect(0, chattingInfoHeight, 100, 100));
+	m_ChattingGui.addln(L"ChattingWindow", GUITextArea::Create(5, 33));
+	//m_pChatTextBox = new TextScorllBox(Rect(30, chattingInfoHeight, 585, 130));
 
 	/* Add Divide Line */
-	//m_ChattingGui.add(L"Divider", GUIHorizontalLine::Create(1));
-	//m_ChattingGui.horizontalLine(L"Divider").style.color = Color(127);
+	m_ChattingGui.add(L"Divider", GUIHorizontalLine::Create(1));
+	m_ChattingGui.horizontalLine(L"Divider").style.color = Color(127);
 
 	//* Add Input Window */
-	//m_ChattingGui.add(L"InputField", GUITextArea::Create(1, 26));
-	//m_ChattingGui.add(L"InputButton", GUIButton::Create(L"Send"));
+	//m_ChattingGui.setPos(15, chattingInfoHeight + 140);
+	m_ChattingGui.add(L"InputField", GUITextArea::Create(1, 26));
+	m_ChattingGui.add(L"InputButton", GUIButton::Create(L"Send"));
 }
 
 void RoomList::exitScene()

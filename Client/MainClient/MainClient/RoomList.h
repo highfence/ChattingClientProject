@@ -1,5 +1,7 @@
 #pragma once
 
+class TextScorllBox;
+
 struct RoomInfo
 {
 	std::wstring roomName;
@@ -16,10 +18,11 @@ struct RoomList : MyApp::Scene
 	GUI m_RoomListGui;
 	GUI m_UserListGui;
 	GUI m_ChattingGui;
+	TextScorllBox* m_pChatTextBox;
 	std::vector<RoomInfo*> m_RoomInfoVector;
 	std::vector<UserInfo*> m_UserInfoVector;
 	std::stack<std::wstring*> m_ChatStack;
-	InlineFrame* m_pChatFrame;
+	String m_ChatString;
 
 	/* Required Initializer for Siv3D */
 	void init() override;
