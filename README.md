@@ -9,3 +9,6 @@
 
 ## Room List 구현
 ![Alt text](./ForGithub/RoomList.png)
+
+## Room 구현
+![Alt text](./ForGithub/Room.png)
