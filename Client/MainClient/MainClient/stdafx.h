@@ -19,3 +19,14 @@ struct SceneData
 using MyApp = SceneManager<String, SceneData>;
 
 static ClientLogic::ClientNetwork* clientNetwork;
+
+struct RoomInfo
+{
+	std::wstring roomName;
+	std::wstring buttonName;
+};
+
+struct UserInfo
+{
+	std::wstring userName;
+};

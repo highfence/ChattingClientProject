@@ -2,16 +2,6 @@
 
 class TextScorllBox;
 
-struct RoomInfo
-{
-	std::wstring roomName;
-	std::wstring buttonName;
-};
-
-struct UserInfo
-{
-	std::wstring userName;
-};
 
 struct RoomList : MyApp::Scene
 {
@@ -44,6 +34,7 @@ struct RoomList : MyApp::Scene
 	void makeChattingGui();
 
 	/* Update Functions */
+	void checkRoomClicked();
 
 	/* Function must be called when scene changed */
 	void exitScene();

@@ -54,6 +54,8 @@ void RoomList::update()
 		m_ChattingGui.textArea(L"ChattingWindow").setText(m_ChatString);
 		m_ChattingGui.textArea(L"InputField").setText(L"");
 	}
+
+	checkRoomClicked();
 }
 
 void RoomList::draw() const
@@ -129,6 +131,17 @@ void RoomList::makeChattingGui()
 	//m_ChattingGui.setPos(15, chattingInfoHeight + 140);
 	m_ChattingGui.add(L"InputField", GUITextArea::Create(1, 26));
 	m_ChattingGui.add(L"InputButton", GUIButton::Create(L"Send"));
+}
+
+void RoomList::checkRoomClicked()
+{
+	for (const auto i : m_RoomInfoVector)
+	{
+		if (m_RoomListGui.button(i->buttonName).pushed)
+		{
+			changeScene(L"Room");
+		}
+	}
 }
 
 void RoomList::exitScene()

@@ -3,6 +3,7 @@
 # include "LoginScene.h"
 # include "LobbyScene.h"
 # include "RoomList.h"
+# include "Room.h"
 
 
 void Main()
@@ -20,6 +21,7 @@ void Main()
 	sceneManager.add<Login>(L"Login");
 	sceneManager.add<Lobby>(L"Lobby");
 	sceneManager.add<RoomList>(L"RoomList");
+	sceneManager.add<Room>(L"Room");
 
 	while (System::Update())
 	{
