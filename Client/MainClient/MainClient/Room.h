@@ -3,7 +3,10 @@
 struct Room : MyApp::Scene
 {
 	GUI m_ChattingGui;
+	GUI m_UserGui;
+	GUI m_InputGui;
 	std::vector<UserInfo*> m_UserInfoVector;
+	String m_ChatString;
 
 	void init() override;
 	
@@ -14,4 +17,6 @@ struct Room : MyApp::Scene
 	void setUserData();
 
 	void drawUser();
+
+	void checkSendPushed();
 };
