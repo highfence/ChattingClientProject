@@ -11,24 +11,5 @@ namespace COMMON_INFO
 {
 	const int bufSize = 512;
 	const int recvSize = 4000;
+	const int MAX_PACKET_SIZE = 1024;
 };
-
-namespace PACKET
-{
-	struct PacketHeader
-	{
-		short Id;
-		short BodySize;
-	};
-
-	const int packetHeaderSize = sizeof(PacketHeader);
-
-	struct RecvPacketInfo
-	{
-		RecvPacketInfo() {};
-
-		short PacketId = 0;
-		short PacketBodySize = 0;
-		char* pData = nullptr;
-	};
-}

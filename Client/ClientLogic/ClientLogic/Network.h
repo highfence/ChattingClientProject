@@ -13,19 +13,11 @@
 #include <mutex>
 
 #include "Definition.h"
+#include "ErrorCode.h"
+#include "Packet.h"
+#include "PacketID.h"
 
-/*
-	리시브한 내용을 버퍼에 저장해야 함. (vector)
-	시작하자마자 커넥트
-	- 커넥트가 성공하면 쓰레드를 하나 만듬.
-	- 쓰레드 생성후에는 리시브를 하고 있어야 함.
-
-	Connect() 서버에 접속. std::thread 생성.
-	threadFunc : 네트워크 연결되어있는지 확인 후, 연결 되었다면 while문 안에서 리시브.
-				 데이터가 있다면 저장소에 넣음.
-
-	Send() 소켓 Send
-*/
+using namespace NCommon;
 
 namespace ClientLogic
 {
@@ -34,7 +26,7 @@ namespace ClientLogic
 		DISCONNECT, CONNECTING, CONNECTED
 	};
 
-	class ClientNetwork
+	class ClientNetwork 
 	{
 	public :
 
@@ -42,28 +34,35 @@ namespace ClientLogic
 		~ClientNetwork() = default;
 
 		CONNECT_STATE GetConnectState() { return m_ConnectState; };
-		PACKET::RecvPacketInfo* GetPacketFromDeque()
+		RecvPacketInfo* GetPacketFromDeque()
 		{
+			std::lock_guard<std::mutex> lockDeque(m_Mutex);
+			if (m_PacketDeque.empty())
+			{
+				return nullptr;
+			}
 			auto returnPacket = m_PacketDeque.front();
 			m_PacketDeque.pop_front();
 			return returnPacket;
 		};
 
+		void Init();
+		void Release();
+		bool Connect();
+
+		bool SendLogin(std::wstring, std::wstring);
+
 	private :
 
-		void Init();
-
-		void Release();
-
-		bool Connect();
 
 		void Update();
 
 		void PacketHeaderDivide(char* buf, const int size);
 
-		void PushPacketToDeque(const PACKET::PacketHeader*, char*);
+		void PushPacketToDeque(const PktHeader*, char*);
 
 		void Send(char* buf, const int size);
+		void Send(const short, const short, char*);
 		
 		void Disconnect();
 
@@ -75,8 +74,27 @@ namespace ClientLogic
 		SOCKADDR_IN m_ServerAddr;
 		char m_RecvBuffer[COMMON_INFO::recvSize] = { 0, };
 		std::thread m_Thread;
-		std::deque<PACKET::RecvPacketInfo*> m_PacketDeque;
+		std::deque<RecvPacketInfo*> m_PacketDeque;
 		std::mutex m_Mutex;
+
+	};
+
+	class PacketProcess
+	{
+	public :
+		PacketProcess() = default;
+		~PacketProcess() = default;
+
+		void Update();
+		void RegisterClientNetwork(ClientNetwork*);
+		bool GetIsLoginSuccessed() { return m_IsLoginSuccessed; }; 
+		void SetIsLoginSuccedded(const bool isSuccessed) { m_IsLoginSuccessed = isSuccessed; };
+
+	private :
+
+		ClientNetwork* m_ClientNetwork;
+		bool m_IsClientRegisterd = false;
+		bool m_IsLoginSuccessed = false;
 
 	};
 }

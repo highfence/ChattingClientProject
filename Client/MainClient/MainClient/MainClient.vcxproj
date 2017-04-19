@@ -304,6 +304,11 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TextScrollBox.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ClientLogic\ClientLogic\ClientLogic.vcxproj">
+      <Project>{88ca797f-e48f-4ec4-a680-8673821db47a}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

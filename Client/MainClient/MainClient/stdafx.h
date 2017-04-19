@@ -19,6 +19,7 @@ struct SceneData
 using MyApp = SceneManager<String, SceneData>;
 
 static ClientLogic::ClientNetwork* clientNetwork;
+static ClientLogic::PacketProcess* packetProcess;
 
 struct RoomInfo
 {
