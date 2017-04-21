@@ -71,8 +71,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\NEXT\Desktop\Project\ChattingClientProject\Client\ClientLogic\ClientLogic;$(SIV3D_20160812)\Inc;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\NEXT\Desktop\Project\Chatting\Client\ClientLib\ClientLogic\Debug;$(SIV3D_20160812)\Lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>G:\Siv3D%28August2016v2%29\Inc;C:\Users\NEXT\Desktop\Project\ChattingClientProject\Client\ClientLogic\ClientLogic;$(SIV3D_20160812)\Inc;$(IncludePath)</IncludePath>
+    <LibraryPath>G:\Siv3D%28August2016v2%29\Lib;$(SIV3D_20160812)\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>

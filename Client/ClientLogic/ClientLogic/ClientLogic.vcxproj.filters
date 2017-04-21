@@ -21,6 +21,9 @@
     <ClCompile Include="PacketProcess.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="DataContainer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Network.h">
@@ -39,6 +42,15 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="ErrorCode.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DataContainer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketMessenger.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketProcessor.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

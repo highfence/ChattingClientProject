@@ -35,11 +35,12 @@ void Lobby::update()
 {
 	/* if lobby entry button pushed */
 	checkButtonClicked();
+
 }
 
 void Lobby::draw() const 
 {
-	/* Empty */
+
 }
 
 void Lobby::lobbyInfoSetting()
@@ -64,7 +65,7 @@ void Lobby::lobbyInfoSetting()
 	}
 }
 
-void Lobby::makeLobbys()
+void Lobby::makeLobbys() 
 {
 	int idx = 1;
 

@@ -17,6 +17,7 @@
 #include "Packet.h"
 #include "PacketID.h"
 
+// TODO :: 스마트 포인터를 사용하자.
 using namespace NCommon;
 
 namespace ClientLogic

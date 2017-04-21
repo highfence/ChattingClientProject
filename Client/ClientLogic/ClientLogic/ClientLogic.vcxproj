@@ -129,15 +129,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DataContainer.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="PacketProcess.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DataContainer.h" />
     <ClInclude Include="Definition.h" />
     <ClInclude Include="ErrorCode.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="PacketID.h" />
+    <ClInclude Include="PacketMessenger.h" />
+    <ClInclude Include="PacketProcessor.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
