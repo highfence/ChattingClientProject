@@ -131,6 +131,7 @@
   <ItemGroup>
     <ClCompile Include="DataContainer.cpp" />
     <ClCompile Include="Network.cpp" />
+    <ClCompile Include="PacketMessenger.cpp" />
     <ClCompile Include="PacketProcess.cpp" />
   </ItemGroup>
   <ItemGroup>
