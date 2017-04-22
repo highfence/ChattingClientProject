@@ -15,6 +15,7 @@
 #include "ErrorCode.h"
 #include "Packet.h"
 #include "PacketID.h"
+#include "DataStruct.h"
 
 using namespace NCommon;
 
@@ -43,8 +44,15 @@ namespace DataContainer
 
 	private :
 
-		PacketMessenger* m_pPacketMessenger;
-		PacketProcessor* m_pPacketProcessor;
+		// Queue 등록 함수.
+		void RegisterQueueToProcessor();
+		void RegisterQueueToMessenger();
+
+		std::shared_ptr<PacketMessenger*> m_pPacketMessenger;
+		std::shared_ptr<PacketProcessor*> m_pPacketProcessor;
+		std::shared_ptr<LoginData*> m_pLoginData;
+
+		std::deque<RecvPacketInfo*> m_PacketDeque;
 
 	};
 

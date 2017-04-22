@@ -135,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataContainer.h" />
+    <ClInclude Include="DataStruct.h" />
     <ClInclude Include="Definition.h" />
     <ClInclude Include="ErrorCode.h" />
     <ClInclude Include="Network.h" />
