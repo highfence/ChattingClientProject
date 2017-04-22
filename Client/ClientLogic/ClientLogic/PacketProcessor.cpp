@@ -2,6 +2,7 @@
 #include <map>
 #include <memory>
 #include <vector>
+#include <deque>
 #include "Observer.h"
 #include "PacketMessenger.h"
 #include "PacketProcessor.h"
@@ -50,22 +51,22 @@ namespace DataContainer
 		{
 			for (auto& i : subscribers->second)
 			{
-				i->Update(packet);
+				(*i)->emplace_back(packet);
 			}
 		}
 	}
 
-	void PacketProcessor::Subscribe(short interestPacketId, std::shared_ptr<Observer> observerInstance)
+	void PacketProcessor::Subscribe(short interestPacketId, std::deque<std::shared_ptr<RecvPacketInfo>>* observerPacketQueue)
 	{
-		// 해당 패킷 아이디로 구독 등록한 옵저버가 없으면 새로운 리스트 생성.
+		// 해당 패킷 아이디로 구독 등록한 옵저버 큐가 없으면 새로운 리스트 생성.
 		if (m_ObserverMap.find(interestPacketId) == m_ObserverMap.end())
 		{
-			ObserverVector newObserverVector;
+			ObserverQueueVector newObserverVector;
 			m_ObserverMap.emplace(interestPacketId, std::move(newObserverVector));
 		}
 
-		// 리스트에 옵저버 추가.
-		m_ObserverMap.at(interestPacketId).emplace_back(observerInstance);
+		// 리스트에 옵저버 큐 추가.
+		m_ObserverMap.at(interestPacketId).emplace_back(observerPacketQueue);
 	}
 
 }
