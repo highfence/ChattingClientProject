@@ -17,7 +17,7 @@ namespace DataContainer
 		virtual void Subscribe(std::shared_ptr<PacketProcessor>) = 0;
 
 	protected :
-		std::deque<std::shared_ptr<RecvPacketInfo>> m_RecvQueue;
+		std::deque<RecvPacketInfo*> m_RecvQueue;
 	};
 
 	class LoginData : public Observer

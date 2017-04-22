@@ -39,7 +39,7 @@ namespace DataContainer
 		}
 	}
 
-	void PacketProcessor::BroadCast(std::shared_ptr<RecvPacketInfo> packet)
+	void PacketProcessor::BroadCast(RecvPacketInfo* packet)
 	{
 		auto subscribers = m_ObserverMap.find(packet->PacketId);
 		if (subscribers == m_ObserverMap.end())
@@ -51,12 +51,12 @@ namespace DataContainer
 		{
 			for (auto& i : subscribers->second)
 			{
-				i->emplace_back(packet);
+				i->push_back(packet);
 			}
 		}
 	}
 
-	void PacketProcessor::Subscribe(short interestPacketId, std::deque<std::shared_ptr<RecvPacketInfo>>* observerPacketQueue)
+	void PacketProcessor::Subscribe(short interestPacketId, std::deque<RecvPacketInfo*>* observerPacketQueue)
 	{
 		// 해당 패킷 아이디로 구독 등록한 옵저버 큐가 없으면 새로운 리스트 생성.
 		if (m_ObserverMap.find(interestPacketId) == m_ObserverMap.end())

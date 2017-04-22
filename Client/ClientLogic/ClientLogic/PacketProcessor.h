@@ -1,11 +1,16 @@
 #pragma once
 #include <map>
+#include <vector>
+#include <deque>
+#include "Packet.h"
+
+using namespace NCommon;
 
 namespace DataContainer
 {
 	class PacketMessenger;
 	class Observer;
-	using ObserverQueueVector = std::vector<std::shared_ptr<std::deque<RecvPacketInfo>*>>;
+	using ObserverQueueVector = std::vector<std::deque<RecvPacketInfo*>*>;
 
 	class PacketProcessor
 	{
@@ -16,8 +21,8 @@ namespace DataContainer
 		void Update();
 		void RegisterMessenger(std::shared_ptr<PacketMessenger>);
 
-		void BroadCast(std::shared_ptr<RecvPacketInfo>);
-		void Subscribe(short, std::deque<std::shared_ptr<RecvPacketInfo>>*);
+		void BroadCast(RecvPacketInfo*);
+		void Subscribe(short, std::deque<RecvPacketInfo*>*);
 
 	private :
 		
