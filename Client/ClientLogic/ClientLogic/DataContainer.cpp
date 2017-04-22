@@ -8,6 +8,9 @@ namespace DataContainer
 	{
 		m_pPacketMessenger = std::make_shared<PacketMessenger>();
 		m_pPacketProcessor = std::make_shared<PacketProcessor>();
+		m_pLoginData = std::make_shared<LoginData>();
+
+		m_pLoginData->Subscribe(m_pPacketProcessor);
 	}
 
 	void DataContainer::Release()
@@ -23,6 +26,11 @@ namespace DataContainer
 	bool DataContainer::DisconnectRequest()
 	{
 		return m_pPacketMessenger->Disconnect();
+	}
+
+	std::shared_ptr<LoginData> DataContainer::GetLoginData() const
+	{
+		return m_pLoginData;
 	}
 
 	void DataContainer::RegisterQueueToProcessor()
