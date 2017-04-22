@@ -25,7 +25,7 @@ namespace DataContainer
 		closesocket(m_ClientSock);
 	}
 
-	RecvPacketInfo* PacketMessenger::GetPacketFromDeque()
+	std::shared_ptr<RecvPacketInfo> PacketMessenger::GetPacketFromDeque()
 	{
 		/* Make a lockguard */
 		std::lock_guard<std::mutex> lockDeque(m_Mutex);
@@ -123,7 +123,7 @@ namespace DataContainer
 
 			readPos += PACKET_HEADER_SIZE;
 
-			RecvPacketInfo* pPacketInfo = new RecvPacketInfo;
+			std::shared_ptr<RecvPacketInfo> pPacketInfo = std::make_shared<RecvPacketInfo>();
 			pPacketInfo->PacketId = pPacketHeader->Id;
 			pPacketInfo->PacketBodySize = pPacketHeader->BodySize;
 			pPacketInfo->pData = new char[pPacketHeader->BodySize];

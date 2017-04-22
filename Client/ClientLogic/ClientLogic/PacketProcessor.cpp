@@ -38,9 +38,21 @@ namespace DataContainer
 		}
 	}
 
-	void PacketProcessor::BroadCast(RecvPacketInfo* packet)
+	void PacketProcessor::BroadCast(std::shared_ptr<RecvPacketInfo> packet)
 	{
-
+		auto subscribers = m_ObserverMap.find(packet->PacketId);
+		if (subscribers == m_ObserverMap.end())
+		{
+			OutputDebugString(L"INVALID BroadCast");
+			return;
+		}
+		else
+		{
+			for (auto& i : subscribers->second)
+			{
+				i->Update(packet);
+			}
+		}
 	}
 
 	void PacketProcessor::Subscribe(short interestPacketId, std::shared_ptr<Observer> observerInstance)
@@ -55,21 +67,5 @@ namespace DataContainer
 		// 리스트에 옵저버 추가.
 		m_ObserverMap.at(interestPacketId).emplace_back(observerInstance);
 	}
-
-	//void PacketProcessor::UnSubscribe(short subscribedPacketId, std::shared_ptr<Observer> observerInstance)
-	//{
-	//	auto iterVector = m_ObserverMap.find(subscribedPacketId);
-
-	//	if (iterVector == m_ObserverMap.end())
-	//	{
-	//		// 잘못된 UnSubscribe 요청
-	//		OutputDebugString(L"INVALID UnSubscribe Call!");
-	//		return;
-	//	}
-	//	else
-	//	{
-	//		
-	//	}
-	//}
 
 }

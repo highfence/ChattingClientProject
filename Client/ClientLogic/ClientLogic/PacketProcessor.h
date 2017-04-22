@@ -15,9 +15,8 @@ namespace DataContainer
 		void Update();
 		void RegisterMessenger(PacketMessenger*);
 
-		void BroadCast(RecvPacketInfo*);
+		void BroadCast(std::shared_ptr<RecvPacketInfo>);
 		void Subscribe(short, std::shared_ptr<Observer>);
-		//void UnSubscribe(short, std::shared_ptr<Observer>);
 
 	private :
 		
