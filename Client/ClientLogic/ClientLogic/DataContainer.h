@@ -55,5 +55,4 @@ class PacketProcessor;
 		std::deque<RecvPacketInfo*> m_PacketDeque;
 
 	};
-
 }

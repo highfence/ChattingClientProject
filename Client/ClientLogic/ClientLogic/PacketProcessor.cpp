@@ -51,7 +51,7 @@ namespace DataContainer
 		{
 			for (auto& i : subscribers->second)
 			{
-				(*i)->emplace_back(packet);
+				i->emplace_back(packet);
 			}
 		}
 	}

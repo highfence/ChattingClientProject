@@ -1,10 +1,15 @@
 #pragma once
+#include <vector>
+#include <map>
+#include "Packet.h"
+
+using namespace NCommon;
 
 namespace DataContainer
 {
 	class PacketMessenger;
 	class Observer;
-	using ObserverQueueVector = std::vector<std::shared_ptr<std::deque<RecvPacketInfo>*>>;
+	using ObserverQueueVector = std::vector<std::deque<std::shared_ptr<RecvPacketInfo>>*>;
 
 	class PacketProcessor
 	{

@@ -1,4 +1,6 @@
 #pragma once
+#include <thread>
+#include <mutex>
 #include "Packet.h"
 
 using namespace NCommon;
