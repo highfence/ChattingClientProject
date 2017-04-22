@@ -15,7 +15,7 @@
 #include "ErrorCode.h"
 #include "Packet.h"
 #include "PacketID.h"
-#include "DataStruct.h"
+#include "Observer.h"
 
 using namespace NCommon;
 
@@ -41,16 +41,16 @@ class PacketProcessor;
 		bool DisconnectRequest();
 
 		// 정보 관련 함수.
-		
+		std::shared_ptr<LoginData> GetLoginData() const;
 
 	private :
 
 		// Queue 등록 함수.
 		void RegisterQueueToProcessor();
 
-		std::unique_ptr<PacketMessenger> m_PacketMessenger;
-		std::unique_ptr<PacketProcessor> m_PacketProcessor;
-		std::shared_ptr<LoginData*> m_pLoginData;
+		std::shared_ptr<PacketMessenger> m_pPacketMessenger = nullptr;
+		std::shared_ptr<PacketProcessor> m_pPacketProcessor = nullptr;
+		std::shared_ptr<LoginData> m_pLoginData = nullptr;
 
 		std::deque<RecvPacketInfo*> m_PacketDeque;
 
