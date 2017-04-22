@@ -295,7 +295,6 @@
     <Font Include="Example\YomogiFont.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="InlineFrame.h" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="LoginScene.h" />
     <ClInclude Include="Main.h" />

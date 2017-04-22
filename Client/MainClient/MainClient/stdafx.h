@@ -7,19 +7,17 @@
 #include <stack>
 #include <array>
 #include "InlineFrame.h"
-#include "Network.h"
+#include "DataContainer.h"
 
 
 /* 씬에서 사용할 공용 데이터 구조체. */
 struct SceneData
 {
 	int32 sceneNumber;
+	DataContainer::DataContainer dataContainer;
 };
 
 using MyApp = SceneManager<String, SceneData>;
-
-static ClientLogic::ClientNetwork* clientNetwork;
-static ClientLogic::PacketProcess* packetProcess;
 
 struct RoomInfo
 {
