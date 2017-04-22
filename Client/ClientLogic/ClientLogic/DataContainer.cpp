@@ -1,18 +1,28 @@
 #include "DataContainer.h"
+#include "PacketMessenger.h"
+#include "PacketProcessor.h"
 
 namespace DataContainer
 {
 	void DataContainer::Init()
 	{
-		/*
-			TODO ::
-				패킷메신져와 패킷프로세서 등록.
-		*/	
+		m_PacketMessenger = std::make_unique<PacketMessenger>();
+		m_PacketProcessor = std::make_unique<PacketProcessor>();
 	}
 
 	void DataContainer::Release()
 	{
+		
+	}
 
+	bool DataContainer::ConnectRequest()
+	{
+		return m_PacketMessenger->Connect();
+	}
+
+	bool DataContainer::DisconnectRequest()
+	{
+		return m_PacketMessenger->Disconnect();
 	}
 
 }

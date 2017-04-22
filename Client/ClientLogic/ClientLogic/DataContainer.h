@@ -19,11 +19,12 @@
 
 using namespace NCommon;
 
-class PacketMessenger;
-class PacketProcessor;
 
 namespace DataContainer
 {
+class PacketMessenger;
+class PacketProcessor;
+
 	class DataContainer
 	{
 	public :
@@ -36,8 +37,8 @@ namespace DataContainer
 		void Release();
 
 		// 네트워크 관련 함수.
-		bool Connect();
-		bool Disconnect();
+		bool ConnectRequest();
+		bool DisconnectRequest();
 
 		// 정보 관련 함수.
 		
@@ -46,10 +47,9 @@ namespace DataContainer
 
 		// Queue 등록 함수.
 		void RegisterQueueToProcessor();
-		void RegisterQueueToMessenger();
 
-		std::shared_ptr<PacketMessenger*> m_pPacketMessenger;
-		std::shared_ptr<PacketProcessor*> m_pPacketProcessor;
+		std::unique_ptr<PacketMessenger> m_PacketMessenger;
+		std::unique_ptr<PacketProcessor> m_PacketProcessor;
 		std::shared_ptr<LoginData*> m_pLoginData;
 
 		std::deque<RecvPacketInfo*> m_PacketDeque;
