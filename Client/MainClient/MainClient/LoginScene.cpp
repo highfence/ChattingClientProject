@@ -1,13 +1,16 @@
 #include "stdafx.h"
 #include "LoginScene.h"
+#include "DataContainer.h"
 
 void Login::init()
 {
+	using namespace DataContainer;
 	m_LoginGui = GUI(GUIStyle::Default);
 	Graphics::SetBackground(Color(160, 200, 100));
 
 	m_LoginGui.setTitle(L"Login!");
-	packetProcess = new ClientLogic::PacketProcess();
+	m_data->dataContainer.Init();
+	m_data->dataContainer.ConnectRequest();
 
 	/* 텍스트 필드 */
 	m_LoginGui.add(L"idLabel", GUIText::Create(L"ID :   "));
@@ -21,11 +24,6 @@ void Login::init()
 
 	/* 창 위치 지정 */
 	m_LoginGui.setCenter(Window::Center());
-
-	packetProcess = new ClientLogic::PacketProcess();
-	clientNetwork = new ClientLogic::ClientNetwork();
-	clientNetwork->Init();
-	packetProcess->RegisterClientNetwork(clientNetwork);
 }
 
 void Login::update()

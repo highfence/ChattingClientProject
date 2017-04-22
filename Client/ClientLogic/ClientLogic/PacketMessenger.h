@@ -1,7 +1,5 @@
 #pragma once
-#include <winsock2.h>
 #include <thread>
-#include <deque>
 #include <mutex>
 #include "Packet.h"
 
@@ -21,21 +19,22 @@ namespace DataContainer
 		PacketMessenger() = default;
 		~PacketMessenger() = default;
 
-		const short GetConnectState() const { return (short)m_ConnectState; };
-		RecvPacketInfo* GetPacketFromDeque();
-
 		void Init();
 		void Release();
 		bool Connect();
 		bool Disconnect();
+		bool Send(const short, const short, char*);
+
+		const short GetConnectState() const { return (short)m_ConnectState; };
+		RecvPacketInfo* GetPacketFromDeque();
+
 
 	private :
 
+		bool SetSocket();
 		void Update();
 
-		void PacketHeaderDivide(char* buf, const int size);
-
-		void PushPacketToDeque(const PktHeader*, char*);
+		void LoadUpPacketToDeque(char* buf, const int bufSize);
 
 		CONNECT_STATE m_ConnectState = CONNECT_STATE::DISCONNECT;
 		SOCKET m_ClientSock = INVALID_SOCKET;
