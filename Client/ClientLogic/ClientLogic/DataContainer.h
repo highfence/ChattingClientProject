@@ -48,9 +48,9 @@ class PacketProcessor;
 		// Queue 등록 함수.
 		void RegisterQueueToProcessor();
 
-		std::unique_ptr<PacketMessenger> m_PacketMessenger;
-		std::unique_ptr<PacketProcessor> m_PacketProcessor;
-		std::shared_ptr<LoginData*> m_pLoginData;
+		std::shared_ptr<PacketMessenger> m_pPacketMessenger = nullptr;
+		std::shared_ptr<PacketProcessor> m_pPacketProcessor = nullptr;
+		std::shared_ptr<LoginData> m_LoginData = nullptr;
 
 		std::deque<RecvPacketInfo*> m_PacketDeque;
 

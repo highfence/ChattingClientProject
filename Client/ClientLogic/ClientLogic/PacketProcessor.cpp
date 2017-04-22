@@ -17,7 +17,7 @@ namespace DataContainer
 			return;
 		}
 
-		auto packet = m_MessengerAddress->GetPacketFromDeque();
+		auto packet = m_pMessengerAddress->GetPacketFromDeque();
 
 		/* 큐에 패킷이 없으면 Update를 잠깐 쉰다. */
 		if (packet == nullptr)
@@ -30,11 +30,11 @@ namespace DataContainer
 		BroadCast(packet);
 	}
 
-	void PacketProcessor::RegisterMessenger(PacketMessenger * messengerAddress)
+	void PacketProcessor::RegisterMessenger(std::shared_ptr<PacketMessenger> messengerAddress)
 	{
 		if (m_IsMessengerRegisterd == false)
 		{
-			m_MessengerAddress = messengerAddress;
+			m_pMessengerAddress = messengerAddress;
 			m_IsMessengerRegisterd = true;
 		}
 	}
