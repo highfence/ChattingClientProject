@@ -43,16 +43,23 @@ namespace ClientLogic
 		bool m_IsLoginSuccessed = false;
 	};
 
-	//class LobbyListData : public Observer
-	//{
-	//public :
-	//	LobbyListData() = default;
-	//	~LobbyListData() = default;
+	class LobbyListData : public Observer
+	{
+	public :
+		LobbyListData() = default;
+		~LobbyListData() = default;
 
-	//	void Update() override;
-	//	
-	//private :
-	//	
-
-	//};
+		void Update() override;
+		void SetSubscribe(std::shared_ptr<PacketProcessor>);
+		
+		bool GetIsListLoaded() const { return m_IsListLoaded; };
+		short GetLobbyCount() const { return m_LobbyCount; };
+		const LobbyListInfo& GetLobbyListInfo() const;
+		
+	private :
+		
+		short m_LobbyCount = 0;
+		LobbyListInfo m_LobbyList[MAX_LOBBY_LIST_COUNT];
+		bool m_IsListLoaded = false;
+	};
 }

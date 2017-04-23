@@ -10,9 +10,11 @@ namespace ClientLogic
 		m_pPacketMessenger->Init();
 		m_pPacketProcessor = std::make_shared<PacketProcessor>();
 		m_pLoginData = std::make_shared<LoginData>();
+		m_pLoginData->SetSubscribe(m_pPacketProcessor);
+		m_pLobbyListData = std::make_shared<LobbyListData>();
+		m_pLobbyListData->SetSubscribe(m_pPacketProcessor);
 
 		RegisterQueueToProcessor();
-		m_pLoginData->SetSubscribe(m_pPacketProcessor);
 	}
 
 	void DataContainer::Release()

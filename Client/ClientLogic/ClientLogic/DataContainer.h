@@ -61,6 +61,7 @@ namespace ClientLogic
 		std::shared_ptr<PacketMessenger> m_pPacketMessenger = nullptr;
 		std::shared_ptr<PacketProcessor> m_pPacketProcessor = nullptr;
 		std::shared_ptr<LoginData> m_pLoginData = nullptr;
+		std::shared_ptr<LobbyListData> m_pLobbyListData = nullptr;
 
 		std::deque<RecvPacketInfo*> m_PacketDeque;
 

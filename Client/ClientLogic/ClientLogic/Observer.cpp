@@ -7,11 +7,6 @@ namespace ClientLogic
 		processor->Subscribe(packetId, &m_RecvQueue);
 	}
 
-	void LoginData::SetSubscribe(std::shared_ptr<PacketProcessor> publisher)
-	{
-		publisher->Subscribe((short)PACKET_ID::LOGIN_IN_RES, &m_RecvQueue);
-	}
-
 	void LoginData::Update()
 	{
 		// 받은 큐가 비어있으면 일하지 않음.
@@ -22,13 +17,12 @@ namespace ClientLogic
 		}
 
 		// 큐가 있다면 빼서, LOGIN_IN_RES 패킷이 왔는지 확인.
-		std::lock_guard<std::mutex> lockDeque(m_Mutex);
 		auto packet = m_RecvQueue.front();
 
 		if (packet->PacketId != (short)PACKET_ID::LOGIN_IN_RES)
 		{
 			// 뭔가 잘못된 패킷이 옴.
-			OutputDebugString(L"Invaild Packet Receive! (In LoginData Update)");
+			OutputDebugString(L"Invaild Packet Receive! (In LoginData Update)\n");
 			return;
 		}
 
@@ -46,5 +40,51 @@ namespace ClientLogic
 			m_IsLoginSuccessed = true;
 		}
 		m_RecvQueue.pop_front();
+	}
+
+	void LoginData::SetSubscribe(std::shared_ptr<PacketProcessor> publisher)
+	{
+		publisher->Subscribe((short)PACKET_ID::LOGIN_IN_RES, &m_RecvQueue);
+	}
+
+	void LobbyListData::Update()
+	{
+		if (m_RecvQueue.empty())
+		{
+			Sleep(0);
+			return;
+		}
+
+		auto packet = m_RecvQueue.front();
+
+		if (packet->PacketId != (short)PACKET_ID::LOBBY_LIST_RES)
+		{
+			OutputDebugString(L"Invalid Packet Receive! (In LobbyListData Update)\n");
+			return;
+		}
+
+		auto i = (PktLogInRes*)packet->pData;
+		if (i->ErrorCode != (short)ERROR_CODE::NONE)
+		{
+			OutputDebugString(L"[LobbyListData] 로비리스트 수령 실패!\n");
+		}
+		else
+		{
+			OutputDebugString(L"[LobbyListData] 로비리스트 성공적으로 수령\n");
+			m_IsListLoaded = true;
+		}
+		m_RecvQueue.pop_front();
+	}
+	
+
+	void LobbyListData::SetSubscribe(std::shared_ptr<PacketProcessor> publisher)
+	{
+		publisher->Subscribe((short)PACKET_ID::LOBBY_LIST_RES, &m_RecvQueue);
+	}
+
+	const LobbyListInfo & LobbyListData::GetLobbyListInfo() const
+	{
+		const LobbyListInfo& const listLobbyRef = *m_LobbyList;
+		return listLobbyRef;
 	}
 }
