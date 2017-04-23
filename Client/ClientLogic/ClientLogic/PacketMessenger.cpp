@@ -20,7 +20,7 @@ namespace ClientLogic
 		closesocket(m_ClientSock);
 	}
 
-	RecvPacketInfo* PacketMessenger::GetPacketFromDeque()
+	std::shared_ptr<RecvPacketInfo> PacketMessenger::GetPacketFromDeque()
 	{
 		/* Make a lockguard */
 		std::lock_guard<std::mutex> lockDeque(m_Mutex);
@@ -128,7 +128,7 @@ namespace ClientLogic
 
 			// 쓰레드 락.
 			std::lock_guard<std::mutex> lockDeque(m_Mutex);
-			m_PacketDeque.push_back(pPacketInfo);
+			m_PacketDeque.emplace_back(pPacketInfo);
 		}
 	}
 
@@ -169,8 +169,21 @@ namespace ClientLogic
 				return false;
 			}
 		}
+		/* 로비리스트 요청 패킷 처리 */
+		else if (packetId == (short)PACKET_ID::LOBBY_LIST_REQ)
+		{
+			PktHeader pktHeader{packetId, 0};
+			char data[COMMON_INFO::MAX_PACKET_SIZE] = { 0, };
+			memcpy(&data[0], (char*)&pktHeader, PACKET_HEADER_SIZE);
+
+			int hr = send(m_ClientSock, data, PACKET_HEADER_SIZE, 0);
+			if (hr == SOCKET_ERROR)
+			{
+				int err = WSAGetLastError();
+				return false;
+			}
+		}
+
 		return true;
 	}
-
-
 }

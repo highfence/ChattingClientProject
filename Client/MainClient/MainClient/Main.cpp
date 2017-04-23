@@ -23,6 +23,10 @@ void Main()
 	sceneManager.add<RoomList>(L"RoomList");
 	sceneManager.add<Room>(L"Room");
 
+	// packet queue
+	// net service
+	// broadcaster
+
 	while (System::Update())
 	{
 		if (!sceneManager.updateAndDraw())

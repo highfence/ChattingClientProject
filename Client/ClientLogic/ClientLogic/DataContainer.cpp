@@ -8,7 +8,7 @@ namespace ClientLogic
 	{
 		m_pPacketMessenger = std::make_shared<PacketMessenger>();
 		m_pPacketMessenger->Init();
-		m_pPacketProcessor = std::make_shared<PacketProcessor>();
+		m_pPacketProcessor = std::make_shared<PacketDistributer>();
 		m_pLoginData = std::make_shared<LoginData>();
 		m_pLoginData->SetSubscribe(m_pPacketProcessor);
 		m_pLobbyListData = std::make_shared<LobbyListData>();
@@ -26,6 +26,7 @@ namespace ClientLogic
 	{
 		m_pPacketProcessor->Update();
 		m_pLoginData->Update();
+		m_pLobbyListData->Update();
 	}
 
 	bool DataContainer::ConnectRequest()
@@ -46,6 +47,11 @@ namespace ClientLogic
 	std::shared_ptr<LoginData> DataContainer::GetLoginData() const
 	{
 		return m_pLoginData;
+	}
+
+	std::shared_ptr<LobbyListData> DataContainer::GetLobbyListData() const
+	{
+		return m_pLobbyListData;
 	}
 
 	void DataContainer::RegisterQueueToProcessor()

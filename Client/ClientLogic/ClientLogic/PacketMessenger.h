@@ -30,7 +30,7 @@ namespace ClientLogic
 		bool Send(const short, const short, char*);
 
 		const short GetConnectState() const { return (short)m_ConnectState; };
-		RecvPacketInfo* GetPacketFromDeque();
+		std::shared_ptr<RecvPacketInfo> GetPacketFromDeque();
 
 
 	private :
@@ -44,7 +44,7 @@ namespace ClientLogic
 		SOCKET m_ClientSock = INVALID_SOCKET;
 		SOCKADDR_IN m_ServerAddr;
 		std::thread m_RecvThread;
-		std::deque<RecvPacketInfo*> m_PacketDeque;
+		std::deque<std::shared_ptr<RecvPacketInfo>> m_PacketDeque;
 		std::mutex m_Mutex;
 	};
 }

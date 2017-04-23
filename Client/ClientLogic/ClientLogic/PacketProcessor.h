@@ -11,19 +11,19 @@ using namespace NCommon;
 namespace ClientLogic
 {
 	class PacketMessenger;
-	using ObserverQueueVector = std::vector<std::deque<RecvPacketInfo*>*>;
+	using ObserverQueueVector = std::vector<std::deque<std::shared_ptr<RecvPacketInfo>>*>;
 
-	class PacketProcessor
+	class PacketDistributer
 	{
 	public :
-		PacketProcessor() = default;
-		~PacketProcessor() = default;
+		PacketDistributer() = default;
+		~PacketDistributer() = default;
 
 		void Update();
 		void RegisterMessenger(std::shared_ptr<PacketMessenger>);
 
-		void BroadCast(RecvPacketInfo*);
-		void Subscribe(short, std::deque<RecvPacketInfo*>*);
+		void BroadCast(std::shared_ptr<RecvPacketInfo>);
+		void Subscribe(short, std::deque<std::shared_ptr<RecvPacketInfo>>*);
 
 	private :
 		

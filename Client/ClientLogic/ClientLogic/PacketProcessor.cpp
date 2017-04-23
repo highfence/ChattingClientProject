@@ -4,7 +4,7 @@
 
 namespace ClientLogic
 {
-	void PacketProcessor::Update()
+	void PacketDistributer::Update()
 	{
 		// 메신저 등록이 안되어 있을 경우 Update를 실행하지 못함. 
 		if (m_IsMessengerRegisterd == false)
@@ -25,7 +25,7 @@ namespace ClientLogic
 		BroadCast(packet);
 	}
 
-	void PacketProcessor::RegisterMessenger(std::shared_ptr<PacketMessenger> messengerAddress)
+	void PacketDistributer::RegisterMessenger(std::shared_ptr<PacketMessenger> messengerAddress)
 	{
 		if (m_IsMessengerRegisterd == false)
 		{
@@ -34,7 +34,7 @@ namespace ClientLogic
 		}
 	}
 
-	void PacketProcessor::BroadCast(RecvPacketInfo* packet)
+	void PacketDistributer::BroadCast(std::shared_ptr<RecvPacketInfo> packet)
 	{
 		auto subscribers = m_ObserverMap.find(packet->PacketId);
 		if (subscribers == m_ObserverMap.end())
@@ -51,7 +51,7 @@ namespace ClientLogic
 		}
 	}
 
-	void PacketProcessor::Subscribe(short interestPacketId, std::deque<RecvPacketInfo*>* observerPacketQueue)
+	void PacketDistributer::Subscribe(short interestPacketId, std::deque<std::shared_ptr<RecvPacketInfo>>* observerPacketQueue)
 	{
 		// 해당 패킷 아이디로 구독 등록한 옵저버 큐가 없으면 새로운 리스트 생성.
 		if (m_ObserverMap.find(interestPacketId) == m_ObserverMap.end())
@@ -63,5 +63,4 @@ namespace ClientLogic
 		// 리스트에 옵저버 큐 추가.
 		m_ObserverMap.at(interestPacketId).emplace_back(observerPacketQueue);
 	}
-
 }

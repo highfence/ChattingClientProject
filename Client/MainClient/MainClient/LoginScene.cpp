@@ -24,8 +24,9 @@ void Login::init()
 	/* 창 위치 지정 */
 	m_LoginGui.setCenter(Window::Center());
 
-	m_data->dataContainer.Init();
-	m_data->dataContainer.ConnectRequest();
+	m_data->dataContainer = new DataContainer;
+	m_data->dataContainer->Init();
+	m_data->dataContainer->ConnectRequest();
 }
 
 void Login::update()
@@ -45,13 +46,13 @@ void Login::update()
 	{
 		tryLogin();
 	}
-	m_data->dataContainer.Update();
+	m_data->dataContainer->Update();
 	checkLoginSuccessed();
 }
 
 void Login::checkLoginSuccessed()
 {
-	if (m_data->dataContainer.GetLoginData()->GetLoginSuccessed())
+	if (m_data->dataContainer->GetLoginData()->GetLoginSuccessed())
 	{
 		OutputDebugString(L"로그인 성공.");
 		changeScene(L"Lobby");
@@ -73,7 +74,7 @@ bool Login::tryLogin()
 	PktLogInReq newLoginReq;
 	makeLoginReqPacket(&newLoginReq);
 
-	m_data->dataContainer.SendRequest((short)PACKET_ID::LOGIN_IN_REQ, sizeof(newLoginReq), (char*)&newLoginReq);
+	m_data->dataContainer->SendRequest((short)PACKET_ID::LOGIN_IN_REQ, sizeof(newLoginReq), (char*)&newLoginReq);
 	return true;
 }
 

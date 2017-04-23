@@ -30,7 +30,6 @@ using namespace NCommon;
 
 namespace ClientLogic
 {
-
 	class DataContainer
 	{
 	public :
@@ -52,6 +51,7 @@ namespace ClientLogic
 
 		// 정보 관련 함수.
 		std::shared_ptr<LoginData> GetLoginData() const;
+		std::shared_ptr<LobbyListData> GetLobbyListData() const;
 
 	private :
 
@@ -59,11 +59,11 @@ namespace ClientLogic
 		void RegisterQueueToProcessor();
 
 		std::shared_ptr<PacketMessenger> m_pPacketMessenger = nullptr;
-		std::shared_ptr<PacketProcessor> m_pPacketProcessor = nullptr;
+		std::shared_ptr<PacketDistributer> m_pPacketProcessor = nullptr;
 		std::shared_ptr<LoginData> m_pLoginData = nullptr;
 		std::shared_ptr<LobbyListData> m_pLobbyListData = nullptr;
 
-		std::deque<RecvPacketInfo*> m_PacketDeque;
+		std::deque<std::shared_ptr<RecvPacketInfo>> m_PacketDeque;
 
 	};
 }

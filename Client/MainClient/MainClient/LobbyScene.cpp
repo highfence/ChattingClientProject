@@ -11,13 +11,12 @@ const int infoWidth = 150;
 
 void Lobby::init()
 {
+	reqLobbyInfo();
+
 	m_LobbyGui = GUI(GUIStyle::Default);
 	m_LobbyGui.setTitle(L"Lobby");
 	m_InfoGui = GUI(GUIStyle::Default);
 	m_InfoGui.setTitle(L"My Info");
-
-	/* Set Lobby information */
-	lobbyInfoSetting();
 
 	/* Setting InfoGui Position & Background Color */
 	Point infoGuiPos = Point(roomNameWidth + roomUserWidth + 160, 0);
@@ -33,9 +32,19 @@ void Lobby::init()
 
 void Lobby::update()
 {
+
+	m_data->dataContainer->Update();
+
+	auto data = ~~;
+	if (data->GetHash() != lastDataHash)
+	{
+		applyData(data);
+	}
+
+	lobbyInfoSetting();
+
 	/* if lobby entry button pushed */
 	checkButtonClicked();
-
 }
 
 void Lobby::draw() const 
@@ -45,24 +54,20 @@ void Lobby::draw() const
 
 void Lobby::lobbyInfoSetting()
 {
-	// TODO :: data of Lobby & info window will be given by server
-	/* Temporarily Data input */
-	std::mt19937 rng((unsigned int)time(NULL));
-	std::uniform_int_distribution<int> lobbyNumberRange(1, lobbyMaxNumber);
-	std::uniform_int_distribution<int> userNumberRange(0, lobbyMaxUserNumber);
+	static long long lastDataHash = 0;
+	auto data = m_data->dataContainer->GetLobbyListData();
 
-	/* Make Lobby infos */
-	int lobbyNumber = lobbyNumberRange(rng);
-	for (int i = 0; i < lobbyNumber; ++i)
+
+	if(lastDataHash)
+	if (data->GetIsListLoaded())
 	{
-		LobbyInfo* newLobbyInfo = new LobbyInfo;
-		newLobbyInfo->LobbyName = L"Chatting Server " + std::to_wstring(i + 1);
-		newLobbyInfo->LobbyButtonName = L"Button" + std::to_wstring(i + 1);
-		newLobbyInfo->LobbyId = L"Lobby" + std::to_wstring(i + 1);
-		newLobbyInfo->MaxUserNumber = lobbyMaxUserNumber;
-		newLobbyInfo->UserNumber = userNumberRange(rng);
-		m_LobbyVector.push_back(newLobbyInfo);
+		
 	}
+}
+
+void Lobby::applyData(ClientLogic::LobbyListData data)
+{
+
 }
 
 void Lobby::makeLobbys() 
@@ -94,4 +99,9 @@ void Lobby::checkButtonClicked()
 			changeScene(L"RoomList");
 		}
 	}
+}
+
+void Lobby::reqLobbyInfo()
+{
+	m_data->dataContainer->SendRequest((short)PACKET_ID::LOBBY_LIST_REQ, sizeof(PktHeader), nullptr);
 }

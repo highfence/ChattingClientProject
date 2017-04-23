@@ -7,7 +7,7 @@ struct LobbyInfo
 	std::wstring LobbyId;
 	std::wstring LobbyButtonName;
 	int UserNumber = 0;
-	int MaxUserNumber = 0;
+	int MaxUserNumber = 50;
 };
 
 
@@ -16,7 +16,6 @@ struct Lobby : MyApp::Scene
 	GUI m_LobbyGui;
 	GUI m_InfoGui;
 	std::vector<LobbyInfo*> m_LobbyVector;
-
 
 	/* Required Initializer for Siv3D */
 	void init() override;
@@ -38,4 +37,7 @@ struct Lobby : MyApp::Scene
 
 	/* Check which button clicked */
 	void checkButtonClicked();
+
+	/* Request Lobby Info */
+	void reqLobbyInfo();
 };

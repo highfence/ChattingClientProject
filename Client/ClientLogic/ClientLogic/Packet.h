@@ -36,6 +36,10 @@ namespace NCommon
 	struct RecvPacketInfo
 	{
 		RecvPacketInfo() {};
+		~RecvPacketInfo()
+		{
+			delete[] pData;
+		}
 
 		short PacketId = 0;
 		short PacketBodySize = 0;

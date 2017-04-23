@@ -11,7 +11,7 @@
 
 namespace ClientLogic
 {
-	class PacketProcessor;
+	class PacketDistributer;
 
 	class Observer
 	{
@@ -20,10 +20,10 @@ namespace ClientLogic
 		virtual ~Observer() = default;
 
 		virtual void Update() = 0;
-		virtual void Subscribe(short, std::shared_ptr<PacketProcessor>);
+		virtual void Subscribe(short, std::shared_ptr<PacketDistributer>);
 
 	protected :
-		std::deque<RecvPacketInfo*> m_RecvQueue;
+		std::deque<std::shared_ptr<RecvPacketInfo>> m_RecvQueue;
 		std::mutex m_Mutex;
 	};
 
@@ -34,7 +34,7 @@ namespace ClientLogic
 		~LoginData() = default;
 
 		void Update() override;
-		void SetSubscribe(std::shared_ptr<PacketProcessor>);
+		void SetSubscribe(std::shared_ptr<PacketDistributer>);
 
 		bool GetLoginSuccessed() const { return m_IsLoginSuccessed; };
 
@@ -50,13 +50,17 @@ namespace ClientLogic
 		~LobbyListData() = default;
 
 		void Update() override;
-		void SetSubscribe(std::shared_ptr<PacketProcessor>);
+		void SetSubscribe(std::shared_ptr<PacketDistributer>);
 		
+		void RequestDataCompletlyDelivered() { m_IsListLoaded = false; };
 		bool GetIsListLoaded() const { return m_IsListLoaded; };
 		short GetLobbyCount() const { return m_LobbyCount; };
-		const LobbyListInfo& GetLobbyListInfo() const;
+		const LobbyListInfo* GetLobbyListInfo() const;
+		long long GetHash();
 		
 	private :
+
+		void LoadData(PktLobbyListRes*);
 		
 		short m_LobbyCount = 0;
 		LobbyListInfo m_LobbyList[MAX_LOBBY_LIST_COUNT];

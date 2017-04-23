@@ -2,7 +2,7 @@
 
 namespace ClientLogic
 {
-	void Observer::Subscribe(short packetId, std::shared_ptr<PacketProcessor> processor)
+	void Observer::Subscribe(short packetId, std::shared_ptr<PacketDistributer> processor)
 	{
 		processor->Subscribe(packetId, &m_RecvQueue);
 	}
@@ -42,7 +42,7 @@ namespace ClientLogic
 		m_RecvQueue.pop_front();
 	}
 
-	void LoginData::SetSubscribe(std::shared_ptr<PacketProcessor> publisher)
+	void LoginData::SetSubscribe(std::shared_ptr<PacketDistributer> publisher)
 	{
 		publisher->Subscribe((short)PACKET_ID::LOGIN_IN_RES, &m_RecvQueue);
 	}
@@ -63,28 +63,39 @@ namespace ClientLogic
 			return;
 		}
 
-		auto i = (PktLogInRes*)packet->pData;
-		if (i->ErrorCode != (short)ERROR_CODE::NONE)
+		auto pLobbyListData = (PktLobbyListRes*)packet->pData;
+		if (pLobbyListData->ErrorCode != (short)ERROR_CODE::NONE)
 		{
 			OutputDebugString(L"[LobbyListData] 로비리스트 수령 실패!\n");
 		}
 		else
 		{
 			OutputDebugString(L"[LobbyListData] 로비리스트 성공적으로 수령\n");
-			m_IsListLoaded = true;
+			LoadData(pLobbyListData);
 		}
 		m_RecvQueue.pop_front();
 	}
 	
 
-	void LobbyListData::SetSubscribe(std::shared_ptr<PacketProcessor> publisher)
+	void LobbyListData::SetSubscribe(std::shared_ptr<PacketDistributer> publisher)
 	{
 		publisher->Subscribe((short)PACKET_ID::LOBBY_LIST_RES, &m_RecvQueue);
 	}
 
-	const LobbyListInfo & LobbyListData::GetLobbyListInfo() const
+	const LobbyListInfo * LobbyListData::GetLobbyListInfo() const
 	{
-		const LobbyListInfo& const listLobbyRef = *m_LobbyList;
-		return listLobbyRef;
+		const LobbyListInfo* const listLobbyConstPointer = m_LobbyList;
+		return listLobbyConstPointer;
+	}
+
+	void LobbyListData::LoadData(PktLobbyListRes* pLobbyListData)
+	{
+		m_LobbyCount = pLobbyListData->LobbyCount;
+		
+		for (int i = 0; i < m_LobbyCount; ++i)
+		{
+			m_LobbyList[i] = pLobbyListData->LobbyList[i];
+		}
+		m_IsListLoaded = true;
 	}
 }
