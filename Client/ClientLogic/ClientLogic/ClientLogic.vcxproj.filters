@@ -15,12 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Network.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="PacketProcess.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="DataContainer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -35,9 +29,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Network.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Definition.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -60,9 +51,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="PacketProcessor.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="DataStruct.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Observer.h">

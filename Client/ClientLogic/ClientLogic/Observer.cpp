@@ -1,11 +1,6 @@
-#include <Windows.h>
-#include <memory>
-#include <deque>
-#include "Packet.h"
-#include "PacketProcessor.h"
 #include "Observer.h"
 
-namespace DataContainer
+namespace ClientLogic
 {
 	void LoginData::Subscribe(std::shared_ptr<PacketProcessor> processor)
 	{

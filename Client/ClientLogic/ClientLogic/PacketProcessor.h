@@ -1,15 +1,16 @@
 #pragma once
+#include <Windows.h>
 #include <map>
 #include <vector>
 #include <deque>
 #include "Packet.h"
 
+
 using namespace NCommon;
 
-namespace DataContainer
+namespace ClientLogic
 {
 	class PacketMessenger;
-	class Observer;
 	using ObserverQueueVector = std::vector<std::deque<RecvPacketInfo*>*>;
 
 	class PacketProcessor

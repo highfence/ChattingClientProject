@@ -1,13 +1,8 @@
-#include <Windows.h>
-#include <map>
-#include <memory>
-#include <vector>
-#include <deque>
-#include "Observer.h"
+
 #include "PacketMessenger.h"
 #include "PacketProcessor.h"
 
-namespace DataContainer
+namespace ClientLogic
 {
 	void PacketProcessor::Update()
 	{

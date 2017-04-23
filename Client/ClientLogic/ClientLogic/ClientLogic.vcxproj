@@ -129,19 +129,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DataContainer.cpp" />
-    <ClCompile Include="Network.cpp" />
-    <ClCompile Include="Observer.cpp" />
-    <ClCompile Include="PacketMessenger.cpp" />
-    <ClCompile Include="PacketProcess.cpp" />
-    <ClCompile Include="PacketProcessor.cpp" />
+    <ClCompile Include="DataContainer.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Observer.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="PacketMessenger.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="PacketProcessor.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataContainer.h" />
-    <ClInclude Include="DataStruct.h" />
     <ClInclude Include="Definition.h" />
     <ClInclude Include="ErrorCode.h" />
-    <ClInclude Include="Network.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="PacketID.h" />

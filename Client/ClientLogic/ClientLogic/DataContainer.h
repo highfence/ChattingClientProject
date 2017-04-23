@@ -1,29 +1,35 @@
 #pragma once
 
-#pragma comment(lib, "Ws2_32.lib")
 #include <WinSock2.h>
-#include <WS2tcpip.h>
+//#include <WS2tcpip.h>
 #include <stdlib.h>
+
+#include <Windows.h>
+#include <tchar.h>
 #include <stdio.h>
-#include <thread>
-#include <vector>
+#include <map>
 #include <deque>
-#include <string>
+#include <vector>
 #include <mutex>
 #include <memory>
-#include "Definition.h"
-#include "ErrorCode.h"
+#include <thread>
+#include <string>
+
 #include "Packet.h"
 #include "PacketID.h"
+#include "ErrorCode.h"
+#include "Util.h"
+#include "DataContainer.h"
+#include "Definition.h"
 #include "Observer.h"
+
+#include "PacketMessenger.h"
+#include "PacketProcessor.h"
 
 using namespace NCommon;
 
-
-namespace DataContainer
+namespace ClientLogic
 {
-class PacketMessenger;
-class PacketProcessor;
 
 	class DataContainer
 	{

@@ -1,8 +1,8 @@
 #include "DataContainer.h"
-#include "PacketMessenger.h"
-#include "PacketProcessor.h"
 
-namespace DataContainer
+#pragma comment(lib, "Ws2_32.lib")
+
+namespace ClientLogic
 {
 	void DataContainer::Init()
 	{

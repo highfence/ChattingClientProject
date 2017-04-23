@@ -1,10 +1,12 @@
 #pragma once
+#include <Windows.h>
+#include <deque>
+#include <memory>
 #include <mutex>
 #include "Packet.h"
+#include "PacketProcessor.h"
 
-using namespace NCommon;
-
-namespace DataContainer
+namespace ClientLogic
 {
 	class PacketProcessor;
 

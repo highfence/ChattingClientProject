@@ -1,13 +1,8 @@
-#include <winsock2.h>
-#include <thread>
-#include <deque>
-#include <mutex>
+#pragma comment(lib, "Ws2_32.lib")
 #include "PacketMessenger.h"
 #include "Definition.h"
 
-using namespace NCommon;
-
-namespace DataContainer
+namespace ClientLogic
 {
 	void PacketMessenger::Init()
 	{

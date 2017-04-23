@@ -1,11 +1,15 @@
 #pragma once
+#include <WinSock2.h>
+//#include <WS2tcpip.h>
+#include <stdlib.h>
 #include <thread>
 #include <mutex>
+#include <deque>
 #include "Packet.h"
 
 using namespace NCommon;
 
-namespace DataContainer
+namespace ClientLogic
 {
 	enum class CONNECT_STATE : short
 	{

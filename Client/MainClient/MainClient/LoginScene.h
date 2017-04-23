@@ -16,6 +16,7 @@ struct Login : MyApp::Scene
 	/* Required Function for Siv3d */
 	void draw() const override;
 
-	/* 로그인 시도 함수 */
+	/* 로그인 관련 함수 */
 	bool tryLogin();
+	void makeLoginReqPacket(PktLogInReq*);
 };

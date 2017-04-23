@@ -1,7 +1,7 @@
 #pragma once
 #include <stdio.h>
 
-namespace DataContainer
+namespace ClientLogic
 {
 	class Util
 	{

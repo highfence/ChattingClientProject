@@ -14,7 +14,7 @@
 struct SceneData
 {
 	int32 sceneNumber;
-	DataContainer::DataContainer dataContainer;
+	ClientLogic::DataContainer dataContainer;
 };
 
 using MyApp = SceneManager<String, SceneData>;
