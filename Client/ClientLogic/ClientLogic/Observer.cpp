@@ -23,9 +23,9 @@ namespace DataContainer
 
 		// 큐가 있다면 빼서, LOGIN_IN_RES 패킷이 왔는지 확인.
 		std::lock_guard<std::mutex> lockDeque(m_Mutex);
-		auto i = m_RecvQueue.front();
+		auto packet = m_RecvQueue.front();
 
-		if (i->PacketId != (short)PACKET_ID::LOGIN_IN_RES)
+		if (packet->PacketId != (short)PACKET_ID::LOGIN_IN_RES)
 		{
 			// 뭔가 잘못된 패킷이 옴.
 			OutputDebugString(L"Invaild Packet Receive! (In LoginData Update)");
@@ -33,17 +33,18 @@ namespace DataContainer
 		}
 
 		// 올바른 패킷이 왔다면, 에러코드 확인.
-		auto j = (PktLogInRes*)&m_RecvQueue.front();
-		if (j->ErrorCode != (short)ERROR_CODE::NONE)
+		auto i = (PktLogInRes*)packet->pData;
+		if (i->ErrorCode != (short)ERROR_CODE::NONE)
 		{
 			// 로그인 실패
-			OutputDebugString(L"로그인 실패!");
+			OutputDebugString(L"[LoginData] 로그인 실패!\n");
 		}
 		else
 		{
 			// 성공
-			OutputDebugString(L"로그인 성공!");
+			OutputDebugString(L"[LoginData] 로그인 성공!\n");
 			m_IsLoginSuccessed = true;
 		}
+		m_RecvQueue.pop_front();
 	}
 }

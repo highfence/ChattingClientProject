@@ -32,13 +32,12 @@ namespace ClientLogic
 			if (i->ErrorCode != (short)ERROR_CODE::NONE)
 			{
 				// ERROR
-				OutputDebugString(L"로그인 실패!");
-				
+				OutputDebugString(L"[PacketProcess] 로그인 실패!");
 			}
 			else
 			{
 				// 성공
-				OutputDebugString(L"로그인 성공");
+				OutputDebugString(L"[PacketProcess] 로그인 성공");
 				m_IsLoginSuccessed = true;
 			}
 			delete i;

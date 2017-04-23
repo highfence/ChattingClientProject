@@ -7,6 +7,7 @@ namespace DataContainer
 	void DataContainer::Init()
 	{
 		m_pPacketMessenger = std::make_shared<PacketMessenger>();
+		m_pPacketMessenger->Init();
 		m_pPacketProcessor = std::make_shared<PacketProcessor>();
 		m_pLoginData = std::make_shared<LoginData>();
 
@@ -21,6 +22,7 @@ namespace DataContainer
 
 	void DataContainer::Update()
 	{
+		m_pPacketProcessor->Update();
 		m_pLoginData->Update();
 	}
 

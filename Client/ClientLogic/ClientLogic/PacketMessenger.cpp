@@ -130,7 +130,6 @@ namespace DataContainer
 			memcpy(pPacketInfo->pData, &buf[readPos], pPacketHeader->BodySize);
 
 			readPos += pPacketHeader->BodySize;
-			delete pPacketHeader;
 
 			// 쓰레드 락.
 			std::lock_guard<std::mutex> lockDeque(m_Mutex);
