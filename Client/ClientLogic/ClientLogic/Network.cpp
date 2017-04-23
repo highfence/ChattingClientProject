@@ -120,8 +120,8 @@ namespace ClientLogic
 		char szID[MAX_USER_ID_SIZE] = { 0, };
 		char szPW[MAX_USER_PASSWORD_SIZE] = { 0, };
 
-		Util::UnicodeToAnsi(idStr.c_str(), MAX_USER_ID_SIZE, szID);
-		Util::UnicodeToAnsi(pwStr.c_str(), MAX_USER_PASSWORD_SIZE, szPW);
+		//Util::UnicodeToAnsi(idStr.c_str(), MAX_USER_ID_SIZE, szID);
+		//Util::UnicodeToAnsi(pwStr.c_str(), MAX_USER_PASSWORD_SIZE, szPW);
 
 		strncpy_s(newLoginReq.szID, MAX_USER_ID_SIZE + 1, szID, MAX_USER_ID_SIZE);
 		strncpy_s(newLoginReq.szPW, MAX_USER_PASSWORD_SIZE + 1, szPW, MAX_USER_PASSWORD_SIZE);

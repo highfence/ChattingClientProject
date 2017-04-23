@@ -11,6 +11,7 @@ struct Login : MyApp::Scene
 
 	/* Required Function for Siv3d */
 	void update() override;
+	void checkLoginSuccessed();
 
 	/* Required Function for Siv3d */
 	void draw() const override;

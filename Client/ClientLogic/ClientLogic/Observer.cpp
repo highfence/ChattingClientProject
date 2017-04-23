@@ -21,7 +21,8 @@ namespace DataContainer
 			return;
 		}
 
-		// 큐가 있다면, LOGIN_IN_RES 패킷이 왔는지 확인.
+		// 큐가 있다면 빼서, LOGIN_IN_RES 패킷이 왔는지 확인.
+		std::lock_guard<std::mutex> lockDeque(m_Mutex);
 		auto i = m_RecvQueue.front();
 
 		if (i->PacketId != (short)PACKET_ID::LOGIN_IN_RES)

@@ -36,9 +36,13 @@ class PacketProcessor;
 		void Init();
 		void Release();
 
+		// 업데이트
+		void Update();
+
 		// 네트워크 관련 함수.
 		bool ConnectRequest();
 		bool DisconnectRequest();
+		bool SendRequest(const short, const short, char*);
 
 		// 정보 관련 함수.
 		std::shared_ptr<LoginData> GetLoginData() const;

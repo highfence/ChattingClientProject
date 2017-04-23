@@ -1,4 +1,5 @@
 #pragma once
+#include <mutex>
 #include "Packet.h"
 
 using namespace NCommon;
@@ -11,13 +12,14 @@ namespace DataContainer
 	{
 	public:
 		Observer() = default;
-		virtual ~Observer() = 0;
+		virtual ~Observer() = default;
 
 		virtual void Update() = 0;
 		virtual void Subscribe(std::shared_ptr<PacketProcessor>) = 0;
 
 	protected :
 		std::deque<RecvPacketInfo*> m_RecvQueue;
+		std::mutex m_Mutex;
 	};
 
 	class LoginData : public Observer

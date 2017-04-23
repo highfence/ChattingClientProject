@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "LoginScene.h"
 #include "DataContainer.h"
+#include "Util.h"
 
 void Login::init()
 {
@@ -9,8 +10,6 @@ void Login::init()
 	Graphics::SetBackground(Color(160, 200, 100));
 
 	m_LoginGui.setTitle(L"Login!");
-	m_data->dataContainer.Init();
-	m_data->dataContainer.ConnectRequest();
 
 	/* 텍스트 필드 */
 	m_LoginGui.add(L"idLabel", GUIText::Create(L"ID :   "));
@@ -24,6 +23,9 @@ void Login::init()
 
 	/* 창 위치 지정 */
 	m_LoginGui.setCenter(Window::Center());
+
+	m_data->dataContainer.Init();
+	m_data->dataContainer.ConnectRequest();
 }
 
 void Login::update()
@@ -43,12 +45,15 @@ void Login::update()
 	{
 		tryLogin();
 	}
-	packetProcess->Update();
-	/* If connect successed, change Lobby Scene */
-	if (packetProcess->GetIsLoginSuccessed())
+	m_data->dataContainer.Update();
+	checkLoginSuccessed();
+}
+
+void Login::checkLoginSuccessed()
+{
+	if (m_data->dataContainer.GetLoginData()->GetLoginSuccessed())
 	{
-		packetProcess->SetIsLoginSuccedded(false);
-		changeScene(L"Lobby");
+		OutputDebugString(L"로그인 성공.");
 	}
 }
 
@@ -63,17 +68,18 @@ bool Login::tryLogin()
 	m_IdStr = m_LoginGui.textField(L"idField").text;
 	m_PasswordStr = m_LoginGui.textField(L"PasswordField").text;
 
-	if (!clientNetwork->Connect())
-	{
-		//
-		OutputDebugString(L"커넥트 실패.");
-	}
-	else
-	{
-		clientNetwork->SendLogin(m_IdStr.c_str(), m_PasswordStr.c_str());
-		OutputDebugString(L"커넥트 성공.");
-	}
+	/* Making Send Packet */
+	PktLogInReq newLoginReq;
 
+	char szID[MAX_USER_ID_SIZE] = { 0, };
+	char szPW[MAX_USER_PASSWORD_SIZE] = { 0, };
 
+	DataContainer::Util::UnicodeToAnsi(m_IdStr.c_str(), MAX_USER_ID_SIZE, szID);
+	DataContainer::Util::UnicodeToAnsi(m_PasswordStr.c_str(), MAX_USER_PASSWORD_SIZE, szPW);
+
+	strncpy_s(newLoginReq.szID, MAX_USER_ID_SIZE + 1, szID, MAX_USER_ID_SIZE);
+	strncpy_s(newLoginReq.szPW, MAX_USER_PASSWORD_SIZE + 1, szPW, MAX_USER_PASSWORD_SIZE);
+
+	m_data->dataContainer.SendRequest((short)PACKET_ID::LOGIN_IN_REQ, sizeof(newLoginReq), (char*)&newLoginReq);
 	return true;
 }
