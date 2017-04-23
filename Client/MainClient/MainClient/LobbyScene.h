@@ -3,11 +3,9 @@
 
 struct LobbyInfo
 {
-	std::wstring LobbyName;
-	std::wstring LobbyId;
+	short LobbyId;
+	short LobbyUser = 0;
 	std::wstring LobbyButtonName;
-	int UserNumber = 0;
-	int MaxUserNumber = 50;
 };
 
 
@@ -15,6 +13,9 @@ struct Lobby : MyApp::Scene
 {
 	GUI m_LobbyGui;
 	GUI m_InfoGui;
+	int m_LastDataVersion = -1;
+	Font font = Font(15);
+
 	std::vector<LobbyInfo*> m_LobbyVector;
 
 	/* Required Initializer for Siv3D */
@@ -26,18 +27,19 @@ struct Lobby : MyApp::Scene
 	/* Required Function for Siv3d */
 	void draw() const override;
 
-	/* Insert Lobby Info to vector */
-	void lobbyInfoSetting();
+	/* Data Handling */
+	void RefreshData();
+	bool IsMyDataNeedRefreshed();
 
 	/* Make text field accord with set lobby info */
-	void makeLobbys();
+	void MakeLobbys();
 
 	/* Function which must be called when the scene changed */
-	void exitScene();
+	void ExitScene();
 
 	/* Check which button clicked */
-	void checkButtonClicked();
+	void CheckButtonClicked();
 
 	/* Request Lobby Info */
-	void reqLobbyInfo();
+	void ReqLobbyInfo();
 };

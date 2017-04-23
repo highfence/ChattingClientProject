@@ -58,8 +58,8 @@ namespace ClientLogic
 		// Queue 등록 함수.
 		void RegisterQueueToProcessor();
 
-		std::shared_ptr<PacketMessenger> m_pPacketMessenger = nullptr;
-		std::shared_ptr<PacketDistributer> m_pPacketProcessor = nullptr;
+		std::unique_ptr<PacketMessenger> m_pPacketMessenger = nullptr;
+		std::unique_ptr<PacketDistributer> m_pPacketDistributer = nullptr;
 		std::shared_ptr<LoginData> m_pLoginData = nullptr;
 		std::shared_ptr<LobbyListData> m_pLobbyListData = nullptr;
 

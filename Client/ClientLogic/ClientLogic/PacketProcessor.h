@@ -20,14 +20,14 @@ namespace ClientLogic
 		~PacketDistributer() = default;
 
 		void Update();
-		void RegisterMessenger(std::shared_ptr<PacketMessenger>);
+		void RegisterMessenger(PacketMessenger* messengerAddress);
 
 		void BroadCast(std::shared_ptr<RecvPacketInfo>);
 		void Subscribe(short, std::deque<std::shared_ptr<RecvPacketInfo>>*);
 
 	private :
 		
-		std::shared_ptr<PacketMessenger> m_pMessengerAddress = nullptr;
+		PacketMessenger* m_pMessengerAddress = nullptr;
 		bool m_IsMessengerRegisterd = false;
 		std::map<short, ObserverQueueVector> m_ObserverMap;
 	};

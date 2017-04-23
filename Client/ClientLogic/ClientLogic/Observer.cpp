@@ -1,8 +1,9 @@
 #include "Observer.h"
+#include "Util.h"
 
 namespace ClientLogic
 {
-	void Observer::Subscribe(short packetId, std::shared_ptr<PacketDistributer> processor)
+	void Observer::Subscribe(short packetId, PacketDistributer* processor)
 	{
 		processor->Subscribe(packetId, &m_RecvQueue);
 	}
@@ -42,7 +43,7 @@ namespace ClientLogic
 		m_RecvQueue.pop_front();
 	}
 
-	void LoginData::SetSubscribe(std::shared_ptr<PacketDistributer> publisher)
+	void LoginData::SetSubscribe(PacketDistributer* publisher)
 	{
 		publisher->Subscribe((short)PACKET_ID::LOGIN_IN_RES, &m_RecvQueue);
 	}
@@ -77,7 +78,7 @@ namespace ClientLogic
 	}
 	
 
-	void LobbyListData::SetSubscribe(std::shared_ptr<PacketDistributer> publisher)
+	void LobbyListData::SetSubscribe(PacketDistributer* publisher)
 	{
 		publisher->Subscribe((short)PACKET_ID::LOBBY_LIST_RES, &m_RecvQueue);
 	}
@@ -96,6 +97,5 @@ namespace ClientLogic
 		{
 			m_LobbyList[i] = pLobbyListData->LobbyList[i];
 		}
-		m_IsListLoaded = true;
 	}
 }

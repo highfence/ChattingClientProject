@@ -39,18 +39,18 @@ void Login::update()
 	/* Login button pushed */
 	if (m_LoginGui.button(L"loginBtn").pushed)
 	{
-		tryLogin();
+		TryLogin();
 	}
 	/* Enter key pushed */
 	if (Input::KeyEnter.clicked)
 	{
-		tryLogin();
+		TryLogin();
 	}
 	m_data->dataContainer->Update();
-	checkLoginSuccessed();
+	CheckLoginSuccessed();
 }
 
-void Login::checkLoginSuccessed()
+void Login::CheckLoginSuccessed()
 {
 	if (m_data->dataContainer->GetLoginData()->GetLoginSuccessed())
 	{
@@ -64,7 +64,7 @@ void Login::draw() const
 	/* Empty */
 }
 
-bool Login::tryLogin()
+bool Login::TryLogin()
 {
 	/* Save Id & Password */
 	m_IdStr = m_LoginGui.textField(L"idField").text;
@@ -72,13 +72,13 @@ bool Login::tryLogin()
 
 	/* Making Send Packet */
 	PktLogInReq newLoginReq;
-	makeLoginReqPacket(&newLoginReq);
+	MakeLoginReqPacket(&newLoginReq);
 
 	m_data->dataContainer->SendRequest((short)PACKET_ID::LOGIN_IN_REQ, sizeof(newLoginReq), (char*)&newLoginReq);
 	return true;
 }
 
-void Login::makeLoginReqPacket(PktLogInReq* packet)
+void Login::MakeLoginReqPacket(PktLogInReq* packet)
 {
 	char szID[MAX_USER_ID_SIZE] = { 0, };
 	char szPW[MAX_USER_PASSWORD_SIZE] = { 0, };

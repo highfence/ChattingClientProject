@@ -11,12 +11,12 @@ struct Login : MyApp::Scene
 
 	/* Required Function for Siv3d */
 	void update() override;
-	void checkLoginSuccessed();
+	void CheckLoginSuccessed();
 
 	/* Required Function for Siv3d */
 	void draw() const override;
 
 	/* 로그인 관련 함수 */
-	bool tryLogin();
-	void makeLoginReqPacket(PktLogInReq*);
+	bool TryLogin();
+	void MakeLoginReqPacket(PktLogInReq*);
 };

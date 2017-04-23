@@ -6,13 +6,14 @@ namespace ClientLogic
 {
 	void DataContainer::Init()
 	{
-		m_pPacketMessenger = std::make_shared<PacketMessenger>();
+		m_pPacketMessenger = std::make_unique<PacketMessenger>();
 		m_pPacketMessenger->Init();
-		m_pPacketProcessor = std::make_shared<PacketDistributer>();
+		m_pPacketDistributer = std::make_unique<PacketDistributer>();
 		m_pLoginData = std::make_shared<LoginData>();
-		m_pLoginData->SetSubscribe(m_pPacketProcessor);
+		// TODO :: 왜 유니크포인터를 넘겨줄땐 Get으로 넘겨줄까?
+		m_pLoginData->SetSubscribe(m_pPacketDistributer.get());
 		m_pLobbyListData = std::make_shared<LobbyListData>();
-		m_pLobbyListData->SetSubscribe(m_pPacketProcessor);
+		m_pLobbyListData->SetSubscribe(m_pPacketDistributer.get());
 
 		RegisterQueueToProcessor();
 	}
@@ -24,7 +25,7 @@ namespace ClientLogic
 
 	void DataContainer::Update()
 	{
-		m_pPacketProcessor->Update();
+		m_pPacketDistributer->Update();
 		m_pLoginData->Update();
 		m_pLobbyListData->Update();
 	}
@@ -56,7 +57,7 @@ namespace ClientLogic
 
 	void DataContainer::RegisterQueueToProcessor()
 	{
-		m_pPacketProcessor->RegisterMessenger(m_pPacketMessenger);
+		m_pPacketDistributer->RegisterMessenger(m_pPacketMessenger.get());
 	}
 
 }

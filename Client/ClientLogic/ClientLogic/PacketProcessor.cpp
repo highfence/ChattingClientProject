@@ -25,7 +25,7 @@ namespace ClientLogic
 		BroadCast(packet);
 	}
 
-	void PacketDistributer::RegisterMessenger(std::shared_ptr<PacketMessenger> messengerAddress)
+	void PacketDistributer::RegisterMessenger(PacketMessenger* messengerAddress)
 	{
 		if (m_IsMessengerRegisterd == false)
 		{
