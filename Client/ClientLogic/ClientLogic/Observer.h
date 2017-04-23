@@ -6,6 +6,9 @@
 #include "Packet.h"
 #include "PacketProcessor.h"
 
+// TODO :: Observer는 OnReceive() 가상 함수만을 가진 인터페이스로 구현해보자. (다음주 25, 26, 27)
+// I~able로 구현된 것이 많음.
+
 namespace ClientLogic
 {
 	class PacketProcessor;
@@ -17,7 +20,7 @@ namespace ClientLogic
 		virtual ~Observer() = default;
 
 		virtual void Update() = 0;
-		virtual void Subscribe(std::shared_ptr<PacketProcessor>) = 0;
+		virtual void Subscribe(short, std::shared_ptr<PacketProcessor>);
 
 	protected :
 		std::deque<RecvPacketInfo*> m_RecvQueue;
@@ -31,7 +34,7 @@ namespace ClientLogic
 		~LoginData() = default;
 
 		void Update() override;
-		void Subscribe(std::shared_ptr<PacketProcessor>) override;
+		void SetSubscribe(std::shared_ptr<PacketProcessor>);
 
 		bool GetLoginSuccessed() const { return m_IsLoginSuccessed; };
 
@@ -39,4 +42,17 @@ namespace ClientLogic
 
 		bool m_IsLoginSuccessed = false;
 	};
+
+	//class LobbyListData : public Observer
+	//{
+	//public :
+	//	LobbyListData() = default;
+	//	~LobbyListData() = default;
+
+	//	void Update() override;
+	//	
+	//private :
+	//	
+
+	//};
 }

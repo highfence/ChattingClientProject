@@ -2,9 +2,14 @@
 
 namespace ClientLogic
 {
-	void LoginData::Subscribe(std::shared_ptr<PacketProcessor> processor)
+	void Observer::Subscribe(short packetId, std::shared_ptr<PacketProcessor> processor)
 	{
-		processor->Subscribe((short)PACKET_ID::LOGIN_IN_RES, &m_RecvQueue);
+		processor->Subscribe(packetId, &m_RecvQueue);
+	}
+
+	void LoginData::SetSubscribe(std::shared_ptr<PacketProcessor> publisher)
+	{
+		publisher->Subscribe((short)PACKET_ID::LOGIN_IN_RES, &m_RecvQueue);
 	}
 
 	void LoginData::Update()

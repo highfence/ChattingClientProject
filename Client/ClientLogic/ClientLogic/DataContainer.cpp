@@ -12,7 +12,7 @@ namespace ClientLogic
 		m_pLoginData = std::make_shared<LoginData>();
 
 		RegisterQueueToProcessor();
-		m_pLoginData->Subscribe(m_pPacketProcessor);
+		m_pLoginData->SetSubscribe(m_pPacketProcessor);
 	}
 
 	void DataContainer::Release()
