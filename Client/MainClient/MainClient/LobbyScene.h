@@ -14,7 +14,8 @@ struct Lobby : MyApp::Scene
 	GUI m_LobbyGui;
 	GUI m_InfoGui;
 	int m_LastDataVersion = -1;
-	Font font = Font(15);
+	int m_AbleLobbyNumber = 0;
+	Font m_Font = Font(15);
 
 	std::vector<LobbyInfo*> m_LobbyVector;
 
@@ -30,6 +31,7 @@ struct Lobby : MyApp::Scene
 	/* Data Handling */
 	void RefreshData();
 	bool IsMyDataNeedRefreshed();
+	void DrawConnectAbleLobbyInfo() const;
 
 	/* Make text field accord with set lobby info */
 	void MakeLobbys();

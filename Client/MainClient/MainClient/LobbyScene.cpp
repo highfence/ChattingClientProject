@@ -44,6 +44,7 @@ void Lobby::update()
 
 void Lobby::draw() const 
 {
+	DrawConnectAbleLobbyInfo();
 }
 
 void Lobby::RefreshData()
@@ -51,9 +52,9 @@ void Lobby::RefreshData()
 	OutputDebugString(L"[Siv3D::Lobby] 로비 데이터 리프레시");
 	m_LobbyVector.clear();
 
-	int lobbyNumber = m_data->dataContainer->GetLobbyListData()->GetLobbyCount();
+	m_AbleLobbyNumber = m_data->dataContainer->GetLobbyListData()->GetLobbyCount();
 
-	for (int i = 0; i < lobbyNumber; ++i)
+	for (int i = 0; i < m_AbleLobbyNumber; ++i)
 	{
 		LobbyInfo* newLobbyInfo = new LobbyInfo;
 		newLobbyInfo->LobbyId = m_data->dataContainer->GetLobbyListData()->GetLobbyListInfo()->LobbyId;
@@ -74,6 +75,12 @@ bool Lobby::IsMyDataNeedRefreshed()
 	return false;
 }
 
+void Lobby::DrawConnectAbleLobbyInfo() const
+{
+	std::wstring ableLobbyInfo = L"현재 접속가능한 로비 : " + std::to_wstring(m_AbleLobbyNumber);
+	m_Font(ableLobbyInfo).draw(40, 250);
+}
+
 void Lobby::MakeLobbys()
 {
 	for (int i = 0; i < 5; ++i)
@@ -82,7 +89,7 @@ void Lobby::MakeLobbys()
 		m_LobbyGui.add(LobbyName, GUIText::Create(LobbyName, roomNameWidth));
 		
 		std::wstring LobbyButtonName = L"LobbyButton" + std::to_wstring(i + 1);
-		m_LobbyGui.addln(LobbyButtonName, GUIButton::Create(L"ENTER", false));
+		m_LobbyGui.addln(LobbyButtonName, GUIButton::Create(L"ENTER"));
 	}
 }
 
