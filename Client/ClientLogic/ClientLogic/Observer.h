@@ -80,6 +80,7 @@ namespace ClientLogic
 		void SetSubscribe(PacketDistributer*);
 
 	private :
+
 		std::vector<std::string> m_UserIdVector;
 		
 	};

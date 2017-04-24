@@ -130,16 +130,20 @@ namespace ClientLogic
 		// 큐가 있다면 빼서, LOGIN_IN_RES 패킷이 왔는지 확인.
 		auto packet = m_RecvQueue.front();
 
-		if (packet->PacketId != (short)PACKET_ID::LOBBY_ENTER_USER_NTF)
+		if (packet->PacketId == (short)PACKET_ID::LOBBY_ENTER_USER_NTF)
 		{
-			// 뭔가 잘못된 패킷이 옴.
-			OutputDebugString(L"Invaild Packet Receive! (In RoomListData Update)\n");
-			return;
+			auto i = (PktLobbyNewUserInfoNtf*)packet->pData;
+			OutputDebugString(L"[RoomListData] 유저 정보 수령 성공\n");
+			m_UserIdVector.push_back(i->UserID);
 		}
-
-		auto i = (PktLobbyNewUserInfoNtf*)packet->pData;
-		OutputDebugString(L"[RoomListData] 유저 정보 수령 성공\n");
-		m_UserIdVector.push_back(i->UserID);
+		else if (packet->PacketId == (short)PACKET_ID::LOBBY_CHAT_REQ)
+		{
+			OutputDebugString(L"[RoomListData] 채팅 답변 수령 성공\n");
+		}
+		else if (packet->PacketId == (short)PACKET_ID::LOBBY_CHAT_NTF)
+		{
+			OutputDebugString(L"[RoomListData] 다른 사람 채팅 수령 성공\n");
+		}
 
 		m_RecvQueue.pop_front();
 	}
@@ -147,5 +151,8 @@ namespace ClientLogic
 	void RoomListData::SetSubscribe(PacketDistributer * publisher)
 	{
 		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_USER_NTF, &m_RecvQueue);
+		publisher->Subscribe((short)PACKET_ID::LOBBY_CHAT_REQ, &m_RecvQueue);
+		publisher->Subscribe((short)PACKET_ID::LOBBY_CHAT_RES, &m_RecvQueue);
+		publisher->Subscribe((short)PACKET_ID::LOBBY_CHAT_NTF, &m_RecvQueue);
 	}
 }

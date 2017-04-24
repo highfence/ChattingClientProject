@@ -22,20 +22,24 @@ struct RoomList : MyApp::Scene
 	void draw() const override;
 
 	/* Refreshing All Gui */
-	void refresh();
+	void Refresh();
 
 	/* Insert Data to member vector */
-	void roomInfoSetting();
-	void userInfoSetting();
+	void RoomInfoSetting();
+	void UserInfoSetting();
 
 	/* Make Room and Users accord with data */
-	void makeRooms();
-	void makeUsers();
-	void makeChattingGui();
+	void MakeRooms();
+	void MakeUsers();
+	void MakeChattingGui();
 
 	/* Update Functions */
-	void checkRoomClicked();
+	void CheckRoomClicked();
+	void CheckSendClicked();
 
 	/* Function must be called when scene changed */
-	void exitScene();
+	void ExitScene();
+
+	/* Network Function */
+	void SendChatting(std::wstring);
 };

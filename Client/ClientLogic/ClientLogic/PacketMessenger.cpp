@@ -190,11 +190,30 @@ namespace ClientLogic
 		/* 로비 진입 요청 패킷 처리 */
 		else if (packetId == (short)PACKET_ID::LOBBY_ENTER_REQ)
 		{
-			//PktLobbyEnterReq* pNewLobbyEnterReq = (PktLobbyEnterReq*)pData;
-
 			char data[COMMON_INFO::MAX_PACKET_SIZE] = { 0, };
 
 			PktHeader pktHeader{ packetId, sizeof(PktLobbyEnterReq) };
+			memcpy(&data[0], (char*)&pktHeader, PACKET_HEADER_SIZE);
+
+			if (pktHeader.BodySize > 0)
+			{
+				memcpy(&data[PACKET_HEADER_SIZE], pData, pktHeader.BodySize);
+			}
+
+			int hr = send(m_ClientSock, data, pktHeader.BodySize + PACKET_HEADER_SIZE, 0);
+			if (hr == SOCKET_ERROR)
+			{
+				int err = WSAGetLastError();
+				return false;
+			}
+		}
+		/* 로비 채팅 요청 패킷 처리 */
+		else if (packetId == (short)PACKET_ID::LOBBY_CHAT_REQ)
+		{
+			char data[COMMON_INFO::MAX_PACKET_SIZE] = { 0, };
+
+			// TODO :: 이거 그냥 템플릿으로 처리할까?
+			PktHeader pktHeader{ packetId, sizeof(PktLobbyChatReq) };
 			memcpy(&data[0], (char*)&pktHeader, PACKET_HEADER_SIZE);
 
 			if (pktHeader.BodySize > 0)

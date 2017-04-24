@@ -61,6 +61,9 @@ namespace ClientLogic
 		{
 			ObserverQueueVector newObserverVector;
 			m_ObserverMap.emplace(interestPacketId, std::move(newObserverVector));
+
+			std::wstring debugLabel = L"[PacketDistributer] 옵져버 큐벡터 생성 ID : " + std::to_wstring(interestPacketId) + L"\n";
+			OutputDebugString(debugLabel.c_str());
 		}
 
 		// 리스트에 옵저버 큐 추가.
