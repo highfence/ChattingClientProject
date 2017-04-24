@@ -58,22 +58,40 @@ namespace ClientLogic
 
 		auto packet = m_RecvQueue.front();
 
-		if (packet->PacketId != (short)PACKET_ID::LOBBY_LIST_RES)
+		/* 로비 리스트 답변 */
+		if (packet->PacketId == (short)PACKET_ID::LOBBY_LIST_RES)
+		{
+			auto pLobbyListData = (PktLobbyListRes*)packet->pData;
+			if (pLobbyListData->ErrorCode != (short)ERROR_CODE::NONE)
+			{
+				OutputDebugString(L"[LobbyListData] 로비리스트 수령 실패!\n");
+			}
+			else
+			{
+				OutputDebugString(L"[LobbyListData] 로비리스트 성공적으로 수령\n");
+				LoadData(pLobbyListData);
+			}
+		}
+		/* 로비 진입 데이터 답변 */
+		else if (packet->PacketId == (short)PACKET_ID::LOBBY_ENTER_RES)
+		{
+			auto pLobbyEnterResData = (PktLobbyEnterRes*)packet->pData;
+			if (pLobbyEnterResData->ErrorCode != (short)ERROR_CODE::NONE)
+			{
+				OutputDebugString(L"[LobbyListData] 로비 진입 데이터 수령 실패!\n");
+			}
+			else
+			{
+				OutputDebugString(L"[LobbyListData] 로비 진입 데이터 성공적으로 수령\n");
+				m_IsLobbySuccesslyEntered = true;
+			}
+		}
+		else
 		{
 			OutputDebugString(L"Invalid Packet Receive! (In LobbyListData Update)\n");
 			return;
 		}
 
-		auto pLobbyListData = (PktLobbyListRes*)packet->pData;
-		if (pLobbyListData->ErrorCode != (short)ERROR_CODE::NONE)
-		{
-			OutputDebugString(L"[LobbyListData] 로비리스트 수령 실패!\n");
-		}
-		else
-		{
-			OutputDebugString(L"[LobbyListData] 로비리스트 성공적으로 수령\n");
-			LoadData(pLobbyListData);
-		}
 		m_RecvQueue.pop_front();
 	}
 	
@@ -81,11 +99,12 @@ namespace ClientLogic
 	void LobbyListData::SetSubscribe(PacketDistributer* publisher)
 	{
 		publisher->Subscribe((short)PACKET_ID::LOBBY_LIST_RES, &m_RecvQueue);
+		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_RES, &m_RecvQueue);
 	}
 
-	const LobbyListInfo * LobbyListData::GetLobbyListInfo() const
+	const LobbyListInfo * LobbyListData::GetLobbyListInfo(const int idx) const
 	{
-		const LobbyListInfo* const listLobbyConstPointer = m_LobbyList;
+		const auto listLobbyConstPointer = &m_LobbyList[idx];
 		return listLobbyConstPointer;
 	}
 
@@ -97,5 +116,36 @@ namespace ClientLogic
 		{
 			m_LobbyList[i] = pLobbyListData->LobbyList[i];
 		}
+	}
+
+	void RoomListData::Update()
+	{
+		// 받은 큐가 비어있으면 일하지 않음.
+		if (m_RecvQueue.empty())
+		{
+			Sleep(0);
+			return;
+		}
+
+		// 큐가 있다면 빼서, LOGIN_IN_RES 패킷이 왔는지 확인.
+		auto packet = m_RecvQueue.front();
+
+		if (packet->PacketId != (short)PACKET_ID::LOBBY_ENTER_USER_NTF)
+		{
+			// 뭔가 잘못된 패킷이 옴.
+			OutputDebugString(L"Invaild Packet Receive! (In RoomListData Update)\n");
+			return;
+		}
+
+		auto i = (PktLobbyNewUserInfoNtf*)packet->pData;
+		OutputDebugString(L"[RoomListData] 유저 정보 수령 성공\n");
+		m_UserIdVector.push_back(i->UserID);
+
+		m_RecvQueue.pop_front();
+	}
+
+	void RoomListData::SetSubscribe(PacketDistributer * publisher)
+	{
+		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_USER_NTF, &m_RecvQueue);
 	}
 }

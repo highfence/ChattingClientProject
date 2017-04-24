@@ -58,7 +58,8 @@ namespace ClientLogic
 		void SetSubscribe(PacketDistributer*);
 		
 		short GetLobbyCount() const { return m_LobbyCount; };
-		const LobbyListInfo* GetLobbyListInfo() const;
+		const LobbyListInfo* GetLobbyListInfo(const int) const;
+		bool GetIsLobbySuccesslyEntered() const { return m_IsLobbySuccesslyEntered; };
 		
 	private :
 
@@ -66,5 +67,20 @@ namespace ClientLogic
 		
 		short m_LobbyCount = 0;
 		LobbyListInfo m_LobbyList[MAX_LOBBY_LIST_COUNT];
+		bool m_IsLobbySuccesslyEntered = false;
+	};
+
+	class RoomListData : public Observer
+	{
+	public :
+		RoomListData() = default;
+		~RoomListData() = default;
+
+		void Update() override;
+		void SetSubscribe(PacketDistributer*);
+
+	private :
+		std::vector<std::string> m_UserIdVector;
+		
 	};
 }

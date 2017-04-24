@@ -62,6 +62,7 @@ namespace ClientLogic
 		std::unique_ptr<PacketDistributer> m_pPacketDistributer = nullptr;
 		std::shared_ptr<LoginData> m_pLoginData = nullptr;
 		std::shared_ptr<LobbyListData> m_pLobbyListData = nullptr;
+		std::shared_ptr<RoomListData> m_pRoomListData = nullptr;
 
 		std::deque<std::shared_ptr<RecvPacketInfo>> m_PacketDeque;
 

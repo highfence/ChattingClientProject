@@ -1,6 +1,7 @@
 #pragma comment(lib, "Ws2_32.lib")
 #include "PacketMessenger.h"
 #include "Definition.h"
+#include <string>
 
 namespace ClientLogic
 {
@@ -126,9 +127,12 @@ namespace ClientLogic
 
 			readPos += pPacketHeader->BodySize;
 
+			std::wstring debugLabel = L"[PacketMessenger] 받은 패킷 ID : " + std::to_wstring(pPacketHeader->Id) + L"\n";
+			OutputDebugString(debugLabel.c_str());
+
 			// 쓰레드 락.
 			std::lock_guard<std::mutex> lockDeque(m_Mutex);
-			m_PacketDeque.emplace_back(pPacketInfo);
+			m_PacketDeque.emplace_back(std::move(pPacketInfo));
 		}
 	}
 
@@ -177,6 +181,28 @@ namespace ClientLogic
 			memcpy(&data[0], (char*)&pktHeader, PACKET_HEADER_SIZE);
 
 			int hr = send(m_ClientSock, data, PACKET_HEADER_SIZE, 0);
+			if (hr == SOCKET_ERROR)
+			{
+				int err = WSAGetLastError();
+				return false;
+			}
+		}
+		/* 로비 진입 요청 패킷 처리 */
+		else if (packetId == (short)PACKET_ID::LOBBY_ENTER_REQ)
+		{
+			//PktLobbyEnterReq* pNewLobbyEnterReq = (PktLobbyEnterReq*)pData;
+
+			char data[COMMON_INFO::MAX_PACKET_SIZE] = { 0, };
+
+			PktHeader pktHeader{ packetId, sizeof(PktLobbyEnterReq) };
+			memcpy(&data[0], (char*)&pktHeader, PACKET_HEADER_SIZE);
+
+			if (pktHeader.BodySize > 0)
+			{
+				memcpy(&data[PACKET_HEADER_SIZE], pData, pktHeader.BodySize);
+			}
+
+			int hr = send(m_ClientSock, data, pktHeader.BodySize + PACKET_HEADER_SIZE, 0);
 			if (hr == SOCKET_ERROR)
 			{
 				int err = WSAGetLastError();

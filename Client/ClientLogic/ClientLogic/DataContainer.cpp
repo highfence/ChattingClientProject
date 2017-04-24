@@ -9,11 +9,13 @@ namespace ClientLogic
 		m_pPacketMessenger = std::make_unique<PacketMessenger>();
 		m_pPacketMessenger->Init();
 		m_pPacketDistributer = std::make_unique<PacketDistributer>();
+
 		m_pLoginData = std::make_shared<LoginData>();
-		// TODO :: 왜 유니크포인터를 넘겨줄땐 Get으로 넘겨줄까?
 		m_pLoginData->SetSubscribe(m_pPacketDistributer.get());
 		m_pLobbyListData = std::make_shared<LobbyListData>();
 		m_pLobbyListData->SetSubscribe(m_pPacketDistributer.get());
+		m_pRoomListData = std::make_shared<RoomListData>();
+		m_pRoomListData->SetSubscribe(m_pPacketDistributer.get());
 
 		RegisterQueueToProcessor();
 	}
@@ -28,6 +30,7 @@ namespace ClientLogic
 		m_pPacketDistributer->Update();
 		m_pLoginData->Update();
 		m_pLobbyListData->Update();
+		m_pRoomListData->Update();
 	}
 
 	bool DataContainer::ConnectRequest()

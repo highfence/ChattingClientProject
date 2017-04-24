@@ -44,4 +44,7 @@ struct Lobby : MyApp::Scene
 
 	/* Request Lobby Info */
 	void ReqLobbyInfo();
+	
+	/* Send Lobby Enter */
+	void ReqLobbyEnter(short);
 };

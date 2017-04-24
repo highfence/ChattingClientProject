@@ -1,6 +1,7 @@
 
 #include "PacketMessenger.h"
 #include "PacketProcessor.h"
+#include <string>
 
 namespace ClientLogic
 {
@@ -22,6 +23,8 @@ namespace ClientLogic
 		}
 
 		/* 패킷이 있다면, 구독해 놓은 옵저버들에게 브로드캐스트. */
+		std::wstring debugLabel = L"[PacketDistributer] ID : " + std::to_wstring(packet->PacketId) + L"브로드 캐스트\n";
+		OutputDebugString(debugLabel.c_str());
 		BroadCast(packet);
 	}
 

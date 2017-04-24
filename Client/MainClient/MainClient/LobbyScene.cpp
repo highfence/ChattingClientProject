@@ -40,6 +40,12 @@ void Lobby::update()
 
 	/* if lobby entry button pushed */
 	CheckButtonClicked();
+
+	// TODO :: 룸리스트 받기.
+	if (m_data->dataContainer->GetLobbyListData()->GetIsLobbySuccesslyEntered())
+	{
+		changeScene(L"RoomList");
+	}
 }
 
 void Lobby::draw() const 
@@ -49,7 +55,7 @@ void Lobby::draw() const
 
 void Lobby::RefreshData()
 {
-	OutputDebugString(L"[Siv3D::Lobby] 로비 데이터 리프레시");
+	OutputDebugString(L"[Lobby] 데이터 리프레시 \n");
 	m_LobbyVector.clear();
 
 	m_AbleLobbyNumber = m_data->dataContainer->GetLobbyListData()->GetLobbyCount();
@@ -57,11 +63,12 @@ void Lobby::RefreshData()
 	for (int i = 0; i < m_AbleLobbyNumber; ++i)
 	{
 		LobbyInfo* newLobbyInfo = new LobbyInfo;
-		newLobbyInfo->LobbyId = m_data->dataContainer->GetLobbyListData()->GetLobbyListInfo()->LobbyId;
-		newLobbyInfo->LobbyUser = m_data->dataContainer->GetLobbyListData()->GetLobbyListInfo()->LobbyUserCount;
+		newLobbyInfo->LobbyId = m_data->dataContainer->GetLobbyListData()->GetLobbyListInfo(i)->LobbyId;
+		newLobbyInfo->LobbyUser = m_data->dataContainer->GetLobbyListData()->GetLobbyListInfo(i)->LobbyUserCount;
 		newLobbyInfo->LobbyButtonName = L"LobbyButton" + std::to_wstring(i);
 		m_LobbyVector.emplace_back(std::move(newLobbyInfo));
 	}
+	m_LastDataVersion = m_data->dataContainer->GetLobbyListData()->GetVersion();
 }
 
 bool Lobby::IsMyDataNeedRefreshed()
@@ -79,16 +86,25 @@ void Lobby::DrawConnectAbleLobbyInfo() const
 {
 	std::wstring ableLobbyInfo = L"현재 접속가능한 로비 : " + std::to_wstring(m_AbleLobbyNumber);
 	m_Font(ableLobbyInfo).draw(40, 250);
+
+	int idx = 0;
+	for (auto& i : m_LobbyVector)
+	{
+		std::wstring lobbyUser = L"  유저 수 : " + std::to_wstring(i->LobbyUser) + L" / 50";
+		std::wstring lobbyName = L"Lobby" + std::to_wstring(idx);
+		m_LobbyGui.text(lobbyName).text = lobbyName + lobbyUser;
+		++idx;
+	}
 }
 
 void Lobby::MakeLobbys()
 {
 	for (int i = 0; i < 5; ++i)
 	{
-		std::wstring LobbyName = L"Lobby" + std::to_wstring(i + 1);
+		std::wstring LobbyName = L"Lobby" + std::to_wstring(i);
 		m_LobbyGui.add(LobbyName, GUIText::Create(LobbyName, roomNameWidth));
 		
-		std::wstring LobbyButtonName = L"LobbyButton" + std::to_wstring(i + 1);
+		std::wstring LobbyButtonName = L"LobbyButton" + std::to_wstring(i);
 		m_LobbyGui.addln(LobbyButtonName, GUIButton::Create(L"ENTER"));
 	}
 }
@@ -104,8 +120,7 @@ void Lobby::CheckButtonClicked()
 	{
 		if (m_LobbyGui.button(i->LobbyButtonName).pushed)
 		{
-			// TODO :: 여기서 룸 진입한다는 패킷을 보내야겠지?
-			changeScene(L"RoomList");
+			ReqLobbyEnter(i->LobbyId);
 		}
 	}
 }
@@ -113,4 +128,15 @@ void Lobby::CheckButtonClicked()
 void Lobby::ReqLobbyInfo()
 {
 	m_data->dataContainer->SendRequest((short)PACKET_ID::LOBBY_LIST_REQ, sizeof(PktHeader), nullptr);
+}
+
+void Lobby::ReqLobbyEnter(short lobbyId)
+{
+	std::wstring debugLabel = L"[Siv3D::Lobby] 요청 진입 로비 아이디 : " + std::to_wstring(lobbyId) + L"\n";
+	OutputDebugString(debugLabel.c_str());
+
+	PktLobbyEnterReq newLobbyEnterReq;
+	newLobbyEnterReq.LobbyId = lobbyId;
+
+	m_data->dataContainer->SendRequest((short)PACKET_ID::LOBBY_ENTER_REQ, sizeof(newLobbyEnterReq), (char*)&newLobbyEnterReq);
 }
