@@ -1,7 +1,7 @@
 ﻿# include "stdafx.h"
 # include "Main.h"
 # include "LoginScene.h"
-# include "LobbyScene.h"
+# include "LobbyListScene.h"
 # include "RoomList.h"
 # include "Room.h"
 
@@ -19,7 +19,7 @@ void Main()
 
 	/* Add Scenes into Manager */
 	sceneManager.add<Login>(L"Login");
-	sceneManager.add<Lobby>(L"Lobby");
+	sceneManager.add<LobbyList>(L"LobbyList");
 	sceneManager.add<RoomList>(L"RoomList");
 	sceneManager.add<Room>(L"Room");
 

@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "LobbyScene.h"
+#include "LobbyListScene.h"
 #include <random>
 #include <ctime>
 
@@ -9,7 +9,7 @@ const int roomNameWidth = 200;
 const int roomUserWidth = 95;
 const int infoWidth = 150;
 
-void Lobby::init()
+void LobbyList::init()
 {
 	ReqLobbyInfo();
 
@@ -30,7 +30,7 @@ void Lobby::init()
 	MakeLobbys();
 }
 
-void Lobby::update()
+void LobbyList::update()
 {
 	m_data->dataContainer->Update();
 
@@ -49,12 +49,12 @@ void Lobby::update()
 	}
 }
 
-void Lobby::draw() const 
+void LobbyList::draw() const 
 {
 	DrawConnectAbleLobbyInfo();
 }
 
-void Lobby::RefreshData()
+void LobbyList::RefreshData()
 {
 	OutputDebugString(L"[Lobby] 데이터 리프레시 \n");
 	m_LobbyVector.clear();
@@ -72,7 +72,7 @@ void Lobby::RefreshData()
 	m_LastDataVersion = m_data->dataContainer->GetLobbyListData()->GetVersion();
 }
 
-bool Lobby::IsMyDataNeedRefreshed()
+bool LobbyList::IsMyDataNeedRefreshed()
 {
 	int lastestVersion = m_data->dataContainer->GetLobbyListData()->GetVersion();
 	if (lastestVersion > m_LastDataVersion)
@@ -83,7 +83,7 @@ bool Lobby::IsMyDataNeedRefreshed()
 	return false;
 }
 
-void Lobby::DrawConnectAbleLobbyInfo() const
+void LobbyList::DrawConnectAbleLobbyInfo() const
 {
 	std::wstring ableLobbyInfo = L"현재 접속가능한 로비 : " + std::to_wstring(m_AbleLobbyNumber);
 	m_Font(ableLobbyInfo).draw(40, 250);
@@ -98,7 +98,7 @@ void Lobby::DrawConnectAbleLobbyInfo() const
 	}
 }
 
-void Lobby::MakeLobbys()
+void LobbyList::MakeLobbys()
 {
 	for (int i = 0; i < 5; ++i)
 	{
@@ -108,14 +108,18 @@ void Lobby::MakeLobbys()
 		std::wstring LobbyButtonName = L"LobbyButton" + std::to_wstring(i);
 		m_LobbyGui.addln(LobbyButtonName, GUIButton::Create(L"ENTER"));
 	}
+
+	m_LobbyGui.add(L"divider", GUIHorizontalLine::Create());
+	m_LobbyGui.horizontalLine(L"divider").style.color = Color(127);
+	m_LobbyGui.addln(L"Refresher", GUIButton::Create(L"Refresh"));
 }
 
-void Lobby::ExitScene()
+void LobbyList::ExitScene()
 {
 	m_LobbyVector.clear();
 }
 
-void Lobby::CheckButtonClicked()
+void LobbyList::CheckButtonClicked()
 {
 	for (const auto i : m_LobbyVector)
 	{
@@ -124,14 +128,19 @@ void Lobby::CheckButtonClicked()
 			ReqLobbyEnter(i->LobbyId);
 		}
 	}
+
+	if (m_LobbyGui.button(L"Refresher").pushed)
+	{
+		ReqLobbyInfo();
+	}
 }
 
-void Lobby::ReqLobbyInfo()
+void LobbyList::ReqLobbyInfo()
 {
 	m_data->dataContainer->SendRequest((short)PACKET_ID::LOBBY_LIST_REQ, sizeof(PktHeader), nullptr);
 }
 
-void Lobby::ReqLobbyEnter(short lobbyId)
+void LobbyList::ReqLobbyEnter(short lobbyId)
 {
 	std::wstring debugLabel = L"[Siv3D::Lobby] 요청 진입 로비 아이디 : " + std::to_wstring(lobbyId) + L"\n";
 	OutputDebugString(debugLabel.c_str());

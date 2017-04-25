@@ -35,6 +35,9 @@ namespace ClientLogic
 		/* Return front packet of the queue */
 		auto frontPacket = m_PacketDeque.front();
 		m_PacketDeque.pop_front();
+
+		std::wstring debugLabel = L"[PacketMessenger] 패킷 POP : " + std::to_wstring(frontPacket->PacketId) + L"번 패킷 (size : " + std::to_wstring(m_PacketDeque.size()) + L") \n";
+		OutputDebugString(debugLabel.c_str());
 		return frontPacket;
 	}
 

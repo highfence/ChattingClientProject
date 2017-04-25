@@ -9,7 +9,7 @@ struct LobbyInfo
 };
 
 
-struct Lobby : MyApp::Scene 
+struct LobbyList : MyApp::Scene 
 {
 	GUI m_LobbyGui;
 	GUI m_InfoGui;
@@ -29,6 +29,7 @@ struct Lobby : MyApp::Scene
 	void draw() const override;
 
 	/* Data Handling */
+	void Refresh();
 	void RefreshData();
 	bool IsMyDataNeedRefreshed();
 	void DrawConnectAbleLobbyInfo() const;

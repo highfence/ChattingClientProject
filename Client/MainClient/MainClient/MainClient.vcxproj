@@ -162,7 +162,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="LobbyScene.cpp">
+    <ClCompile Include="LobbyListScene.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="LoginScene.cpp">
@@ -295,7 +295,7 @@
     <Font Include="Example\YomogiFont.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LobbyScene.h" />
+    <ClInclude Include="LobbyListScene.h" />
     <ClInclude Include="LoginScene.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Room.h" />

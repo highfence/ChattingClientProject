@@ -58,7 +58,7 @@ void Login::CheckLoginSuccessed()
 
 		/* 로그인한 ID를 공용 데이터에 저장해놓음. */
 		m_data->id =  m_IdStr.c_str();
-		changeScene(L"Lobby");
+		changeScene(L"LobbyList");
 	}
 }
 

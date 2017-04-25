@@ -39,6 +39,7 @@ namespace ClientLogic
 			// 성공
 			OutputDebugString(L"[LoginData] 로그인 성공!\n");
 			m_IsLoginSuccessed = true;
+			VersionUp();
 		}
 		m_RecvQueue.pop_front();
 	}
@@ -70,6 +71,7 @@ namespace ClientLogic
 			{
 				OutputDebugString(L"[LobbyListData] 로비리스트 성공적으로 수령\n");
 				LoadData(pLobbyListData);
+				VersionUp();
 			}
 		}
 		/* 로비 진입 데이터 답변 */
@@ -84,7 +86,13 @@ namespace ClientLogic
 			{
 				OutputDebugString(L"[LobbyListData] 로비 진입 데이터 성공적으로 수령\n");
 				m_IsLobbySuccesslyEntered = true;
+				VersionUp();
 			}
+		}
+		/* 다른 사람의 로비 진입 데이터 */
+		else if (packet->PacketId == (short)PACKET_ID::LOBBY_ENTER_USER_NTF)
+		{
+			OutputDebugString(L"[LobbyListData] LOBBY_ENTER_USER_NTF 패킷 수령\n");
 		}
 		else
 		{
@@ -100,6 +108,7 @@ namespace ClientLogic
 	{
 		publisher->Subscribe((short)PACKET_ID::LOBBY_LIST_RES, &m_RecvQueue);
 		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_RES, &m_RecvQueue);
+		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_USER_NTF, &m_RecvQueue);
 	}
 
 	const LobbyListInfo * LobbyListData::GetLobbyListInfo(const int idx) const
@@ -135,14 +144,17 @@ namespace ClientLogic
 			auto i = (PktLobbyNewUserInfoNtf*)packet->pData;
 			OutputDebugString(L"[RoomListData] 유저 정보 수령 성공\n");
 			m_UserIdVector.push_back(i->UserID);
+			VersionUp();
 		}
 		else if (packet->PacketId == (short)PACKET_ID::LOBBY_CHAT_REQ)
 		{
 			OutputDebugString(L"[RoomListData] 채팅 답변 수령 성공\n");
+			VersionUp();
 		}
 		else if (packet->PacketId == (short)PACKET_ID::LOBBY_CHAT_NTF)
 		{
 			OutputDebugString(L"[RoomListData] 다른 사람 채팅 수령 성공\n");
+			VersionUp();
 		}
 
 		m_RecvQueue.pop_front();

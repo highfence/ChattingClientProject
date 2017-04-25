@@ -87,9 +87,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="LobbyScene.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="RoomList.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -97,6 +94,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Room.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyListScene.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -419,9 +419,6 @@
     <ClInclude Include="LoginScene.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="LobbyScene.h">
-      <Filter>Header</Filter>
-    </ClInclude>
     <ClInclude Include="RoomList.h">
       <Filter>Header</Filter>
     </ClInclude>
@@ -432,6 +429,9 @@
       <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="Room.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="LobbyListScene.h">
       <Filter>Header</Filter>
     </ClInclude>
   </ItemGroup>
