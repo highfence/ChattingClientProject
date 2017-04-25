@@ -82,6 +82,5 @@ namespace ClientLogic
 	private :
 
 		std::vector<std::string> m_UserIdVector;
-		
 	};
 }

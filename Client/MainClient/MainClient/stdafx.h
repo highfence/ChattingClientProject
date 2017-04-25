@@ -14,6 +14,9 @@
 struct SceneData
 {
 	ClientLogic::DataContainer* dataContainer;
+	// 임시로 정의해 놓은 자신의 id.
+	// 이 변수를 확장해서 myInfo객체로 만들던, 서버에서 다시 한 번 받아오던 그런식으로 할 생각.
+	std::wstring id;
 };
 
 using MyApp = SceneManager<String, SceneData>;

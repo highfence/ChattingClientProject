@@ -24,7 +24,8 @@ void Lobby::init()
 	Graphics::SetBackground(Color(100, 160, 200));
 
 	/* Drawing Info */
-	m_InfoGui.addln(L"Info", GUIText::Create(L"Keun Won, Lee", infoWidth));
+	std::wstring myId = L"ID : " + m_data->id;
+	m_InfoGui.addln(L"Info", GUIText::Create(myId, infoWidth));
 
 	MakeLobbys();
 }
