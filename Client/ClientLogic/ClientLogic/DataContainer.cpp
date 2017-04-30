@@ -58,6 +58,11 @@ namespace ClientLogic
 		return m_pLobbyListData;
 	}
 
+	std::shared_ptr<RoomListData> DataContainer::GetRoomListData() const
+	{
+		return m_pRoomListData;
+	}
+
 	void DataContainer::RegisterQueueToProcessor()
 	{
 		m_pPacketDistributer->RegisterMessenger(m_pPacketMessenger.get());

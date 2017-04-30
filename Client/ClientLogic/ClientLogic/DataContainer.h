@@ -52,6 +52,7 @@ namespace ClientLogic
 		// 정보 관련 함수.
 		std::shared_ptr<LoginData> GetLoginData() const;
 		std::shared_ptr<LobbyListData> GetLobbyListData() const;
+		std::shared_ptr<RoomListData> GetRoomListData() const;
 
 	private :
 

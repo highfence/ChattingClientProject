@@ -99,6 +99,9 @@
     <ClCompile Include="LobbyListScene.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="MyTimer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">
@@ -432,6 +435,9 @@
       <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="LobbyListScene.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="MyTimer.h">
       <Filter>Header</Filter>
     </ClInclude>
   </ItemGroup>

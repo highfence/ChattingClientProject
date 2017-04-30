@@ -231,6 +231,26 @@ namespace ClientLogic
 				return false;
 			}
 		}
+		/* 로비 유저 리스트 요청 패킷 처리 */
+		else if (packetId == (short)PACKET_ID::LOBBY_ENTER_USER_LIST_REQ)
+		{
+			char data[COMMON_INFO::MAX_PACKET_SIZE] = { 0, };
+
+			PktHeader pktHeader{ packetId, sizeof(PktLobbyUserListReq) };
+			memcpy(&data[0], (char*)&pktHeader, PACKET_HEADER_SIZE);
+
+			if (pktHeader.BodySize > 0)
+			{
+				memcpy(&data[PACKET_HEADER_SIZE], pData, pktHeader.BodySize);
+			}
+
+			int hr = send(m_ClientSock, data, pktHeader.BodySize + PACKET_HEADER_SIZE, 0);
+			if (hr == SOCKET_ERROR)
+			{
+				int err = WSAGetLastError();
+				return false;
+			}
+		}
 
 		return true;
 	}

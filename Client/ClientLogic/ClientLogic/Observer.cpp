@@ -141,19 +141,68 @@ namespace ClientLogic
 
 		if (packet->PacketId == (short)PACKET_ID::LOBBY_ENTER_USER_NTF)
 		{
-			auto i = (PktLobbyNewUserInfoNtf*)packet->pData;
 			OutputDebugString(L"[RoomListData] 유저 정보 수령 성공\n");
-			m_UserIdVector.push_back(i->UserID);
+
+			auto packetData = (PktLobbyNewUserInfoNtf*)packet->pData;
+			auto userNumber = m_UserInfoVector.back().first + 1;
+			auto userId = packetData->UserID;
+			std::pair<int, std::wstring> inputData;
+			inputData.first = userNumber;
+			inputData.second = (LPCTSTR)userId;
+
+			m_UserInfoVector.emplace_back(std::move(inputData));
 			VersionUp();
 		}
-		else if (packet->PacketId == (short)PACKET_ID::LOBBY_CHAT_REQ)
+		else if (packet->PacketId == (short)PACKET_ID::LOBBY_CHAT_RES)
 		{
 			OutputDebugString(L"[RoomListData] 채팅 답변 수령 성공\n");
+			m_IsChatDelivered = true;
 			VersionUp();
 		}
 		else if (packet->PacketId == (short)PACKET_ID::LOBBY_CHAT_NTF)
 		{
 			OutputDebugString(L"[RoomListData] 다른 사람 채팅 수령 성공\n");
+			VersionUp();
+		}
+		else if (packet->PacketId == (short)PACKET_ID::LOBBY_ENTER_USER_LIST_RES)
+		{
+			auto recvData = (PktLobbyUserListRes*)packet->pData;
+			if (recvData->ErrorCode != 0)
+			{
+				OutputDebugString(L"[RoomListData] 로비 유저 리스트 수령 실패\n");
+				return;
+			}
+			OutputDebugString(L"[RoomListData] 로비 안의 유저 리스트 수령 성공\n");
+
+			if (recvData->Count == 0)
+			{
+				// 패킷에서 받은 데이터의 카운트가 0이면 벡터를 비워주고 처음부터 다시 받음.
+				m_UserInfoVector.clear();
+			}
+
+			for (int i = 0; i < recvData->Count; ++i)
+			{
+				std::pair<int, std::wstring> inputData;
+				inputData.first = recvData->UserInfo->LobbyUserIndex;
+				
+				char test[300];
+				memcpy(test, recvData->UserInfo->UserID, sizeof(recvData->UserInfo->UserID));
+
+				inputData.second = (LPCTSTR)recvData->UserInfo->UserID;
+				m_UserInfoVector.emplace_back(std::move(inputData));
+			}
+
+			if (recvData->IsEnd == false)
+			{
+				m_IsRequestNeeded = true;
+				m_ReceivedLastestUserId = recvData->UserInfo->LobbyUserIndex;
+			}
+			else
+			{
+				m_IsRequestNeeded = false;
+				m_ReceivedLastestUserId = 0;
+			}
+
 			VersionUp();
 		}
 
@@ -163,8 +212,21 @@ namespace ClientLogic
 	void RoomListData::SetSubscribe(PacketDistributer * publisher)
 	{
 		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_USER_NTF, &m_RecvQueue);
-		publisher->Subscribe((short)PACKET_ID::LOBBY_CHAT_REQ, &m_RecvQueue);
 		publisher->Subscribe((short)PACKET_ID::LOBBY_CHAT_RES, &m_RecvQueue);
 		publisher->Subscribe((short)PACKET_ID::LOBBY_CHAT_NTF, &m_RecvQueue);
+		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_USER_LIST_RES, &m_RecvQueue);
+	}
+
+	bool RoomListData::GetIsChatDelivered()
+	{
+		if (m_IsChatDelivered == false)
+		{
+			return false;
+		}
+		else
+		{
+			m_IsChatDelivered = false;
+			return true;
+		}
 	}
 }

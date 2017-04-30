@@ -6,9 +6,12 @@ const int roomWidth = 250;
 const int buttonWidth = 50;
 const int userInfoWidth = 200;
 const int chattingInfoHeight = 275;
+	const int maxUserInfoNumber = 5;
 
 void RoomList::init()
 {
+	RequestUserInfo();
+
 	m_RoomListGui = GUI(GUIStyle::Default);
 	m_RoomListGui.setTitle(L"Room List");
 
@@ -25,7 +28,6 @@ void RoomList::init()
 
 	/* Data Setting */
 	RoomInfoSetting();
-	UserInfoSetting();
 
 	/* Input data in Gui */
 	MakeRooms();
@@ -39,6 +41,7 @@ void RoomList::update()
 
 	CheckSendClicked();
 	CheckRoomClicked();
+	CheckDataUpdated();
 }
 
 void RoomList::draw() const
@@ -66,19 +69,6 @@ void RoomList::RoomInfoSetting()
 	}
 }
 
-void RoomList::UserInfoSetting()
-{
-	const int userInfoNum = 5;
-	const std::wstring userName = L"User ";
-	// TODO :: user info must be distributed by server
-	for (int i = 0; i < userInfoNum; ++i)
-	{
-		UserInfo* newUserInfo = new UserInfo;
-		newUserInfo->userName = userName + std::to_wstring(i + 1);
-		m_UserInfoVector.push_back(newUserInfo);
-	}
-}
-
 void RoomList::MakeRooms()
 {
 	for (const auto& i : m_RoomInfoVector)
@@ -93,10 +83,10 @@ void RoomList::MakeRooms()
 
 void RoomList::MakeUsers()
 {
-	for (const auto& i : m_UserInfoVector)
+	for (int i = 0; i < maxUserInfoNumber; ++i)
 	{
 		/* Make Users */
-		m_UserListGui.addln(i->userName, GUIText::Create(i->userName, userInfoWidth));
+		m_UserListGui.addln(std::to_wstring(i), GUIText::Create(L"NONE", userInfoWidth));
 	}
 }
 
@@ -114,6 +104,21 @@ void RoomList::MakeChattingGui()
 	//m_ChattingGui.setPos(15, chattingInfoHeight + 140);
 	m_ChattingGui.add(L"InputField", GUITextArea::Create(1, 26));
 	m_ChattingGui.add(L"InputButton", GUIButton::Create(L"Send"));
+}
+
+void RoomList::UserListUpdate()
+{
+	int idx = 0;
+	for (auto i : m_UserListVector)
+	{
+		if (idx >= maxUserInfoNumber)
+		{
+			break;
+		}
+
+		m_UserListGui.text(std::to_wstring(idx)).text = i;
+		++idx;
+	}
 }
 
 void RoomList::CheckRoomClicked()
@@ -146,7 +151,7 @@ void RoomList::CheckSendClicked()
 		}
 
 		SendChatting(m_ChatString.c_str());
-		//m_ChattingGui.textArea(L"ChattingWindow").setText(m_ChatString);
+		m_ChatQueue.push_back(m_ChatString.c_str());
 		m_ChattingGui.textArea(L"InputField").setText(L"");
 	}
 }
@@ -154,7 +159,7 @@ void RoomList::CheckSendClicked()
 void RoomList::ExitScene()
 {
 	m_RoomInfoVector.clear();
-	m_UserInfoVector.clear();
+	m_UserListVector.clear();
 }
 
 void RoomList::SendChatting(std::wstring chat)
@@ -163,4 +168,58 @@ void RoomList::SendChatting(std::wstring chat)
 	memcpy(newChatReq.Msg, chat.c_str(), MAX_LOBBY_CHAT_MSG_SIZE);
 
 	m_data->dataContainer->SendRequest((short)PACKET_ID::LOBBY_CHAT_REQ, sizeof(newChatReq), (char*)&newChatReq);
+}
+
+void RoomList::RequestUserInfo(const int startUserIndex)
+{
+	PktLobbyUserListReq newLobbyUserReq;
+	newLobbyUserReq.StartUserIndex = startUserIndex;
+
+	m_data->dataContainer->SendRequest((short)PACKET_ID::LOBBY_ENTER_USER_LIST_REQ, sizeof(newLobbyUserReq), (char*)&newLobbyUserReq);
+}
+
+void RoomList::CheckDataUpdated()
+{
+	const int lastestDataVersion = m_data->dataContainer->GetRoomListData()->GetVersion();
+
+	if (m_CurrentDataVersion < lastestDataVersion)
+	{
+		std::wstring debugLabel = L"[RoomListScene] 데이터 리프레시! 현재 버전 : " + std::to_wstring(m_CurrentDataVersion) + L", 최신 버전 : " + std::to_wstring(lastestDataVersion);
+		OutputDebugString(debugLabel.c_str());
+		m_UserListVector.clear();
+
+		if (m_data->dataContainer->GetRoomListData()->GetIsRequestNeeded())
+		{
+			// 아직 못받은 데이터가 있으면, 리퀘스트를 또 다시 요청해준다.
+			// 근데 이거는 구조적으로 좀 고치면 좋지 않을까 싶음.
+			RequestUserInfo(m_data->dataContainer->GetRoomListData()->GetReceivedLastestUserId());
+		}
+		else
+		{
+			// 데이터를 다 받았으므로 데이터를 업데이트 해주면 된다.
+			for (auto i : m_data->dataContainer->GetRoomListData()->GetUserInfoVector())
+			{
+				m_UserListVector.push_back(i.second);
+			}
+
+			// 업데이트가 되었으므로, GUI에 표현되는 데이터를 바꾸어준다.
+			UserListUpdate();
+		}
+		
+		m_CurrentDataVersion = lastestDataVersion;
+	}
+}
+
+
+void RoomList::CheckChattingSuccessed()
+{
+	if (m_data->dataContainer->GetRoomListData()->GetIsChatDelivered())
+	{
+		for (auto i : m_ChatQueue)
+		{
+			// TODO :: 여기서 부터 짜면 됩니다.
+			//m_ChattingGuiString = m_ChattingGuiString
+		}
+		m_ChatQueue.clear();
+	}
 }

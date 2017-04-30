@@ -29,7 +29,7 @@ struct LobbyList : MyApp::Scene
 	void draw() const override;
 
 	/* Data Handling */
-	void Refresh();
+	void CheckRefreshNeeded();
 	void RefreshData();
 	bool IsMyDataNeedRefreshed();
 	void DrawConnectAbleLobbyInfo() const;

@@ -171,6 +171,7 @@
     <ClCompile Include="Main.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="MyTimer.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="RoomList.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -298,6 +299,7 @@
     <ClInclude Include="LobbyListScene.h" />
     <ClInclude Include="LoginScene.h" />
     <ClInclude Include="Main.h" />
+    <ClInclude Include="MyTimer.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="RoomList.h" />
     <ClInclude Include="stdafx.h" />
