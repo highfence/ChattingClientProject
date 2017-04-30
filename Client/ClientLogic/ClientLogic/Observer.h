@@ -3,6 +3,7 @@
 #include <deque>
 #include <memory>
 #include <mutex>
+#include <string>
 #include "Packet.h"
 #include "PacketProcessor.h"
 
@@ -82,6 +83,7 @@ namespace ClientLogic
 		bool GetIsRequestNeeded() const { return m_IsRequestNeeded; };
 		bool GetIsChatDelivered();
 		int GetReceivedLastestUserId() const { return m_ReceivedLastestUserId; };
+		std::wstring GetChatFromQueue();
 		std::vector<std::pair<int, std::wstring>>& GetUserInfoVector() { return m_UserInfoVector; };
 
 	private :

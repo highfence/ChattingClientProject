@@ -42,6 +42,8 @@ void RoomList::update()
 	CheckSendClicked();
 	CheckRoomClicked();
 	CheckDataUpdated();
+	CheckSendChattingSuccessed();
+	CheckSendNotifyArrived();
 }
 
 void RoomList::draw() const
@@ -150,8 +152,10 @@ void RoomList::CheckSendClicked()
 			m_ChatString = m_ChatString + L"\n" + m_ChattingGui.textArea(L"InputField").text;
 		}
 
+		// Send버튼이 눌리면 리퀘스트를 보내놓고, 일단 Queue에 저장해 놓는다.
 		SendChatting(m_ChatString.c_str());
 		m_ChatQueue.push_back(m_ChatString.c_str());
+		m_ChatString.erase();
 		m_ChattingGui.textArea(L"InputField").setText(L"");
 	}
 }
@@ -211,15 +215,37 @@ void RoomList::CheckDataUpdated()
 }
 
 
-void RoomList::CheckChattingSuccessed()
+void RoomList::CheckSendChattingSuccessed()
 {
 	if (m_data->dataContainer->GetRoomListData()->GetIsChatDelivered())
 	{
-		for (auto i : m_ChatQueue)
+		while (!m_ChatQueue.empty())
 		{
-			// TODO :: 여기서 부터 짜면 됩니다.
-			//m_ChattingGuiString = m_ChattingGuiString
+			if (m_ChattingGuiString == L"")
+			{
+				m_ChattingGuiString = m_data->id + L" : " + m_ChatQueue.front();
+			}
+			else
+			{
+				m_ChattingGuiString = m_ChattingGuiString + L"\n" + m_data->id + L" : " + m_ChatQueue.front();
+			}
+			m_ChatQueue.pop_front();
 		}
-		m_ChatQueue.clear();
+		m_ChattingGui.textArea(L"ChattingWindow").setText(L"");
+		m_ChattingGui.textArea(L"ChattingWindow").setText(m_ChattingGuiString);
+	}
+}
+
+void RoomList::CheckSendNotifyArrived()
+{
+	while (true)
+	{
+		auto msg = m_data->dataContainer->GetRoomListData()->GetChatFromQueue();
+		if (msg == L"")
+		{
+			break;
+		}
+
+		m_ChattingGuiString = m_ChattingGuiString + L"\n" + msg;
 	}
 }

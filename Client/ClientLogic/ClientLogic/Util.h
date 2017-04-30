@@ -1,5 +1,6 @@
 #pragma once
 #include <stdio.h>
+#include <string>
 
 namespace ClientLogic
 {
@@ -13,6 +14,15 @@ namespace ClientLogic
 		{
 			_snprintf_s(pszDest, destSize, _TRUNCATE, "%S", pszText);
 		}
+
+		static void CharToWstring(const char* charText, const int charTextSize, std::wstring destString)
+		{
+			for (int i = 0; i < charTextSize; ++i)
+			{
+				destString = destString + std::to_wstring(charText[i]);
+			}
+		}
+
 
 	};
 }

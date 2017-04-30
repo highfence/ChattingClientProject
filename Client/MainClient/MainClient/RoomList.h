@@ -39,7 +39,8 @@ struct RoomList : MyApp::Scene
 	void CheckRoomClicked();
 	void CheckSendClicked();
 	void CheckDataUpdated();
-	void CheckChattingSuccessed();
+	void CheckSendChattingSuccessed();
+	void CheckSendNotifyArrived();
 
 
 	/* Function must be called when scene changed */

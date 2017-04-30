@@ -1,5 +1,6 @@
 #include "Observer.h"
 #include "Util.h"
+#include <stdlib.h>
 
 namespace ClientLogic
 {
@@ -161,7 +162,16 @@ namespace ClientLogic
 		}
 		else if (packet->PacketId == (short)PACKET_ID::LOBBY_CHAT_NTF)
 		{
+			auto recvData = (PktLobbyChatNtf*)packet->pData;
 			OutputDebugString(L"[RoomListData] 다른 사람 채팅 수령 성공\n");
+
+			std::wstring userIdStr;
+			Util::CharToWstring(recvData->UserID, sizeof(recvData->UserID), userIdStr);
+
+			std::wstring userMsgStr(recvData->Msg);
+			std::wstring wholeMsg = userIdStr + L" : " + userMsgStr;
+			m_ChatQueue.emplace_back(std::move(wholeMsg));
+
 			VersionUp();
 		}
 		else if (packet->PacketId == (short)PACKET_ID::LOBBY_ENTER_USER_LIST_RES)
@@ -228,5 +238,17 @@ namespace ClientLogic
 			m_IsChatDelivered = false;
 			return true;
 		}
+	}
+	
+	std::wstring RoomListData::GetChatFromQueue()
+	{
+		if (m_ChatQueue.empty())
+		{
+			return L"";
+		}
+
+		auto returnString = m_ChatQueue.front();
+		m_ChatQueue.pop_front();
+		return returnString;
 	}
 }
