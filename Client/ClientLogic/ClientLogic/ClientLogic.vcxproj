@@ -132,6 +132,8 @@
     <ClCompile Include="DataContainer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="LobbyListData.cpp" />
+    <ClCompile Include="LoginData.cpp" />
     <ClCompile Include="Observer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -141,16 +143,20 @@
     <ClCompile Include="PacketProcessor.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="RoomListData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataContainer.h" />
     <ClInclude Include="Definition.h" />
     <ClInclude Include="ErrorCode.h" />
+    <ClInclude Include="LobbyListData.h" />
+    <ClInclude Include="LoginData.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="PacketID.h" />
     <ClInclude Include="PacketMessenger.h" />
     <ClInclude Include="PacketProcessor.h" />
+    <ClInclude Include="RoomListData.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

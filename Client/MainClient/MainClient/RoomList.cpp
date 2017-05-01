@@ -42,7 +42,8 @@ void RoomList::update()
 	CheckSendClicked();
 	CheckRoomClicked();
 	CheckDataUpdated();
-	CheckSendChattingSuccessed();
+	// 잠시 보류.
+	//CheckSendChattingSuccessed();
 	CheckSendNotifyArrived();
 }
 
@@ -246,6 +247,15 @@ void RoomList::CheckSendNotifyArrived()
 			break;
 		}
 
-		m_ChattingGuiString = m_ChattingGuiString + L"\n" + msg;
+		if (m_ChattingGuiString == L"")
+		{
+			m_ChattingGuiString = msg;
+		}
+		else
+		{
+			m_ChattingGuiString = m_ChattingGuiString + L"\n" + msg;
+		}
+		m_ChattingGui.textArea(L"ChattingWindow").setText(L"");
+		m_ChattingGui.textArea(L"ChattingWindow").setText(m_ChattingGuiString);
 	}
 }

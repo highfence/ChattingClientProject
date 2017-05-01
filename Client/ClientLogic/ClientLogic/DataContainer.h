@@ -22,6 +22,9 @@
 #include "DataContainer.h"
 #include "Definition.h"
 #include "Observer.h"
+#include "LoginData.h"
+#include "LobbyListData.h"
+#include "RoomListData.h"
 
 #include "PacketMessenger.h"
 #include "PacketProcessor.h"
