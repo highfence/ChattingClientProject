@@ -20,6 +20,8 @@ namespace ClientLogic
 
 	private:
 
+		void makeUserData(const int, const char*);
+
 		std::vector<std::pair<int, std::wstring>> m_UserInfoVector;
 		std::deque<std::wstring> m_ChatQueue;
 		bool m_IsRequestNeeded = false;

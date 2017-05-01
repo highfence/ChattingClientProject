@@ -1,5 +1,6 @@
 #include "Observer.h"
 #include "RoomListData.h"
+#include "Definition.h"
 #include "Util.h"
 
 namespace ClientLogic
@@ -23,11 +24,8 @@ namespace ClientLogic
 			auto packetData = (PktLobbyNewUserInfoNtf*)packet->pData;
 			auto userNumber = m_UserInfoVector.back().first + 1;
 			auto userId = packetData->UserID;
-			std::pair<int, std::wstring> inputData;
-			inputData.first = userNumber;
-			inputData.second = (LPCTSTR)userId;
+			makeUserData(userNumber, userId);
 
-			m_UserInfoVector.emplace_back(std::move(inputData));
 			VersionUp();
 		}
 		else if (packet->PacketId == (short)PACKET_ID::LOBBY_CHAT_RES)
@@ -41,12 +39,12 @@ namespace ClientLogic
 			auto recvData = (PktLobbyChatNtf*)packet->pData;
 			OutputDebugString(L"[RoomListData] 다른 사람 채팅 수령 성공\n");
 
-			std::wstring userIdStr;
-			Util::CharToWstring(recvData->UserID, sizeof(recvData->UserID), userIdStr);
+			//std::wstring userIdStr;
+			//Util::CharToWstring(recvData->UserID, sizeof(recvData->UserID), userIdStr);
 
-			std::wstring userMsgStr(recvData->Msg);
-			std::wstring wholeMsg = userIdStr + L" : " + userMsgStr;
-			m_ChatQueue.emplace_back(std::move(wholeMsg));
+			//std::wstring userMsgStr(recvData->Msg);
+			//std::wstring wholeMsg = userIdStr + L" : " + userMsgStr;
+			//m_ChatQueue.emplace_back(std::move(wholeMsg));
 
 			VersionUp();
 		}
@@ -126,5 +124,14 @@ namespace ClientLogic
 		auto returnString = m_ChatQueue.front();
 		m_ChatQueue.pop_front();
 		return returnString;
+	}
+
+	void RoomListData::makeUserData(const int userNumber, const char * userId)
+	{
+		std::pair<int, std::wstring> inputData;
+		inputData.first = userNumber;
+		inputData.second = Util::CharToWstring(userId);
+
+		m_UserInfoVector.emplace_back(std::move(inputData));
 	}
 }
