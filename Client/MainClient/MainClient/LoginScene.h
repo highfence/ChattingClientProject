@@ -18,5 +18,4 @@ struct Login : MyApp::Scene
 
 	/* 로그인 관련 함수 */
 	bool TryLogin();
-	void MakeLoginReqPacket(PktLogInReq*);
 };

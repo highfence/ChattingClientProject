@@ -153,104 +153,16 @@ namespace ClientLogic
 	/* 패킷 메신져에 Send를 요청할 때 pData를 알맞은 형태로 넣어주어야 한다. */
 	bool PacketMessenger::Send(const short packetId, const short packetSize, char* pData)
 	{
-		/* 로그인 요청 패킷 처리 */
-		if (packetId == (short)PACKET_ID::LOGIN_IN_REQ)
-		{
-			PktLogInReq* pNewLoginReq = (PktLogInReq*)&pData;
+		char data[COMMON_INFO::MAX_PACKET_SIZE] = { 0, };
 
-			char data[COMMON_INFO::MAX_PACKET_SIZE] = { 0, };
+		PktHeader pktHeader{ packetId, packetSize };
+		memcpy(&data[0], (char*)&pktHeader, PACKET_HEADER_SIZE);
 
-			PktHeader pktHeader{packetId, sizeof(PktLogInReq)};
-			memcpy(&data[0], (char*)&pktHeader, PACKET_HEADER_SIZE);
-
-			if (pktHeader.BodySize > 0)
-			{
-				memcpy(&data[PACKET_HEADER_SIZE], (char*)&pNewLoginReq, pktHeader.BodySize);
-			}
-
-			int hr = send(m_ClientSock, data, pktHeader.BodySize + PACKET_HEADER_SIZE, 0);
-			if (hr == SOCKET_ERROR)
-			{
-				/* Send Error */
-				int err = WSAGetLastError();
-				return false;
-			}
+		if (packetSize > 0) {
+			memcpy(&data[PACKET_HEADER_SIZE], pData, packetSize);
 		}
-		/* 로비리스트 요청 패킷 처리 */
-		else if (packetId == (short)PACKET_ID::LOBBY_LIST_REQ)
-		{
-			PktHeader pktHeader{packetId, 0};
-			char data[COMMON_INFO::MAX_PACKET_SIZE] = { 0, };
-			memcpy(&data[0], (char*)&pktHeader, PACKET_HEADER_SIZE);
 
-			int hr = send(m_ClientSock, data, PACKET_HEADER_SIZE, 0);
-			if (hr == SOCKET_ERROR)
-			{
-				int err = WSAGetLastError();
-				return false;
-			}
-		}
-		/* 로비 진입 요청 패킷 처리 */
-		else if (packetId == (short)PACKET_ID::LOBBY_ENTER_REQ)
-		{
-			char data[COMMON_INFO::MAX_PACKET_SIZE] = { 0, };
-
-			PktHeader pktHeader{ packetId, sizeof(PktLobbyEnterReq) };
-			memcpy(&data[0], (char*)&pktHeader, PACKET_HEADER_SIZE);
-
-			if (pktHeader.BodySize > 0)
-			{
-				memcpy(&data[PACKET_HEADER_SIZE], pData, pktHeader.BodySize);
-			}
-
-			int hr = send(m_ClientSock, data, pktHeader.BodySize + PACKET_HEADER_SIZE, 0);
-			if (hr == SOCKET_ERROR)
-			{
-				int err = WSAGetLastError();
-				return false;
-			}
-		}
-		/* 로비 채팅 요청 패킷 처리 */
-		else if (packetId == (short)PACKET_ID::LOBBY_CHAT_REQ)
-		{
-			char data[COMMON_INFO::MAX_PACKET_SIZE] = { 0, };
-
-			// TODO :: 이거 그냥 템플릿으로 처리할까?
-			PktHeader pktHeader{ packetId, sizeof(PktLobbyChatReq) };
-			memcpy(&data[0], (char*)&pktHeader, PACKET_HEADER_SIZE);
-
-			if (pktHeader.BodySize > 0)
-			{
-				memcpy(&data[PACKET_HEADER_SIZE], pData, pktHeader.BodySize);
-			}
-
-			int hr = send(m_ClientSock, data, pktHeader.BodySize + PACKET_HEADER_SIZE, 0);
-			if (hr == SOCKET_ERROR)
-			{
-				int err = WSAGetLastError();
-				return false;
-			}
-		}
-		/* 로비 유저 리스트 요청 패킷 처리 */
-		else if (packetId == (short)PACKET_ID::LOBBY_ENTER_USER_LIST_REQ)
-		{
-			char data[COMMON_INFO::MAX_PACKET_SIZE] = { 0, };
-
-			PktHeader pktHeader{ packetId, sizeof(PktLobbyUserListReq) };
-			memcpy(&data[0], (char*)&pktHeader, PACKET_HEADER_SIZE);
-
-			if (pktHeader.BodySize > 0)
-			{
-				memcpy(&data[PACKET_HEADER_SIZE], pData, pktHeader.BodySize);
-			}
-
-			int hr = send(m_ClientSock, data, pktHeader.BodySize + PACKET_HEADER_SIZE, 0);
-			if (hr == SOCKET_ERROR)
-			{
-				int err = WSAGetLastError();
-				return false;
-			}
-		}
+		send(m_ClientSock, data, packetSize + PACKET_HEADER_SIZE, 0);
 
 		return true;
 	}

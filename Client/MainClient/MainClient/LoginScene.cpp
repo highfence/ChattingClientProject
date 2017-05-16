@@ -75,20 +75,15 @@ bool Login::TryLogin()
 
 	/* Making Send Packet */
 	PktLogInReq newLoginReq;
-	MakeLoginReqPacket(&newLoginReq);
-
-	m_data->dataContainer->SendRequest((short)PACKET_ID::LOGIN_IN_REQ, sizeof(newLoginReq), (char*)&newLoginReq);
-	return true;
-}
-
-void Login::MakeLoginReqPacket(PktLogInReq* packet)
-{
 	char szID[MAX_USER_ID_SIZE] = { 0, };
 	char szPW[MAX_USER_PASSWORD_SIZE] = { 0, };
 
 	ClientLogic::Util::UnicodeToAnsi(m_IdStr.c_str(), MAX_USER_ID_SIZE, szID);
 	ClientLogic::Util::UnicodeToAnsi(m_PasswordStr.c_str(), MAX_USER_PASSWORD_SIZE, szPW);
 
-	strncpy_s(packet->szID, MAX_USER_ID_SIZE + 1, szID, MAX_USER_ID_SIZE);
-	strncpy_s(packet->szPW, MAX_USER_PASSWORD_SIZE + 1, szPW, MAX_USER_PASSWORD_SIZE);
+	strncpy_s(newLoginReq.szID, MAX_USER_ID_SIZE + 1, szID, MAX_USER_ID_SIZE);
+	strncpy_s(newLoginReq.szPW, MAX_USER_PASSWORD_SIZE + 1, szPW, MAX_USER_PASSWORD_SIZE);
+
+	m_data->dataContainer->SendRequest((short)PACKET_ID::LOGIN_IN_REQ, sizeof(newLoginReq), (char*)&newLoginReq);
+	return true;
 }
