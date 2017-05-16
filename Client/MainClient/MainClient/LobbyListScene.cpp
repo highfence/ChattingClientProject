@@ -142,7 +142,8 @@ void LobbyList::CheckButtonClicked()
 
 void LobbyList::ReqLobbyInfo()
 {
-	m_data->dataContainer->SendRequest((short)PACKET_ID::LOBBY_LIST_REQ, sizeof(PktHeader), nullptr);
+	/* 로비 정보 요청은 패킷 헤더만 보내도 됨. */
+	m_data->dataContainer->SendRequest((short)PACKET_ID::LOBBY_LIST_REQ, 0, nullptr);
 }
 
 void LobbyList::ReqLobbyEnter(short lobbyId)
