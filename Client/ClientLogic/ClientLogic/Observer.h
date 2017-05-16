@@ -20,7 +20,7 @@ namespace ClientLogic
 		Observer() = default;
 		virtual ~Observer() = default;
 
-		virtual void Update() = 0;
+		virtual void OnPacketReceive() = 0;
 		virtual void Subscribe(short, PacketDistributer* processor);
 		int GetVersion() const { return m_Version; };
 

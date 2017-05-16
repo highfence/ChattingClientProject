@@ -3,7 +3,7 @@
 
 namespace ClientLogic
 {
-	void LobbyListData::Update()
+	void LobbyListData::OnPacketReceive()
 	{
 		if (m_RecvQueue.empty())
 		{

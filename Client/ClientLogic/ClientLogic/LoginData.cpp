@@ -3,7 +3,7 @@
 
 namespace ClientLogic
 {
-	void LoginData::Update()
+	void LoginData::OnPacketReceive()
 	{
 		// 받은 큐가 비어있으면 일하지 않음.
 		if (m_RecvQueue.empty())

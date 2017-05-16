@@ -9,7 +9,7 @@ namespace ClientLogic
 		RoomListData() = default;
 		~RoomListData() = default;
 
-		void Update() override;
+		void OnPacketReceive() override;
 		void SetSubscribe(PacketDistributer*);
 
 		bool GetIsRequestNeeded() const { return m_IsRequestNeeded; };

@@ -8,7 +8,7 @@ namespace ClientLogic
 		LobbyListData() = default;
 		~LobbyListData() = default;
 
-		void Update() override;
+		void OnPacketReceive() override;
 		void SetSubscribe(PacketDistributer*);
 
 		short GetLobbyCount() const { return m_LobbyCount; };

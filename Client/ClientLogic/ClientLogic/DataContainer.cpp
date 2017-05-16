@@ -28,9 +28,9 @@ namespace ClientLogic
 	void DataContainer::Update()
 	{
 		m_pPacketDistributer->Update();
-		m_pLoginData->Update();
-		m_pLobbyListData->Update();
-		m_pRoomListData->Update();
+		m_pLoginData->OnPacketReceive();
+		m_pLobbyListData->OnPacketReceive();
+		m_pRoomListData->OnPacketReceive();
 	}
 
 	bool DataContainer::ConnectRequest()

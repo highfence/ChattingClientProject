@@ -24,6 +24,8 @@ namespace ClientLogic
 			
 			return std::wstring(wTemp);
 		}
+
+	private :
 	
 	};
 }
