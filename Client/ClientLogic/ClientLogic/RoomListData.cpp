@@ -1,3 +1,4 @@
+#include <string>
 #include "Observer.h"
 #include "RoomListData.h"
 #include "Definition.h"
@@ -23,8 +24,8 @@ namespace ClientLogic
 
 			auto packetData = (PktLobbyNewUserInfoNtf*)packet->pData;
 			auto userNumber = m_UserInfoVector.back().first + 1;
-			auto userId = packetData->UserID;
-			makeUserData(userNumber, userId);
+			std::string userId = packetData->UserID;
+			makeUserData(userNumber, userId.c_str());
 
 			VersionUp();
 		}
@@ -69,10 +70,7 @@ namespace ClientLogic
 				std::pair<int, std::wstring> inputData;
 				inputData.first = recvData->UserInfo->LobbyUserIndex;
 
-				char test[300];
-				memcpy(test, recvData->UserInfo->UserID, sizeof(recvData->UserInfo->UserID));
-
-				inputData.second = (LPCTSTR)recvData->UserInfo->UserID;
+				inputData.second = Util::CharToWstring(recvData->UserInfo->UserID);
 				m_UserInfoVector.emplace_back(std::move(inputData));
 			}
 
@@ -96,9 +94,9 @@ namespace ClientLogic
 	void RoomListData::SetSubscribe(PacketDistributer * publisher)
 	{
 		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_USER_NTF, &m_RecvQueue);
+		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_USER_LIST_RES, &m_RecvQueue);
 		publisher->Subscribe((short)PACKET_ID::LOBBY_CHAT_RES, &m_RecvQueue);
 		publisher->Subscribe((short)PACKET_ID::LOBBY_CHAT_NTF, &m_RecvQueue);
-		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_USER_LIST_RES, &m_RecvQueue);
 	}
 
 	bool RoomListData::GetIsChatDelivered()
@@ -133,5 +131,10 @@ namespace ClientLogic
 		inputData.second = Util::CharToWstring(userId);
 
 		m_UserInfoVector.emplace_back(std::move(inputData));
+	}
+
+	void RoomListData::RequestUserList()
+	{
+		
 	}
 }

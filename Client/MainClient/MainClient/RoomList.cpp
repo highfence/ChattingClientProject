@@ -180,6 +180,9 @@ void RoomList::RequestUserInfo(const int startUserIndex)
 	PktLobbyUserListReq newLobbyUserReq;
 	newLobbyUserReq.StartUserIndex = startUserIndex;
 
+	std::wstring debugLabel = L"[RoomList] 유저 인포 요청 \n";
+	OutputDebugString(debugLabel.c_str());
+
 	m_data->dataContainer->SendRequest((short)PACKET_ID::LOBBY_ENTER_USER_LIST_REQ, sizeof(newLobbyUserReq), (char*)&newLobbyUserReq);
 }
 
