@@ -68,9 +68,9 @@ namespace ClientLogic
 			for (int i = 0; i < recvData->Count; ++i)
 			{
 				std::pair<int, std::wstring> inputData;
-				inputData.first = recvData->UserInfo->LobbyUserIndex;
+				inputData.first = recvData->UserInfo[i].LobbyUserIndex;
 
-				inputData.second = Util::CharToWstring(recvData->UserInfo->UserID);
+				inputData.second = Util::CharToWstring(recvData->UserInfo[i].UserID);
 				m_UserInfoVector.emplace_back(std::move(inputData));
 			}
 
