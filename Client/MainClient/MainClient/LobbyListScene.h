@@ -17,7 +17,7 @@ struct LobbyList : MyApp::Scene
 	int m_AbleLobbyNumber = 0;
 	Font m_Font = Font(15);
 
-	std::vector<LobbyInfo*> m_LobbyVector;
+	std::vector<std::shared_ptr<LobbyInfo>> m_LobbyVector;
 
 	/* Required Initializer for Siv3D */
 	void init() override;

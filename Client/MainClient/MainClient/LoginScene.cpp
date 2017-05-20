@@ -24,7 +24,7 @@ void Login::init()
 	/* 창 위치 지정 */
 	m_LoginGui.setCenter(Window::Center());
 
-	m_data->dataContainer = new DataContainer;
+	m_data->dataContainer = std::make_unique<DataContainer>();
 	m_data->dataContainer->Init();
 	m_data->dataContainer->ConnectRequest();
 }
