@@ -44,7 +44,6 @@ void RoomList::update()
 	CheckDataUpdated();
 	// 잠시 보류.
 	//CheckSendChattingSuccessed();
-	CheckSendNotifyArrived();
 }
 
 void RoomList::draw() const
@@ -173,6 +172,7 @@ void RoomList::SendChatting(std::wstring chat)
 	memcpy(newChatReq.Msg, chat.c_str(), MAX_LOBBY_CHAT_MSG_SIZE);
 
 	m_data->dataContainer->SendRequest((short)PACKET_ID::LOBBY_CHAT_REQ, sizeof(newChatReq), (char*)&newChatReq);
+	m_data->dataContainer->SendChatToRoomList(m_data->id, chat);
 }
 
 void RoomList::RequestUserInfo(const int startUserIndex)
@@ -240,25 +240,4 @@ void RoomList::CheckSendChattingSuccessed()
 	}
 }
 
-void RoomList::CheckSendNotifyArrived()
-{
-	while (true)
-	{
-		auto msg = m_data->dataContainer->GetRoomListData()->GetChatFromQueue();
-		if (msg == L"")
-		{
-			break;
-		}
 
-		if (m_ChattingGuiString == L"")
-		{
-			m_ChattingGuiString = msg;
-		}
-		else
-		{
-			m_ChattingGuiString = m_ChattingGuiString + L"\n" + msg;
-		}
-		m_ChattingGui.textArea(L"ChattingWindow").setText(L"");
-		m_ChattingGui.textArea(L"ChattingWindow").setText(m_ChattingGuiString);
-	}
-}

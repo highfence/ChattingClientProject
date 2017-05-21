@@ -158,7 +158,8 @@ namespace ClientLogic
 		PktHeader pktHeader{ packetId, packetSize };
 		memcpy(&data[0], (char*)&pktHeader, PACKET_HEADER_SIZE);
 
-		if (packetSize > 0) {
+		if (packetSize > 0)
+		{
 			memcpy(&data[PACKET_HEADER_SIZE], pData, packetSize);
 		}
 

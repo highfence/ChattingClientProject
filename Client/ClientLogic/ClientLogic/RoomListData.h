@@ -1,5 +1,5 @@
 #pragma once
-
+#include <queue>
 
 namespace ClientLogic
 {
@@ -18,8 +18,8 @@ namespace ClientLogic
 		bool GetIsChatDelivered();
 		bool GetIsRequestNeeded() const { return m_IsRequestNeeded; };
 		int GetReceivedLastestUserId() const { return m_ReceivedLastestUserId; };
-		std::wstring GetChatFromQueue();
 		std::vector<std::pair<int, std::wstring>>& GetUserInfoVector() { return m_UserInfoVector; };
+		void PushChatData(std::wstring id, std::wstring chatMsg);
 
 	private:
 		void makeUserData(const int, const char*);
@@ -31,12 +31,11 @@ namespace ClientLogic
 		void LobbyChatNtf(std::shared_ptr<RecvPacketInfo> packet);
 
 		std::vector<std::pair<int, std::wstring>> m_UserInfoVector;
-		std::deque<std::wstring> m_ChatQueue;
+		std::queue<std::shared_ptr<ChatData>> m_WaitResQueue;
+		std::stack<std::shared_ptr<ChatData>> m_ChatStack;
 
 		bool m_IsRequestNeeded = false;
 		bool m_IsChatDelivered = false;
 		int m_ReceivedLastestUserId = 0;
-
-		ObjectPool<ChatData> m_ChatPool = ObjectPool<ChatData>(10);
 	};
 }

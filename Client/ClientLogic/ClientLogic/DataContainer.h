@@ -52,6 +52,9 @@ namespace ClientLogic
 		bool DisconnectRequest();
 		bool SendRequest(const short, const short, char*);
 
+		// 데이터 컨테이너 관련 함수.
+		void SendChatToRoomList(std::wstring id, std::wstring chatMsg);
+
 		// 정보 관련 함수.
 		std::shared_ptr<LoginData> GetLoginData() const;
 		std::shared_ptr<LobbyListData> GetLobbyListData() const;

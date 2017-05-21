@@ -40,13 +40,11 @@ struct RoomList : MyApp::Scene
 	void CheckSendClicked();
 	void CheckDataUpdated();
 	void CheckSendChattingSuccessed();
-	void CheckSendNotifyArrived();
-
 
 	/* Function must be called when scene changed */
 	void ExitScene();
 
 	/* Network Function */
-	void SendChatting(std::wstring);
+	void SendChatting(std::wstring chat);
 	void RequestUserInfo(const int startUserId = 0);
 };

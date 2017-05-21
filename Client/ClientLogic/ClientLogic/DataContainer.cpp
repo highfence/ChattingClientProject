@@ -48,6 +48,11 @@ namespace ClientLogic
 		return m_pPacketMessenger->Send(packetId, packetSize, pData);
 	}
 
+	void DataContainer::SendChatToRoomList(std::wstring id, std::wstring chatMsg)
+	{
+		m_pRoomListData->PushChatData(id, chatMsg);
+	}
+
 	std::shared_ptr<LoginData> DataContainer::GetLoginData() const
 	{
 		return m_pLoginData;

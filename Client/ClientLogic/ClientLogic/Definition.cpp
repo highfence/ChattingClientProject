@@ -44,9 +44,11 @@ std::wstring ChatData::GetInLine()
 	std::wstring timeStr = L" [" + std::to_wstring(hour) + L":" + std::to_wstring(min) + L":" + std::to_wstring(sec) + L"]";
 
 	// id [00:00:00] blah blah 의 형태로 채팅 데이터 뽑아내기. 
-	chatData = m_Id + timeStr + L" " + m_Chat;
+	chatData = m_Id + timeStr + L" " + m_Chat + L"\n";
 
 	return chatData;
 }
 
-
+UserData::UserData(int userNumber, std::wstring userId)
+{
+}

@@ -1,5 +1,9 @@
 #include <string>
 #include <utility>
+#include <queue>
+#include <vector>
+#include <stack>
+#include <memory>
 #include "Observer.h"
 #include "Definition.h"
 #include "Util.h"
@@ -78,16 +82,12 @@ namespace ClientLogic
 		}
 	}
 
-	std::wstring RoomListData::GetChatFromQueue()
+	void RoomListData::PushChatData(std::wstring id, std::wstring chatMsg)
 	{
-		if (m_ChatQueue.empty())
-		{
-			return L"";
-		}
+		std::shared_ptr<ChatData> newMsg = std::make_shared<ChatData>();
+		newMsg->DataSetting(id, chatMsg);
 
-		auto returnString = m_ChatQueue.front();
-		m_ChatQueue.pop_front();
-		return returnString;
+		m_WaitResQueue.emplace(std::move(newMsg));
 	}
 
 	void RoomListData::makeUserData(const int userNumber, const char * userId)
@@ -108,10 +108,10 @@ namespace ClientLogic
 	{
 		OutputDebugString(L"[RoomListData] 유저 정보 수령 성공\n");
 
-		auto packetData = (PktLobbyNewUserInfoNtf*)packet->pData;
+		auto recvData = (PktLobbyNewUserInfoNtf*)packet->pData;
 
 		auto userNumber = m_UserInfoVector.back().first + 1;
-		std::string userId = packetData->UserID;
+		std::string userId = recvData->UserID;
 		makeUserData(userNumber, userId.c_str());
 
 		VersionUp();
@@ -158,18 +158,20 @@ namespace ClientLogic
 
 	void RoomListData::LobbyChatRes(std::shared_ptr<RecvPacketInfo> packet)
 	{
-		auto packetData = (PktLobbyChatRes*)packet->pData;
-		if (packetData->ErrorCode != 0)
+		auto recvData = (PktLobbyChatRes*)packet->pData;
+		if (recvData->ErrorCode != 0)
 		{
 			OutputDebugString(L"[RoomListData] 채팅 보내기 실패.\n");
-			return;
 		}
-		OutputDebugString(L"[RoomListData] 채팅 답변 수령 성공\n");
+		else
+		{
+			OutputDebugString(L"[RoomListData] 채팅 보내기 성공\n");
+			m_ChatStack.emplace(m_WaitResQueue.front());
 
+			VersionUp();
+		}
 
-
-		m_IsChatDelivered = true;
-		VersionUp();
+		m_WaitResQueue.pop();
 	}
 
 	void RoomListData::LobbyChatNtf(std::shared_ptr<RecvPacketInfo> packet)
@@ -177,12 +179,10 @@ namespace ClientLogic
 		auto recvData = (PktLobbyChatNtf*)packet->pData;
 		OutputDebugString(L"[RoomListData] 다른 사람 채팅 수령 성공\n");
 
-		//std::wstring userIdStr;
-		//Util::CharToWstring(recvData->UserID, sizeof(recvData->UserID), userIdStr);
+		std::wstring userIdStr = Util::CharToWstring(recvData->UserID);;
+		std::wstring userMsgStr(recvData->Msg);
 
-		//std::wstring userMsgStr(recvData->Msg);
-		//std::wstring wholeMsg = userIdStr + L" : " + userMsgStr;
-		//m_ChatQueue.emplace_back(std::move(wholeMsg));
+		m_ChatStack.emplace(std::make_shared<ChatData>(userIdStr, userMsgStr));
 
 		VersionUp();
 	}
