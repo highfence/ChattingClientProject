@@ -13,60 +13,46 @@ namespace ClientLogic
 
 		auto packet = m_RecvQueue.front();
 
-		/* 로비 리스트 답변 */
-		if (packet->PacketId == (short)PACKET_ID::LOBBY_LIST_RES)
+		auto packetProcessFunc = m_PacketFuncMap.find(packet->PacketId);
+
+		if (packetProcessFunc == m_PacketFuncMap.end())
 		{
-			auto pLobbyListData = (PktLobbyListRes*)packet->pData;
-			if (pLobbyListData->ErrorCode != (short)ERROR_CODE::NONE)
-			{
-				OutputDebugString(L"[LobbyListData] 로비리스트 수령 실패!\n");
-			}
-			else
-			{
-				OutputDebugString(L"[LobbyListData] 로비리스트 성공적으로 수령\n");
-				LoadData(pLobbyListData);
-				VersionUp();
-			}
-		}
-		/* 로비 진입 데이터 답변 */
-		else if (packet->PacketId == (short)PACKET_ID::LOBBY_ENTER_RES)
-		{
-			auto pLobbyEnterResData = (PktLobbyEnterRes*)packet->pData;
-			if (pLobbyEnterResData->ErrorCode != (short)ERROR_CODE::NONE)
-			{
-				OutputDebugString(L"[LobbyListData] 로비 진입 데이터 수령 실패!\n");
-			}
-			else
-			{
-				OutputDebugString(L"[LobbyListData] 로비 진입 데이터 성공적으로 수령\n");
-				m_IsLobbySuccesslyEntered = true;
-				VersionUp();
-			}
-		}
-		/* 다른 사람의 로비 진입 데이터 */
-		else if (packet->PacketId == (short)PACKET_ID::LOBBY_ENTER_USER_NTF)
-		{
-			OutputDebugString(L"[LobbyListData] LOBBY_ENTER_USER_NTF 패킷 수령\n");
+			OutputDebugString(L"[LobbyListData] 구독하지 않은 패킷을 전송받음. \n");
 		}
 		else
 		{
-			OutputDebugString(L"Invalid Packet Receive! (In LobbyListData Update)\n");
-			return;
+			packetProcessFunc->second(packet);
 		}
+
 
 		m_RecvQueue.pop_front();
 	}
 
 	void LobbyListData::RegisterPacketProcess()
 	{
-	}
+		m_PacketFuncMap.emplace(
+			std::make_pair<short, pPacketFunc>(
+			(short)PACKET_ID::LOBBY_LIST_RES,
+			[this](std::shared_ptr<RecvPacketInfo> packet) { this->LobbyListRes(packet); }));
 
+		m_PacketFuncMap.emplace(
+			std::make_pair<short, pPacketFunc>(
+			(short)PACKET_ID::LOBBY_ENTER_RES,
+			[this](std::shared_ptr<RecvPacketInfo> packet) { this->LobbyEnterRes(packet); }));
+
+		m_PacketFuncMap.emplace(
+			std::make_pair<short, pPacketFunc>(
+			(short)PACKET_ID::LOBBY_ENTER_USER_NTF,
+			[this](std::shared_ptr<RecvPacketInfo> packet) { this->LobbyEnterUserNtf(packet); }));
+	}
 
 	void LobbyListData::SetSubscribe(PacketDistributer* publisher)
 	{
+		/* 구독한 패킷에 대해서는 PacketProcess를 만들어주고, 등록해주어야 함. */
 		publisher->Subscribe((short)PACKET_ID::LOBBY_LIST_RES, &m_RecvQueue);
 		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_RES, &m_RecvQueue);
 		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_USER_NTF, &m_RecvQueue);
+		RegisterPacketProcess();
 	}
 
 	const LobbyListInfo * LobbyListData::GetLobbyListInfo(const int idx) const
@@ -83,5 +69,40 @@ namespace ClientLogic
 		{
 			m_LobbyList[i] = pLobbyListData->LobbyList[i];
 		}
+	}
+
+	void LobbyListData::LobbyListRes(std::shared_ptr<RecvPacketInfo> packet)
+	{
+		auto pLobbyListData = (PktLobbyListRes*)packet->pData;
+		if (pLobbyListData->ErrorCode != (short)ERROR_CODE::NONE)
+		{
+			OutputDebugString(L"[LobbyListData] 로비리스트 수령 실패!\n");
+		}
+		else
+		{
+			OutputDebugString(L"[LobbyListData] 로비리스트 성공적으로 수령\n");
+			LoadData(pLobbyListData);
+			VersionUp();
+		}
+	}
+
+	void LobbyListData::LobbyEnterRes(std::shared_ptr<RecvPacketInfo> packet)
+	{
+		auto pLobbyEnterResData = (PktLobbyEnterRes*)packet->pData;
+		if (pLobbyEnterResData->ErrorCode != (short)ERROR_CODE::NONE)
+		{
+			OutputDebugString(L"[LobbyListData] 로비 진입 데이터 수령 실패!\n");
+		}
+		else
+		{
+			OutputDebugString(L"[LobbyListData] 로비 진입 데이터 성공적으로 수령\n");
+			m_IsLobbySuccesslyEntered = true;
+			VersionUp();
+		}
+	}
+
+	void LobbyListData::LobbyEnterUserNtf(std::shared_ptr<RecvPacketInfo> packet)
+	{
+		OutputDebugString(L"[LobbyListData] LOBBY_ENTER_USER_NTF 패킷 수령\n");
 	}
 }

@@ -19,6 +19,9 @@ namespace ClientLogic
 	private:
 
 		void LoadData(PktLobbyListRes*);
+		void LobbyListRes(std::shared_ptr<RecvPacketInfo> packet);
+		void LobbyEnterRes(std::shared_ptr<RecvPacketInfo> packet);
+		void LobbyEnterUserNtf(std::shared_ptr<RecvPacketInfo> packet);
 
 		short m_LobbyCount = 0;
 		LobbyListInfo m_LobbyList[MAX_LOBBY_LIST_COUNT];

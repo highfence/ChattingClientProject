@@ -13,69 +13,78 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="DataContainers">
+      <UniqueIdentifier>{58354d6f-42f6-4a92-ad57-cc379e96cbd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Definition">
+      <UniqueIdentifier>{7a25f15e-3825-4e12-bdfb-b10c8dc09c93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PacketHandlers">
+      <UniqueIdentifier>{70d72f2b-fe7b-4bed-ac96-3c8283a8eb03}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DataContainer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="PacketMessenger.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="PacketProcessor.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Observer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="LoginData.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>DataContainers</Filter>
     </ClCompile>
     <ClCompile Include="LobbyListData.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>DataContainers</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginData.cpp">
+      <Filter>DataContainers</Filter>
+    </ClCompile>
+    <ClCompile Include="Observer.cpp">
+      <Filter>DataContainers</Filter>
     </ClCompile>
     <ClCompile Include="RoomListData.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>DataContainers</Filter>
     </ClCompile>
     <ClCompile Include="Definition.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Definition</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketMessenger.cpp">
+      <Filter>PacketHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketProcessor.cpp">
+      <Filter>PacketHandlers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Definition.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Util.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Packet.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="PacketID.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="ErrorCode.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="DataContainer.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="PacketMessenger.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="PacketProcessor.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Observer.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="LoginData.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>DataContainers</Filter>
     </ClInclude>
     <ClInclude Include="LobbyListData.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>DataContainers</Filter>
+    </ClInclude>
+    <ClInclude Include="LoginData.h">
+      <Filter>DataContainers</Filter>
     </ClInclude>
     <ClInclude Include="RoomListData.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>DataContainers</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet.h">
+      <Filter>Definition</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketID.h">
+      <Filter>Definition</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorCode.h">
+      <Filter>Definition</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketMessenger.h">
+      <Filter>PacketHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketProcessor.h">
+      <Filter>PacketHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="Definition.h">
+      <Filter>Definition</Filter>
+    </ClInclude>
+    <ClInclude Include="Observer.h">
+      <Filter>DataContainers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
