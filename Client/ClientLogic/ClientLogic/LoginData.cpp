@@ -15,14 +15,37 @@ namespace ClientLogic
 		// 큐가 있다면 빼서, LOGIN_IN_RES 패킷이 왔는지 확인.
 		auto packet = m_RecvQueue.front();
 
-		if (packet->PacketId != (short)PACKET_ID::LOGIN_IN_RES)
-		{
-			// 뭔가 잘못된 패킷이 옴.
-			OutputDebugString(L"Invaild Packet Receive! (In LoginData Update)\n");
-			return;
-		}
+		auto packetProcess = m_PacketFuncMap.find(packet->PacketId);
 
-		// 올바른 패킷이 왔다면, 에러코드 확인.
+		if (packetProcess == m_PacketFuncMap.end())
+		{
+			OutputDebugString(L"[LoginData] 구독하지 않은 패킷 전송 받음. \n");
+		}
+		else
+		{
+			packetProcess->second(packet);
+		}
+	
+		m_RecvQueue.pop_front();
+	}
+
+	void LoginData::RegisterPacketProcess()
+	{
+		m_PacketFuncMap.emplace(
+			std::make_pair<short, pPacketFunc>(
+				(short)PACKET_ID::LOGIN_IN_RES,
+				[this](std::shared_ptr<RecvPacketInfo> packet) { this->LoginInRes(packet); }));
+	}
+
+	void LoginData::SetSubscribe(PacketDistributer* publisher)
+	{
+		publisher->Subscribe((short)PACKET_ID::LOGIN_IN_RES, &m_RecvQueue);
+		RegisterPacketProcess();
+	}
+
+	void LoginData::LoginInRes(std::shared_ptr<RecvPacketInfo> packet)
+	{
+		// 에러코드 확인.
 		auto i = (PktLogInRes*)packet->pData;
 		if (i->ErrorCode != (short)ERROR_CODE::NONE)
 		{
@@ -36,15 +59,5 @@ namespace ClientLogic
 			m_IsLoginSuccessed = true;
 			VersionUp();
 		}
-		m_RecvQueue.pop_front();
-	}
-
-	void LoginData::RegisterPacketProcess()
-	{
-	}
-
-	void LoginData::SetSubscribe(PacketDistributer* publisher)
-	{
-		publisher->Subscribe((short)PACKET_ID::LOGIN_IN_RES, &m_RecvQueue);
 	}
 }

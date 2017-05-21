@@ -5,25 +5,29 @@ namespace ClientLogic
 {
 	void LobbyListData::OnPacketReceive()
 	{
+		/* 받은 큐가 비었다면 차례를 넘긴다. */
 		if (m_RecvQueue.empty())
 		{
 			Sleep(0);
 			return;
 		}
 
+		/* 큐에 패킷이 있다면 packet을 받는다. */
 		auto packet = m_RecvQueue.front();
 
+		/* 구독한 패킷 아이디로 unorded_map 에서 대응되는 함수를 찾는다. */
 		auto packetProcessFunc = m_PacketFuncMap.find(packet->PacketId);
 
+		/* 대응되는 함수가 없을 경우. */
 		if (packetProcessFunc == m_PacketFuncMap.end())
 		{
 			OutputDebugString(L"[LobbyListData] 구독하지 않은 패킷을 전송받음. \n");
 		}
+		/* 대응되는 함수가 있는 경우. */
 		else
 		{
 			packetProcessFunc->second(packet);
 		}
-
 
 		m_RecvQueue.pop_front();
 	}
@@ -32,18 +36,18 @@ namespace ClientLogic
 	{
 		m_PacketFuncMap.emplace(
 			std::make_pair<short, pPacketFunc>(
-			(short)PACKET_ID::LOBBY_LIST_RES,
-			[this](std::shared_ptr<RecvPacketInfo> packet) { this->LobbyListRes(packet); }));
+				(short)PACKET_ID::LOBBY_LIST_RES,
+				[this](std::shared_ptr<RecvPacketInfo> packet) { this->LobbyListRes(packet); }));
 
 		m_PacketFuncMap.emplace(
 			std::make_pair<short, pPacketFunc>(
-			(short)PACKET_ID::LOBBY_ENTER_RES,
-			[this](std::shared_ptr<RecvPacketInfo> packet) { this->LobbyEnterRes(packet); }));
+				(short)PACKET_ID::LOBBY_ENTER_RES,
+				[this](std::shared_ptr<RecvPacketInfo> packet) { this->LobbyEnterRes(packet); }));
 
 		m_PacketFuncMap.emplace(
 			std::make_pair<short, pPacketFunc>(
-			(short)PACKET_ID::LOBBY_ENTER_USER_NTF,
-			[this](std::shared_ptr<RecvPacketInfo> packet) { this->LobbyEnterUserNtf(packet); }));
+				(short)PACKET_ID::LOBBY_ENTER_USER_NTF,
+				[this](std::shared_ptr<RecvPacketInfo> packet) { this->LobbyEnterUserNtf(packet); }));
 	}
 
 	void LobbyListData::SetSubscribe(PacketDistributer* publisher)

@@ -16,6 +16,7 @@ namespace ClientLogic
 
 	private:
 
+		void LoginInRes(std::shared_ptr<RecvPacketInfo> packet);
 		bool m_IsLoginSuccessed = false;
 	};
 

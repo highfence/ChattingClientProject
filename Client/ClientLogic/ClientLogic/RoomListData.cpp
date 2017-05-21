@@ -35,21 +35,25 @@ namespace ClientLogic
 
 	void RoomListData::RegisterPacketProcess()
 	{
-		m_PacketFuncMap.emplace(std::make_pair<short, pPacketFunc>(
-			(short)PACKET_ID::LOBBY_ENTER_USER_NTF,
-			[this](std::shared_ptr<RecvPacketInfo> packetInfo) { this->EnterUserNotify(packetInfo); }));
+		m_PacketFuncMap.emplace(
+			std::make_pair<short, pPacketFunc>(
+				(short)PACKET_ID::LOBBY_ENTER_USER_NTF,
+				[this](std::shared_ptr<RecvPacketInfo> packetInfo) { this->EnterUserNotify(packetInfo); }));
 
-		m_PacketFuncMap.emplace(std::make_pair<short, pPacketFunc>(
-			(short)PACKET_ID::LOBBY_ENTER_USER_LIST_RES,
-			[this](std::shared_ptr<RecvPacketInfo> packetInfo) { this->EnterUserListRes(packetInfo); }));
+		m_PacketFuncMap.emplace(
+			std::make_pair<short, pPacketFunc>(
+				(short)PACKET_ID::LOBBY_ENTER_USER_LIST_RES,
+				[this](std::shared_ptr<RecvPacketInfo> packetInfo) { this->EnterUserListRes(packetInfo); }));
 
-		m_PacketFuncMap.emplace(std::make_pair<short, pPacketFunc>(
-			(short)PACKET_ID::LOBBY_CHAT_RES,
-			[this](std::shared_ptr<RecvPacketInfo> packetInfo) { this->LobbyChatRes(packetInfo); }));
+		m_PacketFuncMap.emplace(
+			std::make_pair<short, pPacketFunc>(
+				(short)PACKET_ID::LOBBY_CHAT_RES,
+				[this](std::shared_ptr<RecvPacketInfo> packetInfo) { this->LobbyChatRes(packetInfo); }));
 
-		m_PacketFuncMap.emplace(std::make_pair<short, pPacketFunc>(
-			(short)PACKET_ID::LOBBY_CHAT_NTF,
-			[this](std::shared_ptr<RecvPacketInfo> packetInfo) { this->LobbyChatNtf(packetInfo); }));
+		m_PacketFuncMap.emplace(
+			std::make_pair<short, pPacketFunc>(
+				(short)PACKET_ID::LOBBY_CHAT_NTF,
+				[this](std::shared_ptr<RecvPacketInfo> packetInfo) { this->LobbyChatNtf(packetInfo); }));
 	}
 
 	void RoomListData::SetSubscribe(PacketDistributer * publisher)
