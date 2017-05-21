@@ -132,6 +132,7 @@
     <ClCompile Include="DataContainer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Definition.cpp" />
     <ClCompile Include="LobbyListData.cpp" />
     <ClCompile Include="LoginData.cpp" />
     <ClCompile Include="Observer.cpp">

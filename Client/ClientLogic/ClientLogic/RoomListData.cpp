@@ -23,6 +23,7 @@ namespace ClientLogic
 			OutputDebugString(L"[RoomListData] 유저 정보 수령 성공\n");
 
 			auto packetData = (PktLobbyNewUserInfoNtf*)packet->pData;
+
 			auto userNumber = m_UserInfoVector.back().first + 1;
 			std::string userId = packetData->UserID;
 			makeUserData(userNumber, userId.c_str());
@@ -31,7 +32,16 @@ namespace ClientLogic
 		}
 		else if (packet->PacketId == (short)PACKET_ID::LOBBY_CHAT_RES)
 		{
+			auto packetData = (PktLobbyChatRes*)packet->pData;
+			if (packetData->ErrorCode != 0)
+			{
+				OutputDebugString(L"[RoomListData] 채팅 보내기 실패.\n");
+				return;
+			}
 			OutputDebugString(L"[RoomListData] 채팅 답변 수령 성공\n");
+
+
+
 			m_IsChatDelivered = true;
 			VersionUp();
 		}

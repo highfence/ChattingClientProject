@@ -1,5 +1,6 @@
 #pragma once
 
+
 namespace ClientLogic
 {
 
@@ -25,8 +26,11 @@ namespace ClientLogic
 
 		std::vector<std::pair<int, std::wstring>> m_UserInfoVector;
 		std::deque<std::wstring> m_ChatQueue;
+
 		bool m_IsRequestNeeded = false;
 		bool m_IsChatDelivered = false;
 		int m_ReceivedLastestUserId = 0;
+
+		ObjectPool<std::shared_ptr<ChatData>> m_ChatPool = ObjectPool<std::shared_ptr<ChatData>>(10);
 	};
 }

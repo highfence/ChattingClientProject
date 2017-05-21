@@ -1,6 +1,7 @@
 #pragma once
 #include <stdio.h>
 #include <string>
+#include <stack>
 #include "Definition.h"
 
 namespace ClientLogic
@@ -28,4 +29,25 @@ namespace ClientLogic
 	private :
 	
 	};
+
+	template <class T>
+	class ObjectPool
+	{
+	public :
+		ObjectPool() = delete;
+		ObjectPool(size_t objectNumber);
+
+	private :
+		std::stack<std::shared_ptr<T>> m_Stack;
+	};
+
+	template<class T>
+	inline ObjectPool<T>::ObjectPool(size_t objectNumber)
+	{
+		for (int i = 0; i < objectNumber; ++i)
+		{
+			T obj = std::make_shared<T>();
+			m_Stack.push(obj);
+		}
+	}
 }
