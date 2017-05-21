@@ -39,6 +39,10 @@ namespace ClientLogic
 		m_RecvQueue.pop_front();
 	}
 
+	void LoginData::RegisterPacketProcess()
+	{
+	}
+
 	void LoginData::SetSubscribe(PacketDistributer* publisher)
 	{
 		publisher->Subscribe((short)PACKET_ID::LOGIN_IN_RES, &m_RecvQueue);

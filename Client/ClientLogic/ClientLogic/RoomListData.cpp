@@ -1,8 +1,9 @@
 #include <string>
+#include <utility>
 #include "Observer.h"
-#include "RoomListData.h"
 #include "Definition.h"
 #include "Util.h"
+#include "RoomListData.h"
 
 namespace ClientLogic
 {
@@ -18,87 +19,37 @@ namespace ClientLogic
 		// 큐가 있다면 빼서, LOGIN_IN_RES 패킷이 왔는지 확인.
 		auto packet = m_RecvQueue.front();
 
-		if (packet->PacketId == (short)PACKET_ID::LOBBY_ENTER_USER_NTF)
+		auto packetProcessFunc = m_PacketFuncMap.find(packet->PacketId);
+
+		if (packetProcessFunc == m_PacketFuncMap.end())
 		{
-			OutputDebugString(L"[RoomListData] 유저 정보 수령 성공\n");
-
-			auto packetData = (PktLobbyNewUserInfoNtf*)packet->pData;
-
-			auto userNumber = m_UserInfoVector.back().first + 1;
-			std::string userId = packetData->UserID;
-			makeUserData(userNumber, userId.c_str());
-
-			VersionUp();
+			OutputDebugString(L"[RoomListData] 맵에 등록되지 않은 패킷 받음. \n");
 		}
-		else if (packet->PacketId == (short)PACKET_ID::LOBBY_CHAT_RES)
+		else
 		{
-			auto packetData = (PktLobbyChatRes*)packet->pData;
-			if (packetData->ErrorCode != 0)
-			{
-				OutputDebugString(L"[RoomListData] 채팅 보내기 실패.\n");
-				return;
-			}
-			OutputDebugString(L"[RoomListData] 채팅 답변 수령 성공\n");
-
-
-
-			m_IsChatDelivered = true;
-			VersionUp();
-		}
-		else if (packet->PacketId == (short)PACKET_ID::LOBBY_CHAT_NTF)
-		{
-			auto recvData = (PktLobbyChatNtf*)packet->pData;
-			OutputDebugString(L"[RoomListData] 다른 사람 채팅 수령 성공\n");
-
-			//std::wstring userIdStr;
-			//Util::CharToWstring(recvData->UserID, sizeof(recvData->UserID), userIdStr);
-
-			//std::wstring userMsgStr(recvData->Msg);
-			//std::wstring wholeMsg = userIdStr + L" : " + userMsgStr;
-			//m_ChatQueue.emplace_back(std::move(wholeMsg));
-
-			VersionUp();
-		}
-		else if (packet->PacketId == (short)PACKET_ID::LOBBY_ENTER_USER_LIST_RES)
-		{
-			auto recvData = (PktLobbyUserListRes*)packet->pData;
-			if (recvData->ErrorCode != 0)
-			{
-				OutputDebugString(L"[RoomListData] 로비 유저 리스트 수령 실패\n");
-				return;
-			}
-			OutputDebugString(L"[RoomListData] 로비 안의 유저 리스트 수령 성공\n");
-
-			if (recvData->Count == 0)
-			{
-				// 패킷에서 받은 데이터의 카운트가 0이면 벡터를 비워주고 처음부터 다시 받음.
-				m_UserInfoVector.clear();
-			}
-
-			for (int i = 0; i < recvData->Count; ++i)
-			{
-				std::pair<int, std::wstring> inputData;
-				inputData.first = recvData->UserInfo[i].LobbyUserIndex;
-
-				inputData.second = Util::CharToWstring(recvData->UserInfo[i].UserID);
-				m_UserInfoVector.emplace_back(std::move(inputData));
-			}
-
-			if (recvData->IsEnd == false)
-			{
-				m_IsRequestNeeded = true;
-				m_ReceivedLastestUserId = recvData->UserInfo->LobbyUserIndex;
-			}
-			else
-			{
-				m_IsRequestNeeded = false;
-				m_ReceivedLastestUserId = 0;
-			}
-
-			VersionUp();
+			packetProcessFunc->second(packet);
 		}
 
 		m_RecvQueue.pop_front();
+	}
+
+	void RoomListData::RegisterPacketProcess()
+	{
+		m_PacketFuncMap.emplace(std::make_pair<short, pPacketFunc>(
+			(short)PACKET_ID::LOBBY_ENTER_USER_NTF,
+			[this](std::shared_ptr<RecvPacketInfo> packetInfo) { this->EnterUserNotify(packetInfo); }));
+
+		m_PacketFuncMap.emplace(std::make_pair<short, pPacketFunc>(
+			(short)PACKET_ID::LOBBY_ENTER_USER_LIST_RES,
+			[this](std::shared_ptr<RecvPacketInfo> packetInfo) { this->EnterUserListRes(packetInfo); }));
+
+		m_PacketFuncMap.emplace(std::make_pair<short, pPacketFunc>(
+			(short)PACKET_ID::LOBBY_CHAT_RES,
+			[this](std::shared_ptr<RecvPacketInfo> packetInfo) { this->LobbyChatRes(packetInfo); }));
+
+		m_PacketFuncMap.emplace(std::make_pair<short, pPacketFunc>(
+			(short)PACKET_ID::LOBBY_CHAT_NTF,
+			[this](std::shared_ptr<RecvPacketInfo> packetInfo) { this->LobbyChatNtf(packetInfo); }));
 	}
 
 	void RoomListData::SetSubscribe(PacketDistributer * publisher)
@@ -107,6 +58,7 @@ namespace ClientLogic
 		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_USER_LIST_RES, &m_RecvQueue);
 		publisher->Subscribe((short)PACKET_ID::LOBBY_CHAT_RES, &m_RecvQueue);
 		publisher->Subscribe((short)PACKET_ID::LOBBY_CHAT_NTF, &m_RecvQueue);
+		RegisterPacketProcess();
 	}
 
 	bool RoomListData::GetIsChatDelivered()
@@ -146,5 +98,88 @@ namespace ClientLogic
 	void RoomListData::RequestUserList()
 	{
 		
+	}
+
+	void RoomListData::EnterUserNotify(std::shared_ptr<RecvPacketInfo> packet)
+	{
+		OutputDebugString(L"[RoomListData] 유저 정보 수령 성공\n");
+
+		auto packetData = (PktLobbyNewUserInfoNtf*)packet->pData;
+
+		auto userNumber = m_UserInfoVector.back().first + 1;
+		std::string userId = packetData->UserID;
+		makeUserData(userNumber, userId.c_str());
+
+		VersionUp();
+	}
+
+	void RoomListData::EnterUserListRes(std::shared_ptr<RecvPacketInfo> packet)
+	{
+		auto recvData = (PktLobbyUserListRes*)packet->pData;
+		if (recvData->ErrorCode != 0)
+		{
+			OutputDebugString(L"[RoomListData] 로비 유저 리스트 수령 실패\n");
+			return;
+		}
+		OutputDebugString(L"[RoomListData] 로비 안의 유저 리스트 수령 성공\n");
+
+		if (recvData->Count == 0)
+		{
+			// 패킷에서 받은 데이터의 카운트가 0이면 벡터를 비워주고 처음부터 다시 받음.
+			m_UserInfoVector.clear();
+		}
+
+		for (int i = 0; i < recvData->Count; ++i)
+		{
+			std::pair<int, std::wstring> inputData;
+			inputData.first = recvData->UserInfo[i].LobbyUserIndex;
+
+			inputData.second = Util::CharToWstring(recvData->UserInfo[i].UserID);
+			m_UserInfoVector.emplace_back(std::move(inputData));
+		}
+
+		if (recvData->IsEnd == false)
+		{
+			m_IsRequestNeeded = true;
+			m_ReceivedLastestUserId = recvData->UserInfo->LobbyUserIndex;
+		}
+		else
+		{
+			m_IsRequestNeeded = false;
+			m_ReceivedLastestUserId = 0;
+		}
+
+		VersionUp();
+	}
+
+	void RoomListData::LobbyChatRes(std::shared_ptr<RecvPacketInfo> packet)
+	{
+		auto packetData = (PktLobbyChatRes*)packet->pData;
+		if (packetData->ErrorCode != 0)
+		{
+			OutputDebugString(L"[RoomListData] 채팅 보내기 실패.\n");
+			return;
+		}
+		OutputDebugString(L"[RoomListData] 채팅 답변 수령 성공\n");
+
+
+
+		m_IsChatDelivered = true;
+		VersionUp();
+	}
+
+	void RoomListData::LobbyChatNtf(std::shared_ptr<RecvPacketInfo> packet)
+	{
+		auto recvData = (PktLobbyChatNtf*)packet->pData;
+		OutputDebugString(L"[RoomListData] 다른 사람 채팅 수령 성공\n");
+
+		//std::wstring userIdStr;
+		//Util::CharToWstring(recvData->UserID, sizeof(recvData->UserID), userIdStr);
+
+		//std::wstring userMsgStr(recvData->Msg);
+		//std::wstring wholeMsg = userIdStr + L" : " + userMsgStr;
+		//m_ChatQueue.emplace_back(std::move(wholeMsg));
+
+		VersionUp();
 	}
 }

@@ -57,6 +57,10 @@ namespace ClientLogic
 		m_RecvQueue.pop_front();
 	}
 
+	void LobbyListData::RegisterPacketProcess()
+	{
+	}
+
 
 	void LobbyListData::SetSubscribe(PacketDistributer* publisher)
 	{

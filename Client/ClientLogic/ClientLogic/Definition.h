@@ -23,6 +23,7 @@ public :
 	ChatData(std::wstring id, std::wstring chat);
 	~ChatData() = default;
 
+	void DataSetting(std::wstring id, std::wstring chat);
 	std::wstring GetInLine();
 
 private :

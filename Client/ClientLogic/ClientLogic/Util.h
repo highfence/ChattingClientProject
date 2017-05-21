@@ -36,6 +36,8 @@ namespace ClientLogic
 	public :
 		ObjectPool() = delete;
 		ObjectPool(size_t objectNumber);
+		T GetObjectFromPool();
+		void PushToObjectPool(const T& rhs);
 
 	private :
 		std::stack<std::shared_ptr<T>> m_Stack;
@@ -46,8 +48,22 @@ namespace ClientLogic
 	{
 		for (int i = 0; i < objectNumber; ++i)
 		{
-			T obj = std::make_shared<T>();
+			auto obj = std::make_shared<T>();
 			m_Stack.push(obj);
 		}
 	}
+
+	template<class T>
+	inline T ObjectPool<T>::GetObjectFromPool()
+	{
+		return m_Stack.pop();
+	}
+
+	template<class T>
+	inline void ObjectPool<T>::PushToObjectPool(const T & rhs)
+	{
+		m_Stack.push(rhs);
+	}
+
+
 }

@@ -7,6 +7,13 @@ ChatData::ChatData(std::wstring id, std::wstring chat)
 	m_ChatTime = std::chrono::system_clock::now();
 }
 
+void ChatData::DataSetting(std::wstring id, std::wstring chat)
+{
+	m_Id = id;
+	m_ChatTime = std::chrono::system_clock::now();
+	m_Chat = chat;
+}
+
 /*
 	
 */
