@@ -105,32 +105,14 @@ void RoomList::MakeChattingGui()
 	m_ChattingGui.add(L"InputButton", GUIButton::Create(L"Send"));
 }
 
-void RoomList::UserListUpdate()
+void RoomList::userListUpdate()
 {
-	int idx = 0;
-	for (auto i : m_UserListVector)
-	{
-		if (idx >= maxUserInfoNumber)
-		{
-			break;
-		}
 
-		m_UserListGui.text(std::to_wstring(idx)).text = i;
-		++idx;
-	}
 }
 
-void RoomList::ChatListUpdate()
+void RoomList::chatListUpdate()
 {
-	// 채팅 메시지를 담을 wstring
-	std::wstring ChatMsg;
 
-	for (auto iter = m_ChatList.begin(); iter != m_ChatList.end(); ++iter)
-	{
-		ChatMsg = ChatMsg + (*iter);
-	}
-
-	m_ChattingGui.textArea(L"ChattingWindow").setText(ChatMsg);
 }
 
 void RoomList::CheckRoomClicked()
@@ -205,42 +187,107 @@ void RoomList::RequestUserInfo(const int startUserIndex)
 
 void RoomList::CheckDataUpdated()
 {
-	const int lastestDataVersion = m_data->dataContainer->GetRoomListData()->GetVersion();
-
-	if (m_CurrentDataVersion < lastestDataVersion)
+#pragma region Update Functions...
+	// 유저 정보 벡터 업데이트.
+	auto UpdateUserData = [this]()
 	{
+		for (auto i : m_data->dataContainer->GetRoomListData()->GetUserInfoVector())
+		{
+			m_UserListVector.push_back(i.second);
+		}
+	};
+
+	// 채팅 정보 리스트 업데이트.
+	auto UpdateChatData = [this]()
+	{
+		auto recvMsgString = m_data->dataContainer->RequestMsgFromRoomList();
+		while (recvMsgString != L"")
+		{
+			m_ChatList.push_back(recvMsgString);
+			recvMsgString = m_data->dataContainer->RequestMsgFromRoomList();
+		}
+	};
+
+	auto UserGuiUpdate = [this]()
+	{
+		int idx = 0;
+		for (auto i : m_UserListVector)
+		{
+			if (idx >= maxUserInfoNumber)
+			{
+				break;
+			}
+
+			m_UserListGui.text(std::to_wstring(idx)).text = i;
+			++idx;
+		}
+	};
+
+	auto UserChatWindowUpdate = [this]()
+	{
+		// 채팅 메시지를 담을 wstring
+		std::wstring ChatMsg;
+
+		for (auto iter = m_ChatList.begin(); iter != m_ChatList.end(); ++iter)
+		{
+			ChatMsg = ChatMsg + (*iter);
+		}
+
+		m_ChattingGui.textArea(L"ChattingWindow").setText(ChatMsg);
+	};
+#pragma endregion 
+#pragma region Util Functions...
+	// 가장 최신의 버전을 가져오는 함수.
+	auto GetLatestDataVersion = [this]()
+	{
+		return m_data->dataContainer->GetRoomListData()->GetVersion();
+	};
+
+	// 현재 자신이 가지고 있는 버전이 최신 버전인지 확인하는 함수.
+	auto IsDataRefreshNeeded = [this, &](int newDataVersion)
+	{
+		if (m_CurrentDataVersion < newDataVersion)
+		{
+			return true;
+		}
+		return false;
+	};
+
+	// 유저 정보 리퀘스트가 필요한지를 가져오는 함수.
+	auto IsUsetDataRequestNeeded = [this]()
+	{
+		return m_data->dataContainer->GetRoomListData()->GetIsRequestNeeded();
+	};
+#pragma endregion
+
+	const int lastestDataVersion = GetLatestDataVersion();
+
+	if (IsDataRefreshNeeded(lastestDataVersion))
+	{
+#ifdef _DEBUG
 		std::wstring debugLabel = L"[RoomListScene] 데이터 리프레시! 현재 버전 : " + std::to_wstring(m_CurrentDataVersion) + L", 최신 버전 : " + std::to_wstring(lastestDataVersion) + L"\n";
 		OutputDebugString(debugLabel.c_str());
+#endif
 		m_UserListVector.clear();
 
-		if (m_data->dataContainer->GetRoomListData()->GetIsRequestNeeded())
+		// 아직 못받은 데이터가 있으면, 리퀘스트를 또 다시 요청해준다.
+		if (IsUsetDataRequestNeeded())
 		{
-			// 아직 못받은 데이터가 있으면, 리퀘스트를 또 다시 요청해준다.
 			// 근데 이거는 구조적으로 좀 고치면 좋지 않을까 싶음.
 			RequestUserInfo(m_data->dataContainer->GetRoomListData()->GetReceivedLastestUserId());
 		}
 		else
 		{
-			// 데이터를 다 받았으므로 데이터를 업데이트 해주면 된다.
-			// 유저 정보 벡터 업데이트.
-			for (auto i : m_data->dataContainer->GetRoomListData()->GetUserInfoVector())
-			{
-				m_UserListVector.push_back(i.second);
-			}
-
-			// 채팅 정보 리스트 업데이트.
-			auto recvMsgString = m_data->dataContainer->RequestMsgFromRoomList();
-			while (recvMsgString != L"")
-			{
-				m_ChatList.push_back(recvMsgString);
-				recvMsgString = m_data->dataContainer->RequestMsgFromRoomList();
-			}
+			// 데이터 업데이트.
+			UpdateUserData();
+			UpdateChatData();
 
 			// 업데이트가 되었으므로, GUI에 표현되는 데이터를 바꾸어준다.
-			UserListUpdate();
-			ChatListUpdate();
+			UserGuiUpdate();
+			UserChatWindowUpdate();
 		}
 		
+		// 가지고 있는 데이터의 버전을 갱신해준다.
 		m_CurrentDataVersion = lastestDataVersion;
 	}
 }
