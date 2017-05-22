@@ -13,8 +13,9 @@ struct RoomList : MyApp::Scene
 	String m_ChatString;
 	std::wstring m_ChattingGuiString;
 
-	std::vector<RoomInfo*> m_RoomInfoVector;
+	std::vector<std::shared_ptr<RoomInfo>> m_RoomInfoVector;
 	std::vector<std::wstring> m_UserListVector;
+	std::list<std::wstring> m_ChatList;
 
 	/* Required Initializer for Siv3D */
 	void init() override;
@@ -32,6 +33,7 @@ struct RoomList : MyApp::Scene
 	void MakeUsers();
 	void MakeChattingGui();
 	void UserListUpdate();
+	void ChatListUpdate();
 
 	/* Update Functions */
 	void CheckRoomClicked();

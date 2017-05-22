@@ -53,6 +53,11 @@ namespace ClientLogic
 		m_pRoomListData->PushChatData(id, chatMsg);
 	}
 
+	std::wstring DataContainer::RequestMsgFromRoomList()
+	{
+		return m_pRoomListData->GetDataFromChatQueue();
+	}
+
 	std::shared_ptr<LoginData> DataContainer::GetLoginData() const
 	{
 		return m_pLoginData;

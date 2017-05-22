@@ -84,12 +84,26 @@ namespace ClientLogic
 		}
 	}
 
+	/* 채팅 데이터를 응답 대기열에 밀어넣어주는 함수. */
 	void RoomListData::PushChatData(std::wstring id, std::wstring chatMsg)
 	{
 		std::shared_ptr<ChatData> newMsg = std::make_shared<ChatData>();
 		newMsg->DataSetting(id, chatMsg);
 
 		m_WaitResQueue.emplace(std::move(newMsg));
+	}
+
+	/* 저장된 채팅 큐에서 한 라인을 뽑아주는 함수. */
+	std::wstring RoomListData::GetDataFromChatQueue()
+	{
+		if (m_ChatQueue.empty())
+		{
+			return L"";
+		}
+
+		auto returnString = m_ChatQueue.front();
+		m_ChatQueue.pop();
+		return returnString->GetInLine();
 	}
 
 	void RoomListData::makeUserData(const int userNumber, const char * userId)
@@ -168,7 +182,7 @@ namespace ClientLogic
 		else
 		{
 			OutputDebugString(L"[RoomListData] 채팅 보내기 성공\n");
-			m_ChatStack.emplace(m_WaitResQueue.front());
+			m_ChatQueue.emplace(m_WaitResQueue.front());
 
 			VersionUp();
 		}
@@ -184,7 +198,7 @@ namespace ClientLogic
 		std::wstring userIdStr = Util::CharToWstring(recvData->UserID);;
 		std::wstring userMsgStr(recvData->Msg);
 
-		m_ChatStack.emplace(std::make_shared<ChatData>(userIdStr, userMsgStr));
+		m_ChatQueue.emplace(std::make_shared<ChatData>(userIdStr, userMsgStr));
 
 		VersionUp();
 	}

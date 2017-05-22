@@ -57,15 +57,14 @@ void RoomList::RoomInfoSetting()
 {
 	const int roomInfoNum = 6;
 	const std::wstring roomName = L"Room ";
-	// TODO :: room info must be distributed by server
 	for (int i = 0; i < roomInfoNum; ++i)
 	{
-		RoomInfo* newRoomInfo = new RoomInfo;
+		std::shared_ptr<RoomInfo> newRoomInfo = std::make_shared<RoomInfo>();
 		newRoomInfo->roomName = roomName + std::to_wstring(i + 1);
 		std::wstring buttonName = L"Button" + std::to_wstring(i + 1);
 		newRoomInfo->buttonName = buttonName;
 
-		m_RoomInfoVector.push_back(newRoomInfo);
+		m_RoomInfoVector.emplace_back(std::move(newRoomInfo));
 	}
 }
 
@@ -119,6 +118,19 @@ void RoomList::UserListUpdate()
 		m_UserListGui.text(std::to_wstring(idx)).text = i;
 		++idx;
 	}
+}
+
+void RoomList::ChatListUpdate()
+{
+	// 채팅 메시지를 담을 wstring
+	std::wstring ChatMsg;
+
+	for (auto iter = m_ChatList.begin(); iter != m_ChatList.end(); ++iter)
+	{
+		ChatMsg = ChatMsg + (*iter);
+	}
+
+	m_ChattingGui.textArea(L"ChattingWindow").setText(ChatMsg);
 }
 
 void RoomList::CheckRoomClicked()
@@ -197,7 +209,7 @@ void RoomList::CheckDataUpdated()
 
 	if (m_CurrentDataVersion < lastestDataVersion)
 	{
-		std::wstring debugLabel = L"[RoomListScene] 데이터 리프레시! 현재 버전 : " + std::to_wstring(m_CurrentDataVersion) + L", 최신 버전 : " + std::to_wstring(lastestDataVersion);
+		std::wstring debugLabel = L"[RoomListScene] 데이터 리프레시! 현재 버전 : " + std::to_wstring(m_CurrentDataVersion) + L", 최신 버전 : " + std::to_wstring(lastestDataVersion) + L"\n";
 		OutputDebugString(debugLabel.c_str());
 		m_UserListVector.clear();
 
@@ -210,13 +222,23 @@ void RoomList::CheckDataUpdated()
 		else
 		{
 			// 데이터를 다 받았으므로 데이터를 업데이트 해주면 된다.
+			// 유저 정보 벡터 업데이트.
 			for (auto i : m_data->dataContainer->GetRoomListData()->GetUserInfoVector())
 			{
 				m_UserListVector.push_back(i.second);
 			}
 
+			// 채팅 정보 리스트 업데이트.
+			auto recvMsgString = m_data->dataContainer->RequestMsgFromRoomList();
+			while (recvMsgString != L"")
+			{
+				m_ChatList.push_back(recvMsgString);
+				recvMsgString = m_data->dataContainer->RequestMsgFromRoomList();
+			}
+
 			// 업데이트가 되었으므로, GUI에 표현되는 데이터를 바꾸어준다.
 			UserListUpdate();
+			ChatListUpdate();
 		}
 		
 		m_CurrentDataVersion = lastestDataVersion;

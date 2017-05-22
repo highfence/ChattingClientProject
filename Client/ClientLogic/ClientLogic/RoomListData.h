@@ -20,9 +20,10 @@ namespace ClientLogic
 		int GetReceivedLastestUserId() const { return m_ReceivedLastestUserId; };
 		std::vector<std::pair<int, std::wstring>>& GetUserInfoVector() { return m_UserInfoVector; };
 		void PushChatData(std::wstring id, std::wstring chatMsg);
+		std::wstring GetDataFromChatQueue();
 
 	private:
-		void makeUserData(const int, const char*);
+		void makeUserData(const int userNumber, const char* userId);
 		void RequestUserList();
 
 		void EnterUserNotify(std::shared_ptr<RecvPacketInfo> packet);
@@ -32,7 +33,7 @@ namespace ClientLogic
 
 		std::vector<std::pair<int, std::wstring>> m_UserInfoVector;
 		std::queue<std::shared_ptr<ChatData>> m_WaitResQueue;
-		std::stack<std::shared_ptr<ChatData>> m_ChatStack;
+		std::queue<std::shared_ptr<ChatData>> m_ChatQueue;
 
 		bool m_IsRequestNeeded = false;
 		bool m_IsChatDelivered = false;
