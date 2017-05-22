@@ -49,13 +49,13 @@ namespace ClientLogic
 		auto i = (PktLogInRes*)packet->pData;
 		if (i->ErrorCode != (short)ERROR_CODE::NONE)
 		{
-			// 로그인 실패
+			// 로그인 실패 (GUI를 띄우는 것이 좋을듯)
 			OutputDebugString(L"[LoginData] 로그인 실패!\n");
 		}
 		else
 		{
-			// 성공
 			OutputDebugString(L"[LoginData] 로그인 성공!\n");
+			// 성공
 			m_IsLoginSuccessed = true;
 			VersionUp();
 		}

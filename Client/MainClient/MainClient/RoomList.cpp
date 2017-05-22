@@ -244,7 +244,7 @@ void RoomList::CheckDataUpdated()
 	};
 
 	// 현재 자신이 가지고 있는 버전이 최신 버전인지 확인하는 함수.
-	auto IsDataRefreshNeeded = [this, &](int newDataVersion)
+	auto IsDataRefreshNeeded = [this](int newDataVersion)
 	{
 		if (m_CurrentDataVersion < newDataVersion)
 		{
