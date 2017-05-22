@@ -1,6 +1,6 @@
 #pragma once
 #include <Windows.h>
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <deque>
 #include "Packet.h"
@@ -29,7 +29,7 @@ namespace ClientLogic
 		
 		PacketMessenger* m_pMessengerAddress = nullptr;
 		bool m_IsMessengerRegisterd = false;
-		std::map<short, ObserverQueueVector> m_ObserverMap;
+		std::unordered_map<short, ObserverQueueVector> m_ObserverMap;
 	};
 
 }

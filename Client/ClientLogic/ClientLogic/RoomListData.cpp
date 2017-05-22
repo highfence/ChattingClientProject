@@ -39,6 +39,8 @@ namespace ClientLogic
 
 	void RoomListData::RegisterPacketProcess()
 	{
+		/* 이걸 어떻게 한번에 처리하게 할 수는 없을까? */
+
 		m_PacketFuncMap.emplace(
 			std::make_pair<short, pPacketFunc>(
 				(short)PACKET_ID::LOBBY_ENTER_USER_NTF,

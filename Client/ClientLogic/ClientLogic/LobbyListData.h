@@ -18,7 +18,7 @@ namespace ClientLogic
 
 	private:
 
-		void LoadData(PktLobbyListRes*);
+		void LoadData(PktLobbyListRes* pLobbyListData);
 		void LobbyListRes(std::shared_ptr<RecvPacketInfo> packet);
 		void LobbyEnterRes(std::shared_ptr<RecvPacketInfo> packet);
 		void LobbyEnterUserNtf(std::shared_ptr<RecvPacketInfo> packet);

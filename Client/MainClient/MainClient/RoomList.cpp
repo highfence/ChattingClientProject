@@ -12,6 +12,7 @@ void RoomList::init()
 {
 	RequestUserInfo();
 
+#pragma region GUI Setting
 	m_RoomListGui = GUI(GUIStyle::Default);
 	m_RoomListGui.setTitle(L"Room List");
 
@@ -25,6 +26,7 @@ void RoomList::init()
 	m_ChattingGui.setPos(chattingGuiPos);
 
 	Graphics::SetBackground(Color(200, 160, 100));
+#pragma endregion
 
 	/* Data Setting */
 	RoomInfoSetting();
@@ -50,10 +52,6 @@ void RoomList::draw() const
 {
 }
 
-void RoomList::Refresh()
-{
-
-}
 
 void RoomList::RoomInfoSetting()
 {
@@ -154,7 +152,6 @@ void RoomList::CheckSendClicked()
 
 		// Send버튼이 눌리면 리퀘스트를 보내놓고, 일단 Queue에 저장해 놓는다.
 		SendChatting(m_ChatString.c_str());
-		m_ChatQueue.push_back(m_ChatString.c_str());
 		m_ChatString.erase();
 		m_ChattingGui.textArea(L"InputField").setText(L"");
 	}
@@ -171,8 +168,13 @@ void RoomList::SendChatting(std::wstring chat)
 	PktLobbyChatReq newChatReq;
 	memcpy(newChatReq.Msg, chat.c_str(), MAX_LOBBY_CHAT_MSG_SIZE);
 
-	m_data->dataContainer->SendRequest((short)PACKET_ID::LOBBY_CHAT_REQ, sizeof(newChatReq), (char*)&newChatReq);
-	m_data->dataContainer->SendChatToRoomList(m_data->id, chat);
+	m_data->dataContainer->SendRequest(
+		(short)PACKET_ID::LOBBY_CHAT_REQ,
+		sizeof(newChatReq),
+		(char*)&newChatReq);
+	m_data->dataContainer->SendChatToRoomList(
+		m_data->id,
+		chat);
 }
 
 void RoomList::RequestUserInfo(const int startUserIndex)
@@ -180,10 +182,13 @@ void RoomList::RequestUserInfo(const int startUserIndex)
 	PktLobbyUserListReq newLobbyUserReq;
 	newLobbyUserReq.StartUserIndex = startUserIndex;
 
-	std::wstring debugLabel = L"[RoomList] 유저 인포 요청 \n";
+	std::wstring debugLabel = L"[RoomList] 유저 인포 요청. \n";
 	OutputDebugString(debugLabel.c_str());
 
-	m_data->dataContainer->SendRequest((short)PACKET_ID::LOBBY_ENTER_USER_LIST_REQ, sizeof(newLobbyUserReq), (char*)&newLobbyUserReq);
+	m_data->dataContainer->SendRequest(
+		(short)PACKET_ID::LOBBY_ENTER_USER_LIST_REQ,
+		sizeof(newLobbyUserReq),
+		(char*)&newLobbyUserReq);
 }
 
 void RoomList::CheckDataUpdated()
@@ -217,27 +222,4 @@ void RoomList::CheckDataUpdated()
 		m_CurrentDataVersion = lastestDataVersion;
 	}
 }
-
-
-void RoomList::CheckSendChattingSuccessed()
-{
-	if (m_data->dataContainer->GetRoomListData()->GetIsChatDelivered())
-	{
-		while (!m_ChatQueue.empty())
-		{
-			if (m_ChattingGuiString == L"")
-			{
-				m_ChattingGuiString = m_data->id + L" : " + m_ChatQueue.front();
-			}
-			else
-			{
-				m_ChattingGuiString = m_ChattingGuiString + L"\n" + m_data->id + L" : " + m_ChatQueue.front();
-			}
-			m_ChatQueue.pop_front();
-		}
-		m_ChattingGui.textArea(L"ChattingWindow").setText(L"");
-		m_ChattingGui.textArea(L"ChattingWindow").setText(m_ChattingGuiString);
-	}
-}
-
 

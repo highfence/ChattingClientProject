@@ -10,11 +10,11 @@ struct RoomList : MyApp::Scene
 	GUI m_ChattingGui;
 	TextScorllBox* m_pChatTextBox;
 	int m_CurrentDataVersion = -1;
+	String m_ChatString;
+	std::wstring m_ChattingGuiString;
+
 	std::vector<RoomInfo*> m_RoomInfoVector;
 	std::vector<std::wstring> m_UserListVector;
-	std::wstring m_ChattingGuiString;
-	String m_ChatString;
-	std::deque<std::wstring> m_ChatQueue;
 
 	/* Required Initializer for Siv3D */
 	void init() override;
@@ -23,8 +23,6 @@ struct RoomList : MyApp::Scene
 
 	void draw() const override;
 
-	/* Refreshing All Gui */
-	void Refresh();
 
 	/* Insert Data to member vector */
 	void RoomInfoSetting();
@@ -39,7 +37,6 @@ struct RoomList : MyApp::Scene
 	void CheckRoomClicked();
 	void CheckSendClicked();
 	void CheckDataUpdated();
-	void CheckSendChattingSuccessed();
 
 	/* Function must be called when scene changed */
 	void ExitScene();
