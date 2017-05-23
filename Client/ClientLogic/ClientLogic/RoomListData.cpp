@@ -60,6 +60,11 @@ namespace ClientLogic
 			std::make_pair<short, pPacketFunc>(
 				(short)PACKET_ID::LOBBY_CHAT_NTF,
 				[this](std::shared_ptr<RecvPacketInfo> packetInfo) { this->LobbyChatNtf(packetInfo); }));
+
+		m_PacketFuncMap.emplace(
+			std::make_pair<short, pPacketFunc>(
+				(short)PACKET_ID::LOBBY_LEAVE_RES,
+				[this](std::shared_ptr<RecvPacketInfo> packetInfo) { this->LobbyLeaveRes(packetInfo); }));
 	}
 
 	void RoomListData::SetSubscribe(PacketDistributer * publisher)
@@ -99,10 +104,7 @@ namespace ClientLogic
 	/* 저장된 채팅 큐에서 한 라인을 뽑아주는 함수. */
 	std::wstring RoomListData::GetDataFromChatQueue()
 	{
-		if (m_ChatQueue.empty())
-		{
-			return L"";
-		}
+		if (m_ChatQueue.empty()) return L"";
 
 		auto returnString = m_ChatQueue.front();
 		m_ChatQueue.pop();
@@ -232,6 +234,15 @@ namespace ClientLogic
 
 	void RoomListData::LobbyLeaveRes(std::shared_ptr<RecvPacketInfo> packet)
 	{
+		auto recvData = (PktLobbyLeaveRes*)packet->pData;
+		if (recvData->ErrorCode != 0)
+		{
+			OutputDebugString(L"[RoomListData] 로비 떠나기 실패. \n");
+		}
+		else
+		{
+			OutputDebugString(L"[RoomListData] 로비 떠나기 성공. \n");
+		}
 	}
 
 	void RoomListData::LobbyLeaveUserNtf(std::shared_ptr<RecvPacketInfo> packet)

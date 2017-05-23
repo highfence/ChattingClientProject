@@ -189,6 +189,8 @@ void RoomList::update()
 	{
 		if (m_UserListGui.button(L"BackButton").pushed)
 		{
+			// 서버에게 나간다는 메시지를 보낸뒤, 씬을 바꾸어 준다.			
+			m_data->dataContainer->SendRequest((short)PACKET_ID::LOBBY_LEAVE_REQ, 0, nullptr);
 			changeScene(L"LobbyList");
 		}
 	};
@@ -250,14 +252,12 @@ void RoomList::MakeChattingGui()
 {
 	/* Add Chatting Window */
 	m_ChattingGui.addln(L"ChattingWindow", GUITextArea::Create(5, 33));
-	//m_pChatTextBox = new TextScorllBox(Rect(30, chattingInfoHeight, 585, 130));
 
 	/* Add Divide Line */
 	m_ChattingGui.add(L"Divider", GUIHorizontalLine::Create(1));
 	m_ChattingGui.horizontalLine(L"Divider").style.color = Color(127);
 
 	//* Add Input Window */
-	//m_ChattingGui.setPos(15, chattingInfoHeight + 140);
 	m_ChattingGui.add(L"InputField", GUITextArea::Create(1, 26));
 	m_ChattingGui.add(L"InputButton", GUIButton::Create(L"Send"));
 }
@@ -277,6 +277,7 @@ void RoomList::SendChatting(std::wstring chat)
 		(short)PACKET_ID::LOBBY_CHAT_REQ,
 		sizeof(newChatReq),
 		(char*)&newChatReq);
+
 	m_data->dataContainer->SendChatToRoomList(
 		m_data->id,
 		chat);

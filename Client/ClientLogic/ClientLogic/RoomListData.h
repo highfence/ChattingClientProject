@@ -12,17 +12,18 @@ namespace ClientLogic
 		~RoomListData() = default;
 
 		void OnPacketReceive() override;
-		void RegisterPacketProcess() override;
 		void SetSubscribe(PacketDistributer*);
 
 		bool GetIsChatDelivered();
 		bool GetIsRequestNeeded() const { return m_IsRequestNeeded; };
 		int GetReceivedLastestUserId() const { return m_ReceivedLastestUserId; };
+		// TODO :: 유저 인포 받는 방식 고쳐야함.
 		std::vector<std::pair<int, std::wstring>>& GetUserInfoVector() { return m_UserInfoVector; };
 		void PushChatData(std::wstring id, std::wstring chatMsg);
 		std::wstring GetDataFromChatQueue();
 
 	private:
+		void RegisterPacketProcess() override;
 		void makeUserData(const int userNumber, const char* userId);
 		void RequestUserList();
 
