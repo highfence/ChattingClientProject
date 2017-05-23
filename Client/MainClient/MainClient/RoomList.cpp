@@ -47,9 +47,10 @@ void RoomList::update()
 		// 유저 정보 벡터 업데이트.
 		auto UpdateUserData = [this]()
 		{
-			for (auto i : m_data->dataContainer->GetRoomListData()->GetUserInfoVector())
+			m_UserListVector.clear();
+			for (auto i : m_data->dataContainer->GetRoomListData()->GetUserInfoList())
 			{
-				m_UserListVector.push_back(i.second);
+				m_UserListVector.push_back(i);
 			}
 		};
 

@@ -18,13 +18,12 @@ namespace ClientLogic
 		bool GetIsRequestNeeded() const { return m_IsRequestNeeded; };
 		int GetReceivedLastestUserId() const { return m_ReceivedLastestUserId; };
 		// TODO :: 유저 인포 받는 방식 고쳐야함.
-		std::vector<std::pair<int, std::wstring>>& GetUserInfoVector() { return m_UserInfoVector; };
+		std::list<std::wstring>& GetUserInfoList() { return m_UserInfoList; };
 		void PushChatData(std::wstring id, std::wstring chatMsg);
 		std::wstring GetDataFromChatQueue();
 
 	private:
 		void RegisterPacketProcess() override;
-		void makeUserData(const int userNumber, const char* userId);
 		void RequestUserList();
 
 		void EnterUserNotify(std::shared_ptr<RecvPacketInfo> packet);
@@ -34,7 +33,7 @@ namespace ClientLogic
 		void LobbyLeaveRes(std::shared_ptr<RecvPacketInfo> packet);
 		void LobbyLeaveUserNtf(std::shared_ptr<RecvPacketInfo> packet);
 
-		std::vector<std::pair<int, std::wstring>> m_UserInfoVector;
+		std::list<std::wstring> m_UserInfoList;
 		std::queue<std::shared_ptr<ChatData>> m_WaitResQueue;
 		std::queue<std::shared_ptr<ChatData>> m_ChatQueue;
 

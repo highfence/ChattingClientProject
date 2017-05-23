@@ -65,6 +65,11 @@ namespace ClientLogic
 			std::make_pair<short, pPacketFunc>(
 				(short)PACKET_ID::LOBBY_LEAVE_RES,
 				[this](std::shared_ptr<RecvPacketInfo> packetInfo) { this->LobbyLeaveRes(packetInfo); }));
+
+		m_PacketFuncMap.emplace(
+			std::make_pair<short, pPacketFunc>(
+				(short)PACKET_ID::LOBBY_LEAVE_USER_NTF,
+				[this](std::shared_ptr<RecvPacketInfo> packetInfo) { this->LobbyLeaveUserNtf(packetInfo); }));
 	}
 
 	void RoomListData::SetSubscribe(PacketDistributer * publisher)
@@ -111,15 +116,6 @@ namespace ClientLogic
 		return returnString->GetInLine();
 	}
 
-	void RoomListData::makeUserData(const int userNumber, const char * userId)
-	{
-		std::pair<int, std::wstring> inputData;
-		inputData.first = userNumber;
-		inputData.second = Util::CharToWstring(userId);
-
-		m_UserInfoVector.emplace_back(std::move(inputData));
-	}
-
 	void RoomListData::RequestUserList()
 	{
 		
@@ -131,9 +127,8 @@ namespace ClientLogic
 
 		auto recvData = (PktLobbyNewUserInfoNtf*)packet->pData;
 
-		auto userNumber = m_UserInfoVector.back().first + 1;
 		std::string userId = recvData->UserID;
-		makeUserData(userNumber, userId.c_str());
+		m_UserInfoList.emplace_back(std::move(Util::CharToWstring(userId.c_str())));
 
 		VersionUp();
 	}
@@ -157,11 +152,10 @@ namespace ClientLogic
 		{
 			for (int i = 0; i < recvData.Count; ++i)
 			{
-				std::pair<int, std::wstring> inputData;
-				inputData.first = recvData.UserInfo[i].LobbyUserIndex;
+				std::wstring inputData;
 
-				inputData.second = Util::CharToWstring(recvData.UserInfo[i].UserID);
-				m_UserInfoVector.emplace_back(std::move(inputData));
+				inputData = Util::CharToWstring(recvData.UserInfo[i].UserID);
+				m_UserInfoList.emplace_back(std::move(inputData));
 			}
 		};
 
@@ -177,7 +171,7 @@ namespace ClientLogic
 		if (!CheckIsRecvDataValid(*recvData)) return;
 
 		// 패킷에서 보낸 데이터의 카운트가 0일 경우, 처음부터 UserList를 받는 경우이므로 벡터를 비워줌.
-		if (recvData->Count == 0) m_UserInfoVector.clear();
+		if (recvData->Count == 0) m_UserInfoList.clear();
 
 		// 벡터에 유저 정보를 밀어넣어 준다.
 		PushUserInfoToVector(*recvData);
@@ -247,5 +241,20 @@ namespace ClientLogic
 
 	void RoomListData::LobbyLeaveUserNtf(std::shared_ptr<RecvPacketInfo> packet)
 	{
+		OutputDebugString(L"[RoomListData] 유저 떠나는 정보 수령 성공. \n");
+
+		auto recvData = (PktLobbyLeaveUserInfoNtf*)packet->pData;
+		auto leaveUserId = Util::CharToWstring(recvData->UserID);
+
+		// 아이디가 같은지 판별할 람다 함수식.
+		auto IsIdEqual = [&leaveUserId](const std::wstring i)->bool 
+		{
+			return i == leaveUserId;
+		};
+
+		// 서버 조건이 아이디가 같은 경우를 허용하지 않으므로, 아이디가 같은 유저를 찾아 없앤다.
+		m_UserInfoList.remove_if(IsIdEqual);
+
+		VersionUp();
 	}
 }
