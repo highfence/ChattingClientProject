@@ -14,9 +14,6 @@ void ChatData::DataSetting(std::wstring id, std::wstring chat)
 	m_Chat = chat;
 }
 
-/*
-	
-*/
 std::wstring ChatData::GetInLine()
 {
 	std::wstring chatData;
@@ -50,5 +47,5 @@ std::wstring ChatData::GetInLine()
 }
 
 UserData::UserData(int userNumber, std::wstring userId)
-{
-}
+	: m_UserNumber(userNumber), m_UserId(userId) {}
+

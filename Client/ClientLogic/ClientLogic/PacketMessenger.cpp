@@ -27,10 +27,7 @@ namespace ClientLogic
 		std::lock_guard<std::mutex> lockDeque(m_Mutex);
 
 		/* If there is no message in queue, return nullptr */
-		if (m_PacketDeque.empty())
-		{
-			return nullptr;
-		}
+		if (m_PacketDeque.empty()) return nullptr;
 
 		/* Return front packet of the queue */
 		auto frontPacket = m_PacketDeque.front();

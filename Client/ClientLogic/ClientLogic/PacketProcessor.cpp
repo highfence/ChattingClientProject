@@ -54,7 +54,7 @@ namespace ClientLogic
 		}
 	}
 
-	void PacketDistributer::Subscribe(short interestPacketId, std::deque<std::shared_ptr<RecvPacketInfo>>* observerPacketQueue)
+	void PacketDistributer::Subscribe(short interestPacketId, ObserverQueue* observerPacketQueue)
 	{
 		// 해당 패킷 아이디로 구독 등록한 옵저버 큐가 없으면 새로운 리스트 생성.
 		if (m_ObserverMap.find(interestPacketId) == m_ObserverMap.end())

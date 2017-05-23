@@ -34,15 +34,11 @@ void LobbyList::update()
 {
 	m_data->dataContainer->Update();
 
-	if (IsMyDataNeedRefreshed())
-	{
-		RefreshData();
-	}
+	if (IsMyDataNeedRefreshed()) RefreshData();
 
 	/* if lobby entry button pushed */
 	CheckButtonClicked();
 
-	// TODO :: 룸리스트 받기.
 	if (m_data->dataContainer->GetLobbyListData()->GetIsLobbySuccesslyEntered())
 	{
 		changeScene(L"RoomList");
@@ -54,18 +50,15 @@ void LobbyList::draw() const
 	DrawConnectAbleLobbyInfo();
 }
 
-void LobbyList::CheckRefreshNeeded()
-{
-	// TODO :: 타이머를 달아서 일정한 시간마다 Refresh를 자동으로 할 수 있도록 만들기.
-}
-
 void LobbyList::RefreshData()
 {
 	OutputDebugString(L"[Lobby] 데이터 리프레시 \n");
 	m_LobbyVector.clear();
 
+	// 가능한 로비 개수 받기.
 	m_AbleLobbyNumber = m_data->dataContainer->GetLobbyListData()->GetLobbyCount();
 
+	// 로비 정보를 이해할 수 있는 LobbyInfo 구조체로 옮겨 저장하기.
 	for (int i = 0; i < m_AbleLobbyNumber; ++i)
 	{
 		LobbyInfo* newLobbyInfo = new LobbyInfo;
@@ -74,6 +67,8 @@ void LobbyList::RefreshData()
 		newLobbyInfo->LobbyButtonName = L"LobbyButton" + std::to_wstring(i);
 		m_LobbyVector.emplace_back(std::move(newLobbyInfo));
 	}
+	
+	// 버전 업데이트.
 	m_LastDataVersion = m_data->dataContainer->GetLobbyListData()->GetVersion();
 }
 

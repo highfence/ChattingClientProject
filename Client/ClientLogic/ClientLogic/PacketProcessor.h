@@ -11,7 +11,8 @@ using namespace NCommon;
 namespace ClientLogic
 {
 	class PacketMessenger;
-	using ObserverQueueVector = std::vector<std::deque<std::shared_ptr<RecvPacketInfo>>*>;
+	using ObserverQueue = std::deque<std::shared_ptr<RecvPacketInfo>>;
+	using ObserverQueueVector = std::vector<ObserverQueue*>;
 
 	class PacketDistributer
 	{
@@ -23,7 +24,7 @@ namespace ClientLogic
 		void RegisterMessenger(PacketMessenger* messengerAddress);
 
 		void BroadCast(std::shared_ptr<RecvPacketInfo>);
-		void Subscribe(short, std::deque<std::shared_ptr<RecvPacketInfo>>*);
+		void Subscribe(short, ObserverQueue*);
 
 	private :
 		

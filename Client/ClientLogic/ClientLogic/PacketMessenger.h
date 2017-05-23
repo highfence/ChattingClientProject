@@ -1,6 +1,5 @@
 #pragma once
 #include <WinSock2.h>
-//#include <WS2tcpip.h>
 #include <stdlib.h>
 #include <thread>
 #include <mutex>
@@ -31,7 +30,6 @@ namespace ClientLogic
 
 		const short GetConnectState() const { return (short)m_ConnectState; };
 		std::shared_ptr<RecvPacketInfo> GetPacketFromDeque();
-
 
 	private :
 
