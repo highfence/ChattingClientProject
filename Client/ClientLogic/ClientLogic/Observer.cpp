@@ -8,5 +8,4 @@ namespace ClientLogic
 	{
 		processor->Subscribe(packetId, &m_RecvQueue);
 	}
-
 }

@@ -10,10 +10,10 @@ namespace ClientLogic
 
 		void OnPacketReceive() override;
 		void RegisterPacketProcess() override;
-		void SetSubscribe(PacketDistributer*);
+		void SetSubscribe(PacketDistributer* publisher);
 
 		short GetLobbyCount() const { return m_LobbyCount; };
-		const LobbyListInfo* GetLobbyListInfo(const int) const;
+		const LobbyListInfo* GetLobbyListInfo(const int listIdx) const;
 		bool GetIsLobbySuccesslyEntered() const { return m_IsLobbySuccesslyEntered; };
 
 	private:

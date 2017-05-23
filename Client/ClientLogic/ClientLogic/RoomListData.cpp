@@ -20,7 +20,7 @@ namespace ClientLogic
 			return;
 		}
 
-		// 큐가 있다면 빼서, LOGIN_IN_RES 패킷이 왔는지 확인.
+		// 큐에 패킷이 있다면 빼서, 대응되는 Function이 있나 확인.
 		auto packet = m_RecvQueue.front();
 
 		auto packetProcessFunc = m_PacketFuncMap.find(packet->PacketId);
@@ -135,34 +135,56 @@ namespace ClientLogic
 
 	void RoomListData::EnterUserListRes(std::shared_ptr<RecvPacketInfo> packet)
 	{
+#pragma region Functions...
+
+		auto CheckIsRecvDataValid = [](PktLobbyUserListRes& recvData)-> bool
+		{
+			if (recvData.ErrorCode != 0)
+			{
+				OutputDebugString(L"[RoomListData] 로비 유저 리스트 수령 실패\n");
+				return false;
+			}
+			OutputDebugString(L"[RoomListData] 로비 안의 유저 리스트 수령 성공\n");
+			return true;
+		};
+
+		auto PushUserInfoToVector = [this](PktLobbyUserListRes& recvData)
+		{
+			for (int i = 0; i < recvData.Count; ++i)
+			{
+				std::pair<int, std::wstring> inputData;
+				inputData.first = recvData.UserInfo[i].LobbyUserIndex;
+
+				inputData.second = Util::CharToWstring(recvData.UserInfo[i].UserID);
+				m_UserInfoVector.emplace_back(std::move(inputData));
+			}
+		};
+
+		auto IsUserDataEnded = [](PktLobbyUserListRes& recvData)-> bool
+		{
+			return recvData.IsEnd;
+		};
+
+#pragma endregion
+
 		auto recvData = (PktLobbyUserListRes*)packet->pData;
-		if (recvData->ErrorCode != 0)
-		{
-			OutputDebugString(L"[RoomListData] 로비 유저 리스트 수령 실패\n");
-			return;
-		}
-		OutputDebugString(L"[RoomListData] 로비 안의 유저 리스트 수령 성공\n");
 
-		if (recvData->Count == 0)
-		{
-			// 패킷에서 받은 데이터의 카운트가 0이면 벡터를 비워주고 처음부터 다시 받음.
-			m_UserInfoVector.clear();
-		}
+		if (!CheckIsRecvDataValid(*recvData)) return;
 
-		for (int i = 0; i < recvData->Count; ++i)
-		{
-			std::pair<int, std::wstring> inputData;
-			inputData.first = recvData->UserInfo[i].LobbyUserIndex;
+		// 패킷에서 보낸 데이터의 카운트가 0일 경우, 처음부터 UserList를 받는 경우이므로 벡터를 비워줌.
+		if (recvData->Count == 0) m_UserInfoVector.clear();
 
-			inputData.second = Util::CharToWstring(recvData->UserInfo[i].UserID);
-			m_UserInfoVector.emplace_back(std::move(inputData));
-		}
+		// 벡터에 유저 정보를 밀어넣어 준다.
+		PushUserInfoToVector(*recvData);
 
-		if (recvData->IsEnd == false)
+		// 더 받아야 할 유저 데이터가 있다면,
+		if (!IsUserDataEnded(*recvData))
 		{
+			// 어디까지 받았는지 기록해 놓는다.
 			m_IsRequestNeeded = true;
 			m_ReceivedLastestUserId = recvData->UserInfo->LobbyUserIndex;
 		}
+		// 더 받아야 할 유저 데이터가 없다면,
 		else
 		{
 			m_IsRequestNeeded = false;

@@ -56,12 +56,14 @@ namespace ClientLogic
 		publisher->Subscribe((short)PACKET_ID::LOBBY_LIST_RES, &m_RecvQueue);
 		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_RES, &m_RecvQueue);
 		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_USER_NTF, &m_RecvQueue);
+
+		/* 구독한 패킷 아이디에 대응되는 Function들을 가지고 있어야한다. */
 		RegisterPacketProcess();
 	}
 
-	const LobbyListInfo * LobbyListData::GetLobbyListInfo(const int idx) const
+	const LobbyListInfo * LobbyListData::GetLobbyListInfo(const int listIdx) const
 	{
-		const auto listLobbyConstPointer = &m_LobbyList[idx];
+		const auto listLobbyConstPointer = &m_LobbyList[listIdx];
 		return listLobbyConstPointer;
 	}
 
