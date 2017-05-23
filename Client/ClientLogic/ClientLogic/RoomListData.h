@@ -30,6 +30,8 @@ namespace ClientLogic
 		void EnterUserListRes(std::shared_ptr<RecvPacketInfo> packet);
 		void LobbyChatRes(std::shared_ptr<RecvPacketInfo> packet);
 		void LobbyChatNtf(std::shared_ptr<RecvPacketInfo> packet);
+		void LobbyLeaveRes(std::shared_ptr<RecvPacketInfo> packet);
+		void LobbyLeaveUserNtf(std::shared_ptr<RecvPacketInfo> packet);
 
 		std::vector<std::pair<int, std::wstring>> m_UserInfoVector;
 		std::queue<std::shared_ptr<ChatData>> m_WaitResQueue;

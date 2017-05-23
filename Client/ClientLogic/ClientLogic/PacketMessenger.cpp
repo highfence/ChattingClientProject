@@ -5,6 +5,11 @@
 
 namespace ClientLogic
 {
+	PacketMessenger::~PacketMessenger()
+	{
+		Release();
+	}
+
 	void PacketMessenger::Init()
 	{
 		if (!SetSocket())

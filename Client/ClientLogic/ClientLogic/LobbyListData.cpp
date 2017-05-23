@@ -67,6 +67,16 @@ namespace ClientLogic
 		return listLobbyConstPointer;
 	}
 
+	bool LobbyListData::GetIsLobbySuccesslyEntered() 
+	{
+		if (m_IsLobbySuccesslyEntered)
+		{
+			m_IsLobbySuccesslyEntered = false;
+			return true;
+		}
+		return false;
+	}
+
 	void LobbyListData::LoadData(PktLobbyListRes* pLobbyListData)
 	{
 		m_LobbyCount = pLobbyListData->LobbyCount;

@@ -20,7 +20,7 @@ namespace ClientLogic
 	public :
 
 		PacketMessenger() = default;
-		~PacketMessenger() = default;
+		~PacketMessenger();
 
 		void Init();
 		void Release();

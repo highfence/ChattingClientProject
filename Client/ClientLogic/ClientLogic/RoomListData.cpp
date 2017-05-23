@@ -68,6 +68,9 @@ namespace ClientLogic
 		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_USER_LIST_RES, &m_RecvQueue);
 		publisher->Subscribe((short)PACKET_ID::LOBBY_CHAT_RES, &m_RecvQueue);
 		publisher->Subscribe((short)PACKET_ID::LOBBY_CHAT_NTF, &m_RecvQueue);
+		publisher->Subscribe((short)PACKET_ID::LOBBY_LEAVE_RES, &m_RecvQueue);
+		publisher->Subscribe((short)PACKET_ID::LOBBY_LEAVE_USER_NTF, &m_RecvQueue);
+
 		RegisterPacketProcess();
 	}
 
@@ -187,10 +190,12 @@ namespace ClientLogic
 		// 더 받아야 할 유저 데이터가 없다면,
 		else
 		{
+			// 변수를 초기화 시켜놓는다.
 			m_IsRequestNeeded = false;
 			m_ReceivedLastestUserId = 0;
 		}
 
+		// 버전 갱신.
 		VersionUp();
 	}
 
@@ -223,5 +228,13 @@ namespace ClientLogic
 		m_ChatQueue.emplace(std::make_shared<ChatData>(userIdStr, userMsgStr));
 
 		VersionUp();
+	}
+
+	void RoomListData::LobbyLeaveRes(std::shared_ptr<RecvPacketInfo> packet)
+	{
+	}
+
+	void RoomListData::LobbyLeaveUserNtf(std::shared_ptr<RecvPacketInfo> packet)
+	{
 	}
 }

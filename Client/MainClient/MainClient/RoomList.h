@@ -32,13 +32,6 @@ struct RoomList : MyApp::Scene
 	void MakeRooms();
 	void MakeUsers();
 	void MakeChattingGui();
-	void userListUpdate();
-	void chatListUpdate();
-
-	/* Update Functions */
-	void CheckRoomClicked();
-	void CheckSendClicked();
-	void CheckDataUpdated();
 
 	/* Function must be called when scene changed */
 	void ExitScene();
