@@ -4,36 +4,6 @@
 
 namespace ClientLogic
 {
-	void LoginData::OnPacketReceive()
-	{
-		// 받은 큐가 비어있으면 일하지 않음.
-		if (m_RecvQueue.empty())
-		{
-			Sleep(0);
-			return;
-		}
-
-		// 큐가 있다면 빼서, LOGIN_IN_RES 패킷이 왔는지 확인.
-		auto packet = m_RecvQueue.front();
-
-		auto packetProcess = m_PacketFuncMap.find(packet->PacketId);
-
-		if (packetProcess == m_PacketFuncMap.end())
-		{
-			OutputDebugString(L"[LoginData] 구독하지 않은 패킷 전송 받음. \n");
-		}
-		else
-		{
-			packetProcess->second(packet);
-		}
-	
-		m_RecvQueue.pop_front();
-	}
-
-	void LoginData::RegisterPacketProcess()
-	{
-	}
-
 	void LoginData::SetSubscribe(PacketDistributer* publisher)
 	{
 		// 패킷 처리 함수를 PacketFunctionMap에 건네준다. 
