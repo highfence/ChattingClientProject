@@ -1,3 +1,4 @@
+#include <functional>
 #include "Observer.h"
 #include "LoginData.h"
 
@@ -31,18 +32,20 @@ namespace ClientLogic
 
 	void LoginData::RegisterPacketProcess()
 	{
-		m_PacketFuncMap.emplace(
-			std::make_pair<short, pPacketFunc>(
-				(short)PACKET_ID::LOGIN_IN_RES,
-				[this](std::shared_ptr<RecvPacketInfo> packet) { this->LoginInRes(packet); }));
 	}
 
 	void LoginData::SetSubscribe(PacketDistributer* publisher)
 	{
-		publisher->Subscribe((short)PACKET_ID::LOGIN_IN_RES, &m_RecvQueue);
-		RegisterPacketProcess();
+		// 패킷 처리 함수를 PacketFunctionMap에 건네준다. 
+		publisher->Subscribe(
+			(short)PACKET_ID::LOGIN_IN_RES,
+			std::bind(
+				&LoginData::LoginInRes,
+				this,
+				std::placeholders::_1));
 	}
 
+	// PACKET_ID::LOGIN_IN_RES를 처리하는 함수.
 	void LoginData::LoginInRes(std::shared_ptr<RecvPacketInfo> packet)
 	{
 		// 에러코드 확인.
@@ -53,8 +56,8 @@ namespace ClientLogic
 		}
 		else
 		{
+			// 로그인이 성공했다면 로그인이 성공했고 변수를 바꿔준다.
 			OutputDebugString(L"[LoginData] 로그인 성공!\n");
-			// 성공
 			m_IsLoginSuccessed = true;
 			VersionUp();
 		}

@@ -6,6 +6,5 @@ namespace ClientLogic
 {
 	void Observer::Subscribe(short packetId, PacketDistributer* processor)
 	{
-		processor->Subscribe(packetId, &m_RecvQueue);
 	}
 }

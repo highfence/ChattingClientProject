@@ -39,8 +39,7 @@ namespace ClientLogic
 
 	void RoomListData::RegisterPacketProcess()
 	{
-		/* 이걸 어떻게 한번에 처리하게 할 수는 없을까? */
-
+		/* 이걸 어떻게 한번에 처리하게 할 수는 없을까? -> 교수님한테 여쭈어보자. */
 		m_PacketFuncMap.emplace(
 			std::make_pair<short, pPacketFunc>(
 				(short)PACKET_ID::LOBBY_ENTER_USER_NTF,
@@ -74,14 +73,7 @@ namespace ClientLogic
 
 	void RoomListData::SetSubscribe(PacketDistributer * publisher)
 	{
-		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_USER_NTF, &m_RecvQueue);
-		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_USER_LIST_RES, &m_RecvQueue);
-		publisher->Subscribe((short)PACKET_ID::LOBBY_CHAT_RES, &m_RecvQueue);
-		publisher->Subscribe((short)PACKET_ID::LOBBY_CHAT_NTF, &m_RecvQueue);
-		publisher->Subscribe((short)PACKET_ID::LOBBY_LEAVE_RES, &m_RecvQueue);
-		publisher->Subscribe((short)PACKET_ID::LOBBY_LEAVE_USER_NTF, &m_RecvQueue);
 
-		RegisterPacketProcess();
 	}
 
 	bool RoomListData::GetIsChatDelivered()

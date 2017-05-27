@@ -52,13 +52,7 @@ namespace ClientLogic
 
 	void LobbyListData::SetSubscribe(PacketDistributer* publisher)
 	{
-		/* 구독한 패킷에 대해서는 PacketProcess를 만들어주고, 등록해주어야 함. */
-		publisher->Subscribe((short)PACKET_ID::LOBBY_LIST_RES, &m_RecvQueue);
-		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_RES, &m_RecvQueue);
-		publisher->Subscribe((short)PACKET_ID::LOBBY_ENTER_USER_NTF, &m_RecvQueue);
 
-		/* 구독한 패킷 아이디에 대응되는 Function들을 가지고 있어야한다. */
-		RegisterPacketProcess();
 	}
 
 	const LobbyListInfo * LobbyListData::GetLobbyListInfo(const int listIdx) const
