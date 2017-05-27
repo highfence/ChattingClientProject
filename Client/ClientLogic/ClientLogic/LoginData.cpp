@@ -15,6 +15,16 @@ namespace ClientLogic
 				std::placeholders::_1));
 	}
 
+	bool LoginData::GetLoginSuccessed()
+	{
+		if (m_IsLoginSuccessed == true)
+		{
+			m_IsLoginSuccessed = false;
+			return true;
+		}
+		return false;
+	}
+
 	// PACKET_ID::LOGIN_IN_RES를 처리하는 함수.
 	void LoginData::LoginInRes(std::shared_ptr<RecvPacketInfo> packet)
 	{
