@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 
 namespace ClientLogic
 {
@@ -8,8 +9,6 @@ namespace ClientLogic
 		LobbyListData() = default;
 		~LobbyListData() = default;
 
-		void OnPacketReceive() override;
-		void RegisterPacketProcess() override;
 		void SetSubscribe(PacketDistributer* publisher);
 
 		short GetLobbyCount() const { return m_LobbyCount; };
@@ -18,13 +17,12 @@ namespace ClientLogic
 
 	private:
 
-		void LoadData(PktLobbyListRes* pLobbyListData);
+		// 패킷을 처리할 함수들.
 		void LobbyListRes(std::shared_ptr<RecvPacketInfo> packet);
 		void LobbyEnterRes(std::shared_ptr<RecvPacketInfo> packet);
-		void LobbyEnterUserNtf(std::shared_ptr<RecvPacketInfo> packet);
 
 		short m_LobbyCount = 0;
-		LobbyListInfo m_LobbyList[MAX_LOBBY_LIST_COUNT];
+		std::array<LobbyListInfo, MAX_LOBBY_LIST_COUNT> m_LobbyList;
 		bool m_IsLobbySuccesslyEntered = false;
 	};
 }

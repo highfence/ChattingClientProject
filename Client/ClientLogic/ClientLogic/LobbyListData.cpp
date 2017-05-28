@@ -1,58 +1,18 @@
+#include <functional>
 #include "Observer.h"
 #include "LobbyListData.h"
 
 namespace ClientLogic
 {
-	void LobbyListData::OnPacketReceive()
-	{
-		/* 받은 큐가 비었다면 차례를 넘긴다. */
-		if (m_RecvQueue.empty())
-		{
-			Sleep(0);
-			return;
-		}
-
-		/* 큐에 패킷이 있다면 packet을 받는다. */
-		auto packet = m_RecvQueue.front();
-
-		/* 구독한 패킷 아이디로 unorded_map 에서 대응되는 함수를 찾는다. */
-		auto packetProcessFunc = m_PacketFuncMap.find(packet->PacketId);
-
-		/* 대응되는 함수가 없을 경우. */
-		if (packetProcessFunc == m_PacketFuncMap.end())
-		{
-			OutputDebugString(L"[LobbyListData] 구독하지 않은 패킷을 전송받음. \n");
-		}
-		/* 대응되는 함수가 있는 경우. */
-		else
-		{
-			packetProcessFunc->second(packet);
-		}
-
-		m_RecvQueue.pop_front();
-	}
-
-	void LobbyListData::RegisterPacketProcess()
-	{
-		m_PacketFuncMap.emplace(
-			std::make_pair<short, pPacketFunc>(
-				(short)PACKET_ID::LOBBY_LIST_RES,
-				[this](std::shared_ptr<RecvPacketInfo> packet) { this->LobbyListRes(packet); }));
-
-		m_PacketFuncMap.emplace(
-			std::make_pair<short, pPacketFunc>(
-				(short)PACKET_ID::LOBBY_ENTER_RES,
-				[this](std::shared_ptr<RecvPacketInfo> packet) { this->LobbyEnterRes(packet); }));
-
-		m_PacketFuncMap.emplace(
-			std::make_pair<short, pPacketFunc>(
-				(short)PACKET_ID::LOBBY_ENTER_USER_NTF,
-				[this](std::shared_ptr<RecvPacketInfo> packet) { this->LobbyEnterUserNtf(packet); }));
-	}
-
 	void LobbyListData::SetSubscribe(PacketDistributer* publisher)
 	{
-
+		// 패킷 처리 함수를 PacketFunctionMap에 건네준다. 
+		publisher->Subscribe(
+			(short)PACKET_ID::LOBBY_LIST_RES,
+			std::bind(&LobbyListData::LobbyListRes, this, std::placeholders::_1));
+		publisher->Subscribe(
+			(short)PACKET_ID::LOBBY_ENTER_RES,
+			std::bind(&LobbyListData::LobbyEnterRes, this, std::placeholders::_1));
 	}
 
 	const LobbyListInfo * LobbyListData::GetLobbyListInfo(const int listIdx) const
@@ -71,18 +31,20 @@ namespace ClientLogic
 		return false;
 	}
 
-	void LobbyListData::LoadData(PktLobbyListRes* pLobbyListData)
-	{
-		m_LobbyCount = pLobbyListData->LobbyCount;
-
-		for (int i = 0; i < m_LobbyCount; ++i)
-		{
-			m_LobbyList[i] = pLobbyListData->LobbyList[i];
-		}
-	}
-
 	void LobbyListData::LobbyListRes(std::shared_ptr<RecvPacketInfo> packet)
 	{
+#pragma region Load Function
+		auto LoadData = [this](PktLobbyListRes* pLobbyListData)
+		{
+			m_LobbyCount = pLobbyListData->LobbyCount;
+
+			for (int i = 0; i < m_LobbyCount; ++i)
+			{
+				m_LobbyList[i] = pLobbyListData->LobbyList[i];
+			}
+		};
+#pragma endregion
+
 		auto pLobbyListData = (PktLobbyListRes*)packet->pData;
 		if (pLobbyListData->ErrorCode != (short)ERROR_CODE::NONE)
 		{
@@ -91,6 +53,7 @@ namespace ClientLogic
 		else
 		{
 			OutputDebugString(L"[LobbyListData] 로비리스트 성공적으로 수령\n");
+			// 로비리스트를 수령한 경우, m_LobbyList에 데이터를 넣어준다.
 			LoadData(pLobbyListData);
 			VersionUp();
 		}
@@ -109,10 +72,5 @@ namespace ClientLogic
 			m_IsLobbySuccesslyEntered = true;
 			VersionUp();
 		}
-	}
-
-	void LobbyListData::LobbyEnterUserNtf(std::shared_ptr<RecvPacketInfo> packet)
-	{
-		OutputDebugString(L"[LobbyListData] LOBBY_ENTER_USER_NTF 패킷 수령\n");
 	}
 }

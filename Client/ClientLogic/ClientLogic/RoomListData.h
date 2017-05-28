@@ -11,8 +11,7 @@ namespace ClientLogic
 		RoomListData() = default;
 		~RoomListData() = default;
 
-		void OnPacketReceive() override;
-		void SetSubscribe(PacketDistributer*);
+		void SetSubscribe(PacketDistributer* publisher);
 
 		bool GetIsChatDelivered();
 		bool GetIsRequestNeeded() const { return m_IsRequestNeeded; };
@@ -23,7 +22,6 @@ namespace ClientLogic
 		std::wstring GetDataFromChatQueue();
 
 	private:
-		void RegisterPacketProcess() override;
 		void RequestUserList();
 
 		void EnterUserNotify(std::shared_ptr<RecvPacketInfo> packet);

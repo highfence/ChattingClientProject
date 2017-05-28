@@ -4,7 +4,5 @@
 
 namespace ClientLogic
 {
-	void Observer::Subscribe(short packetId, PacketDistributer* processor)
-	{
-	}
+
 }
