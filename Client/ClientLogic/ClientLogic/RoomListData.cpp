@@ -14,11 +14,11 @@ namespace ClientLogic
 	void RoomListData::SetSubscribe(PacketDistributer * publisher)
 	{
 		publisher->Subscribe(
-			(short)PACKET_ID::ROOM_ENTER_RES,
+			(short)PACKET_ID::LOBBY_ENTER_USER_LIST_RES,
 			std::bind(&RoomListData::EnterUserListRes, this, std::placeholders::_1));
 
 		publisher->Subscribe(
-			(short)PACKET_ID::ROOM_ENTER_USER_NTF,
+			(short)PACKET_ID::LOBBY_ENTER_USER_NTF,
 			std::bind(&RoomListData::EnterUserNotify, this, std::placeholders::_1));
 			
 		publisher->Subscribe(
@@ -108,6 +108,7 @@ namespace ClientLogic
 			{
 				std::wstring inputData;
 
+				auto a = recvData.UserInfo[i].UserID;
 				inputData = Util::CharToWstring(recvData.UserInfo[i].UserID);
 				m_UserInfoList.emplace_back(std::move(inputData));
 			}
