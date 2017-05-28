@@ -13,7 +13,29 @@ namespace ClientLogic
 {
 	void RoomListData::SetSubscribe(PacketDistributer * publisher)
 	{
+		publisher->Subscribe(
+			(short)PACKET_ID::ROOM_ENTER_RES,
+			std::bind(&RoomListData::EnterUserListRes, this, std::placeholders::_1));
 
+		publisher->Subscribe(
+			(short)PACKET_ID::ROOM_ENTER_USER_NTF,
+			std::bind(&RoomListData::EnterUserNotify, this, std::placeholders::_1));
+			
+		publisher->Subscribe(
+			(short)PACKET_ID::LOBBY_CHAT_RES,
+			std::bind(&RoomListData::LobbyChatRes, this, std::placeholders::_1));
+
+		publisher->Subscribe(
+			(short)PACKET_ID::LOBBY_CHAT_NTF,
+			std::bind(&RoomListData::LobbyChatNtf, this, std::placeholders::_1));
+		
+		publisher->Subscribe(
+			(short)PACKET_ID::LOBBY_LEAVE_RES,
+			std::bind(&RoomListData::LobbyLeaveRes, this, std::placeholders::_1));
+
+		publisher->Subscribe(
+			(short)PACKET_ID::LOBBY_LEAVE_USER_NTF,
+			std::bind(&RoomListData::LobbyLeaveUserNtf, this, std::placeholders::_1));
 	}
 
 	bool RoomListData::GetIsChatDelivered()
