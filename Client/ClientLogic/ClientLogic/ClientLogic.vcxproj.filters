@@ -48,6 +48,9 @@
     <ClCompile Include="PacketProcessor.cpp">
       <Filter>PacketHandlers</Filter>
     </ClCompile>
+    <ClCompile Include="RoomData.cpp">
+      <Filter>DataContainers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Util.h">
@@ -84,6 +87,9 @@
       <Filter>Definition</Filter>
     </ClInclude>
     <ClInclude Include="Observer.h">
+      <Filter>DataContainers</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomData.h">
       <Filter>DataContainers</Filter>
     </ClInclude>
   </ItemGroup>

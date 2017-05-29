@@ -15,11 +15,15 @@ namespace ClientLogic
 	{
 		publisher->Subscribe(
 			(short)PACKET_ID::LOBBY_ENTER_USER_LIST_RES,
-			std::bind(&RoomListData::EnterUserListRes, this, std::placeholders::_1));
+			std::bind(&RoomListData::LobbyEnterUserListRes, this, std::placeholders::_1));
 
 		publisher->Subscribe(
 			(short)PACKET_ID::LOBBY_ENTER_USER_NTF,
-			std::bind(&RoomListData::EnterUserNotify, this, std::placeholders::_1));
+			std::bind(&RoomListData::LobbyEnterUserNtf, this, std::placeholders::_1));
+
+		publisher->Subscribe(
+			(short)PACKET_ID::LOBBY_ENTER_ROOM_LIST_RES,
+			std::bind(&RoomListData::LobbyEnterRoomListRes, this, std::placeholders::_1));
 			
 		publisher->Subscribe(
 			(short)PACKET_ID::LOBBY_CHAT_RES,
@@ -36,6 +40,10 @@ namespace ClientLogic
 		publisher->Subscribe(
 			(short)PACKET_ID::LOBBY_LEAVE_USER_NTF,
 			std::bind(&RoomListData::LobbyLeaveUserNtf, this, std::placeholders::_1));
+
+		publisher->Subscribe(
+			(short)PACKET_ID::ROOM_ENTER_RES,
+			std::bind(&RoomListData::RoomEnterRes, this, std::placeholders::_1));
 	}
 
 	bool RoomListData::GetIsChatDelivered()
@@ -49,6 +57,45 @@ namespace ClientLogic
 			m_IsChatDelivered = false;
 			return true;
 		}
+	}
+
+	bool RoomListData::GetIsRoomSuccesslyEntered()
+	{
+		if (m_IsRoomSuccesslyEntered)
+		{
+			m_IsRoomSuccesslyEntered = false;
+			return true;
+		}
+		return false;
+	}
+
+	bool RoomListData::GetIsRoomDataRequestNeeded()
+	{
+		if (m_IsRoomRequestNeeded)
+		{
+			m_IsRoomRequestNeeded = false;
+			return true;
+		}
+		return false;
+	}
+
+	bool RoomListData::GetRoomInfoFromQueue(short* roomIndex, short* roomUserCount, std::wstring* roomTitle)
+	{
+		// 남아있는 RoomInfo가 없을 경우.
+		if (m_RoomInfoQueue.empty())
+		{
+			return false;
+		}
+
+		// 큐에서 RoomInfo를 하나 빼준다.
+		auto roomInfo = m_RoomInfoQueue.front();
+		m_RoomInfoQueue.pop();
+
+		*roomIndex = roomInfo->RoomIndex;
+		*roomUserCount = roomInfo->RoomUserCount;
+		*roomTitle = roomInfo->RoomTitle;
+
+		return true;
 	}
 
 	/* 채팅 데이터를 응답 대기열에 밀어넣어주는 함수. */
@@ -70,12 +117,7 @@ namespace ClientLogic
 		return returnString->GetInLine();
 	}
 
-	void RoomListData::RequestUserList()
-	{
-		
-	}
-
-	void RoomListData::EnterUserNotify(std::shared_ptr<RecvPacketInfo> packet)
+	void RoomListData::LobbyEnterUserNtf(std::shared_ptr<RecvPacketInfo> packet)
 	{
 		OutputDebugString(L"[RoomListData] 유저 정보 수령 성공\n");
 
@@ -87,7 +129,7 @@ namespace ClientLogic
 		VersionUp();
 	}
 
-	void RoomListData::EnterUserListRes(std::shared_ptr<RecvPacketInfo> packet)
+	void RoomListData::LobbyEnterUserListRes(std::shared_ptr<RecvPacketInfo> packet)
 	{
 #pragma region Functions...
 
@@ -126,7 +168,7 @@ namespace ClientLogic
 		if (!CheckIsRecvDataValid(*recvData)) return;
 
 		// 패킷에서 보낸 데이터의 카운트가 0일 경우, 처음부터 UserList를 받는 경우이므로 벡터를 비워줌.
-		if (recvData->Count == 0) m_UserInfoList.clear();
+		m_UserInfoList.clear();
 
 		// 벡터에 유저 정보를 밀어넣어 준다.
 		PushUserInfoToVector(*recvData);
@@ -135,19 +177,51 @@ namespace ClientLogic
 		if (!IsUserDataEnded(*recvData))
 		{
 			// 어디까지 받았는지 기록해 놓는다.
-			m_IsRequestNeeded = true;
+			m_IsUserDataRequestNeeded = true;
 			m_ReceivedLastestUserId = recvData->UserInfo->LobbyUserIndex;
 		}
 		// 더 받아야 할 유저 데이터가 없다면,
 		else
 		{
 			// 변수를 초기화 시켜놓는다.
-			m_IsRequestNeeded = false;
+			m_IsUserDataRequestNeeded = false;
 			m_ReceivedLastestUserId = 0;
 		}
 
 		// 버전 갱신.
 		VersionUp();
+	}
+
+	void RoomListData::LobbyEnterRoomListRes(std::shared_ptr<RecvPacketInfo> packet)
+	{
+		auto recvData = (PktLobbyRoomListRes*)packet->pData;
+
+		if (recvData->ErrorCode != 0)
+		{
+			auto a = recvData->ErrorCode;
+			OutputDebugString(L"[RoomListData] 룸 목록을 제대로 받지 못함. \n");
+			return;
+		}
+		OutputDebugString(L"[RoomListData] 룸 목록 성공적으로 수령. \n");
+		// RoomQueue를 비워준다.
+		std::queue<std::shared_ptr<RoomSmallInfo>> emptyQueue;
+		std::swap(m_RoomInfoQueue, emptyQueue);
+			
+		// 성공적으로 수령했으므로 룸 정보 리스트에 룸 정보를 넣어준다.
+		for (int i = 0; i < recvData->Count; ++i)
+		{
+			auto roomInfo = recvData->RoomInfo[i];
+			auto sharedRoomInfo = std::make_shared<RoomSmallInfo>(roomInfo);
+			m_RoomInfoQueue.emplace(std::move(sharedRoomInfo));
+			++m_ReceivedRoomIndex;
+		}
+
+		// 추가적으로 룸 정보를 불러오는 것이 필요한지 기록해준다.
+		if (recvData->IsEnd) m_IsRoomRequestNeeded = false;
+		else m_IsRoomRequestNeeded = true;
+
+		VersionUp();
+		return;
 	}
 
 	void RoomListData::LobbyChatRes(std::shared_ptr<RecvPacketInfo> packet)
@@ -161,7 +235,6 @@ namespace ClientLogic
 		{
 			OutputDebugString(L"[RoomListData] 채팅 보내기 성공\n");
 			m_ChatQueue.emplace(m_WaitResQueue.front());
-
 			VersionUp();
 		}
 
@@ -191,6 +264,8 @@ namespace ClientLogic
 		else
 		{
 			OutputDebugString(L"[RoomListData] 로비 떠나기 성공. \n");
+			InitializeData();
+			VersionUp();
 		}
 	}
 
@@ -211,5 +286,42 @@ namespace ClientLogic
 		m_UserInfoList.remove_if(IsIdEqual);
 
 		VersionUp();
+	}
+
+	void RoomListData::RoomEnterRes(std::shared_ptr<RecvPacketInfo> packet)
+	{
+		auto recvData = (PktRoomEnterRes*)packet->pData;
+
+		if (recvData->ErrorCode != 0)
+		{
+			OutputDebugString(L"[RoomListData] 룸 진입 실패 \n");
+			return;
+		}
+		else
+		{
+			OutputDebugString(L"[RoomListData] 룸 진입 성공. \n");
+			m_IsRoomSuccesslyEntered = true;
+			VersionUp();
+		}
+	}
+
+	void RoomListData::InitializeData()
+	{
+		m_IsUserDataRequestNeeded = false;
+		m_IsChatDelivered = false;
+		m_IsRoomSuccesslyEntered = false;
+		m_IsRoomRequestNeeded = false;
+		m_ReceivedLastestUserId = 0;
+		m_ReceivedRoomIndex = 0;
+		m_UserInfoList.clear();
+
+		std::queue<std::shared_ptr<ChatData>> emptyQueue1;
+		std::swap(m_WaitResQueue, emptyQueue1);
+
+		std::queue<std::shared_ptr<ChatData>> emptyQueue2;
+		std::swap(m_ChatQueue, emptyQueue2);
+
+		std::queue<std::shared_ptr<RoomSmallInfo>> emptyQueue3;
+		std::swap(m_RoomInfoQueue, emptyQueue3);
 	}
 }

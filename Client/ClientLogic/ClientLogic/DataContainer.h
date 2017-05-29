@@ -50,7 +50,7 @@ namespace ClientLogic
 		// 네트워크 관련 함수.
 		bool ConnectRequest();
 		bool DisconnectRequest();
-		bool SendRequest(const short, const short, char*);
+		bool SendRequest(const short packetId, const short packetSize, char* pData);
 
 		// 데이터 컨테이너 관련 함수.
 		void SendChatToRoomList(std::wstring id, std::wstring chatMsg);

@@ -1,16 +1,18 @@
+#include <string>
 #include "stdafx.h"
 #include "RoomList.h"
-#include "TextScrollBox.h"
 
 const int roomWidth = 250;
 const int buttonWidth = 50;
 const int userInfoWidth = 200;
 const int chattingInfoHeight = 275;
 const int maxUserInfoNumber = 5;
+const int roomInfoMaxNum = 6;
 
 void RoomList::init()
 {
 	RequestUserInfo();
+	RequestRoomInfo();
 
 #pragma region GUI Setting
 	m_RoomListGui = GUI(GUIStyle::Default);
@@ -29,7 +31,7 @@ void RoomList::init()
 #pragma endregion
 
 	/* Data Setting */
-	RoomInfoSetting();
+	RoomInfoInitialize();
 
 	/* Input data in Gui */
 	MakeRooms();
@@ -40,10 +42,12 @@ void RoomList::init()
 void RoomList::update()
 {
 #pragma region CheckFunctions
+
 	// 데이터가 최신 버전인지 확인해주는 함수.
 	auto CheckDataUpdated = [this]()
 	{
 #pragma region Update Functions...
+
 		// 유저 정보 벡터 업데이트.
 		auto UpdateUserData = [this]()
 		{
@@ -65,8 +69,36 @@ void RoomList::update()
 			}
 		};
 
+		// Room 정보 업데이트.
+		auto UpdateRoomData = [this]()
+		{
+			// 가지고 있던 RoomInfo를 초기화해준다.
+			RoomInfoInitialize();
+
+			auto roomListData = m_data->dataContainer->GetRoomListData();
+
+			for (auto& i : m_RoomInfoVector)
+			{
+				// 벡터를 순회하며 데이터를 받아온다.
+				auto retval = roomListData->GetRoomInfoFromQueue(
+					&i->roomIndex,
+					&i->roomUserCount,
+					&i->roomTitle);
+
+				// 데이터가 유효하면 true를, 마지막 실패는 false 상태로 놔둔다.
+				if (!retval) break;
+				else
+				{
+					i->isRoomInfoValid = true;
+					++m_ExistRoomIdx;
+				}
+			}
+		};
+
+		// 유저 창 업데이트.
 		auto UserGuiUpdate = [this]()
 		{
+			// TODO :: 여기서 남아있던 유저 데이터를 지워주어야 함.
 			int idx = 0;
 			for (auto i : m_UserListVector)
 			{
@@ -78,8 +110,15 @@ void RoomList::update()
 				m_UserListGui.text(std::to_wstring(idx)).text = i;
 				++idx;
 			}
+
+			while (idx < maxUserInfoNumber)
+			{
+				m_UserListGui.text(std::to_wstring(idx)).text = L"NONE";
+				++idx;
+			}
 		};
 
+		// 채팅창 업데이트.
 		auto UserChatWindowUpdate = [this]()
 		{
 			// 채팅 메시지를 담을 wstring
@@ -92,6 +131,31 @@ void RoomList::update()
 
 			m_ChattingGui.textArea(L"ChattingWindow").setText(ChatMsg);
 		};
+
+		// Room Gui 업데이트.
+		auto RoomGuiUpdate = [this]()
+		{
+			for (int i = 0; i < roomInfoMaxNum; ++i)
+			{
+				if (m_RoomInfoVector.at(i)->isRoomInfoValid)
+				{
+					auto buttonName = m_RoomInfoVector.at(i)->buttonName;
+					m_RoomListGui.button(buttonName).enabled = true;
+				}
+			}
+		};
+
+		// 방 입장 정보 업데이트.
+		auto RoomEnterDataUpdate = [this]()
+		{
+			// 방 입장이 되었다면, 씬을 방으로 바꾸어준다.
+			auto isRoomEntered = m_data->dataContainer->GetRoomListData()->GetIsRoomSuccesslyEntered();
+			if (isRoomEntered)
+			{
+				ExitScene(L"Room");
+			}
+		};
+
 #pragma endregion 
 #pragma region Util Functions...
 		// 가장 최신의 버전을 가져오는 함수.
@@ -111,10 +175,17 @@ void RoomList::update()
 		};
 
 		// 유저 정보 리퀘스트가 필요한지를 가져오는 함수.
-		auto IsUsetDataRequestNeeded = [this]()
+		auto IsUserDataRequestNeeded = [this]()
 		{
-			return m_data->dataContainer->GetRoomListData()->GetIsRequestNeeded();
+			return m_data->dataContainer->GetRoomListData()->GetIsUserDataRequestNeeded();
 		};
+
+		// 룸 정보 리퀘스트가 필요한지를 가져오는 함수.
+		auto IsRoomDataRequestNeeded = [this]()
+		{
+			return m_data->dataContainer->GetRoomListData()->GetIsRoomDataRequestNeeded();
+		};
+
 #pragma endregion
 
 		const int lastestDataVersion = GetLatestDataVersion();
@@ -125,26 +196,32 @@ void RoomList::update()
 			OutputDebugString(debugLabel.c_str());
 			m_UserListVector.clear();
 
-			// 아직 못받은 데이터가 있으면, 리퀘스트를 또 다시 요청해준다.
-			if (IsUsetDataRequestNeeded())
+			// 아직 못받은 유저 데이터가 있으면, 리퀘스트를 또 다시 요청해준다.
+			if (IsUserDataRequestNeeded())
 			{
-				// 근데 이거는 구조적으로 좀 고치면 좋지 않을까 싶음.
-				RequestUserInfo(m_data->dataContainer->GetRoomListData()->GetReceivedLastestUserId());
+				auto lastestUserIndex = m_data->dataContainer->GetRoomListData()->GetReceivedLastestUserId();
+				RequestUserInfo(lastestUserIndex);
 			}
-			else
+			// 아직 못받은 룸 데이터가 있으면, 리퀘스트를 또 다시 요청해준다.
+			if (IsRoomDataRequestNeeded())
 			{
-				// 데이터 업데이트.
-				UpdateUserData();
-				UpdateChatData();
+				auto lastestRoomIndex = m_data->dataContainer->GetRoomListData()->GetReceivedLastestRoomId();
+				RequestRoomInfo(lastestRoomIndex);
+			}
 
-				// 업데이트가 되었으므로, GUI에 표현되는 데이터를 바꾸어준다.
-				UserGuiUpdate();
-				UserChatWindowUpdate();
-			}
+			// 데이터 업데이트.
+			UpdateUserData();
+			UpdateChatData();
+
+			// 업데이트가 되었으므로, GUI에 표현되는 데이터를 바꾸어준다.
+			UserGuiUpdate();
+			UserChatWindowUpdate();
+			RoomGuiUpdate();
+			RoomEnterDataUpdate();
 
 			// 가지고 있는 데이터의 버전을 갱신해준다.
 			m_CurrentDataVersion = lastestDataVersion;
-		}
+		};
 	};
 
 	// Room 버튼이 클릭되었는지 확인해주는 함수.
@@ -154,7 +231,10 @@ void RoomList::update()
 		{
 			if (m_RoomListGui.button(i->buttonName).pushed)
 			{
-				changeScene(L"Room");
+				// TODO :: Res를 기다렸다가 Room으로 상태 변경.
+
+				//m_data->dataContainer->SendRequest((short)PACKET_ID::ROOM_ENTER_REQ, );
+				ExitScene(L"Room");
 			}
 		}
 	};
@@ -190,11 +270,31 @@ void RoomList::update()
 	{
 		if (m_UserListGui.button(L"BackButton").pushed)
 		{
-			// 서버에게 나간다는 메시지를 보낸뒤, 씬을 바꾸어 준다.			
-			m_data->dataContainer->SendRequest((short)PACKET_ID::LOBBY_LEAVE_REQ, 0, nullptr);
-			changeScene(L"LobbyList");
+			ExitScene(L"LobbyList");
 		}
 	};
+
+	// Create 버튼이 클릭 되었는지 확인해주는 함수.
+	auto CheckCreateButtonClicked = [this]()
+	{
+		// CreateButton이 클릭되었다면 요청을 보내준다.
+		if (m_UserListGui.button(L"CreateButton").pushed)
+		{
+			PktRoomEnterReq enterReq;
+			enterReq.IsCreate = true;
+			enterReq.RoomIndex = ++m_ExistRoomIdx;
+			std::wstring roomTitle = L"Room" + std::to_wstring(m_ExistRoomIdx);
+			wcscpy_s(enterReq.RoomTitle, MAX_ROOM_TITLE_SIZE, roomTitle.c_str());
+
+			m_data->dataContainer->SendRequest(
+				(short)PACKET_ID::ROOM_ENTER_REQ,
+				sizeof(PktRoomEnterReq),
+				(char*)&enterReq);
+
+			OutputDebugString(L"[RoomList] 방 생성 요청. \n");
+		}
+	};
+
 #pragma endregion
 
 	m_data->dataContainer->Update();
@@ -203,6 +303,7 @@ void RoomList::update()
 	CheckRoomClicked();
 	CheckSendButtonClicked();
 	CheckBackButtonClicked();
+	CheckCreateButtonClicked();
 }
 
 void RoomList::draw() const
@@ -210,19 +311,21 @@ void RoomList::draw() const
 }
 
 
-void RoomList::RoomInfoSetting()
+void RoomList::RoomInfoInitialize()
 {
-	const int roomInfoNum = 6;
-	const std::wstring roomName = L"Room ";
-	for (int i = 0; i < roomInfoNum; ++i)
+	m_RoomInfoVector.clear();
+	const std::wstring roomName = L"NONE";
+	for (int i = 0; i < roomInfoMaxNum; ++i)
 	{
 		std::shared_ptr<RoomInfo> newRoomInfo = std::make_shared<RoomInfo>();
-		newRoomInfo->roomName = roomName + std::to_wstring(i + 1);
-		std::wstring buttonName = L"Button" + std::to_wstring(i + 1);
+		newRoomInfo->roomTitle = roomName;
+		std::wstring buttonName = L"Button" + std::to_wstring(i);
 		newRoomInfo->buttonName = buttonName;
+		newRoomInfo->isRoomInfoValid = false;
 
 		m_RoomInfoVector.emplace_back(std::move(newRoomInfo));
 	}
+	m_ExistRoomIdx = -1;
 }
 
 void RoomList::MakeRooms()
@@ -230,10 +333,10 @@ void RoomList::MakeRooms()
 	for (const auto& i : m_RoomInfoVector)
 	{
 		/* Make Rooms */
-		m_RoomListGui.add(i->roomName, GUIText::Create(i->roomName, roomWidth));
+		m_RoomListGui.add(i->roomTitle, GUIText::Create(i->roomTitle, roomWidth));
 		
 		/* Make Buttons */	
-		m_RoomListGui.addln(i->buttonName, GUIButton::Create(L"ENTER", buttonWidth));
+		m_RoomListGui.addln(i->buttonName, GUIButton::Create(L"Create", false));
 	}
 }
 
@@ -246,7 +349,8 @@ void RoomList::MakeUsers()
 	}
 
 	m_UserListGui.add(L"UserListDivider", GUIHorizontalLine::Create(1));
-	m_UserListGui.addln(L"BackButton", GUIButton::Create(L"Back", 33));
+	m_UserListGui.add(L"BackButton", GUIButton::Create(L"Back", 33));
+	m_UserListGui.addln(L"CreateButton", GUIButton::Create(L"Create", 33));
 }
 
 void RoomList::MakeChattingGui()
@@ -263,10 +367,14 @@ void RoomList::MakeChattingGui()
 	m_ChattingGui.add(L"InputButton", GUIButton::Create(L"Send"));
 }
 
-void RoomList::ExitScene()
+void RoomList::ExitScene(wchar_t* changeSceneName)
 {
+	// 서버에게 나간다는 메시지를 보낸뒤, 씬을 바꾸어 준다.			
+	m_data->dataContainer->SendRequest((short)PACKET_ID::LOBBY_LEAVE_REQ, 0, nullptr);
 	m_RoomInfoVector.clear();
 	m_UserListVector.clear();
+
+	changeScene(changeSceneName);
 }
 
 void RoomList::SendChatting(std::wstring chat)
@@ -284,7 +392,7 @@ void RoomList::SendChatting(std::wstring chat)
 		chat);
 }
 
-void RoomList::RequestUserInfo(const int startUserIndex)
+void RoomList::RequestUserInfo(const short startUserIndex)
 {
 	PktLobbyUserListReq newLobbyUserReq;
 	newLobbyUserReq.StartUserIndex = startUserIndex;
@@ -296,5 +404,19 @@ void RoomList::RequestUserInfo(const int startUserIndex)
 		(short)PACKET_ID::LOBBY_ENTER_USER_LIST_REQ,
 		sizeof(newLobbyUserReq),
 		(char*)&newLobbyUserReq);
+}
+
+void RoomList::RequestRoomInfo(const short startRoomId)
+{
+	PktLobbyRoomListReq newRoomListReq;
+	newRoomListReq.StartRoomIndex = startRoomId;
+
+	std::wstring debugLabel = L"[RoomList] 룸 정보 요청. \n";
+	OutputDebugString(debugLabel.c_str());
+
+	m_data->dataContainer->SendRequest(
+		(short)PACKET_ID::LOBBY_ENTER_ROOM_LIST_REQ,
+		sizeof(newRoomListReq),
+		(char*)&newRoomListReq);
 }
 

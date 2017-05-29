@@ -14,9 +14,10 @@ struct Room : MyApp::Scene
 
 	void draw() const override;
 
-	void setUserData();
+	void SetUserData();
 
-	void drawUser();
+	void DrawUser();
 
-	void checkSendPushed();
+	void CheckSendPushed();
+
 };

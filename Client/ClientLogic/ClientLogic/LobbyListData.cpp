@@ -10,6 +10,7 @@ namespace ClientLogic
 		publisher->Subscribe(
 			(short)PACKET_ID::LOBBY_LIST_RES,
 			std::bind(&LobbyListData::LobbyListRes, this, std::placeholders::_1));
+
 		publisher->Subscribe(
 			(short)PACKET_ID::LOBBY_ENTER_RES,
 			std::bind(&LobbyListData::LobbyEnterRes, this, std::placeholders::_1));

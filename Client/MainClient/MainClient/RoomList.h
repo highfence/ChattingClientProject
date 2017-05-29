@@ -10,6 +10,7 @@ struct RoomList : MyApp::Scene
 	GUI m_ChattingGui;
 	TextScorllBox* m_pChatTextBox;
 	int m_CurrentDataVersion = -1;
+	int m_ExistRoomIdx = -1;
 	String m_ChatString;
 	std::wstring m_ChattingGuiString;
 
@@ -24,9 +25,8 @@ struct RoomList : MyApp::Scene
 
 	void draw() const override;
 
-
 	/* Insert Data to member vector */
-	void RoomInfoSetting();
+	void RoomInfoInitialize();
 
 	/* Make Room and Users accord with data */
 	void MakeRooms();
@@ -34,9 +34,10 @@ struct RoomList : MyApp::Scene
 	void MakeChattingGui();
 
 	/* Function must be called when scene changed */
-	void ExitScene();
+	void ExitScene(wchar_t* changeSceneName);
 
 	/* Network Function */
 	void SendChatting(std::wstring chat);
-	void RequestUserInfo(const int startUserId = 0);
+	void RequestUserInfo(const short startUserId = 0);
+	void RequestRoomInfo(const short startRoomId = 0);
 };

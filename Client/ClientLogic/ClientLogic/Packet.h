@@ -83,7 +83,9 @@ namespace NCommon
 	//- 로비의 룸 리스트 요청
 	struct PktLobbyRoomListReq
 	{
-		short StartRoomIndex; // 로비에서 처음 요청할 때는 0, 두번째부터는 앞에 받은 데이터의 마지막 번호 + 1
+		// 로비에서 처음 요청할 때는 0, 
+		// 두번째부터는 앞에 받은 데이터의 마지막 번호 + 1
+		short StartRoomIndex; 
 	};
 
 	const int MAX_ROOM_TITLE_SIZE = 16;

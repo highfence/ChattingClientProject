@@ -144,6 +144,7 @@
     <ClCompile Include="PacketProcessor.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="RoomData.cpp" />
     <ClCompile Include="RoomListData.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +158,7 @@
     <ClInclude Include="PacketID.h" />
     <ClInclude Include="PacketMessenger.h" />
     <ClInclude Include="PacketProcessor.h" />
+    <ClInclude Include="RoomData.h" />
     <ClInclude Include="RoomListData.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>

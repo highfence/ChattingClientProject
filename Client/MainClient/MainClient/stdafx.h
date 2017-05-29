@@ -23,8 +23,11 @@ using MyApp = SceneManager<String, SceneData>;
 
 struct RoomInfo
 {
-	std::wstring roomName;
+	std::wstring roomTitle;
 	std::wstring buttonName;
+	short roomIndex = 0;
+	short roomUserCount = 0;
+	bool isRoomInfoValid = false;
 };
 
 struct UserInfo

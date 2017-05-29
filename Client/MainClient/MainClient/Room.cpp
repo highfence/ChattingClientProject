@@ -19,18 +19,18 @@ void Room::init()
 	Graphics::SetBackground(Color(95, 0, 255));
 
 	/* Data Setting */
-	setUserData();
+	SetUserData();
 
 	/* Input data in GUI */
 	m_ChattingGui.add(L"RoomChatting", GUITextArea::Create(10, 22));
 	m_InputGui.add(L"InputField", GUITextArea::Create(1, 28));
 	m_InputGui.add(L"InputButton", GUIButton::Create(L"Send"));
-	drawUser();
+	DrawUser();
 }
 
 void Room::update()
 {
-	checkSendPushed();
+	CheckSendPushed();
 }
 
 void Room::draw() const
@@ -38,7 +38,7 @@ void Room::draw() const
 
 }
 
-void Room::setUserData()
+void Room::SetUserData()
 {
 	std::mt19937 rng((unsigned int)time(NULL));
 	std::uniform_int_distribution<int> userRange(1, userMaxNumber);
@@ -53,7 +53,7 @@ void Room::setUserData()
 	}
 }
 
-void Room::drawUser()
+void Room::DrawUser()
 {
 	for (const auto& i : m_UserInfoVector)
 	{
@@ -61,7 +61,7 @@ void Room::drawUser()
 	}
 }
 
-void Room::checkSendPushed()
+void Room::CheckSendPushed()
 {
 	if (m_InputGui.button(L"InputButton").pressed || Input::KeyEnter.clicked)
 	{
