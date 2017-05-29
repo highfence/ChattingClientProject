@@ -4,7 +4,6 @@
 
 namespace ClientLogic
 {
-
 	class RoomListData : public Observer
 	{
 	public:
@@ -19,8 +18,15 @@ namespace ClientLogic
 		bool GetIsUserDataRequestNeeded() const { return m_IsUserDataRequestNeeded; };
 		int GetReceivedLastestUserId() const { return m_ReceivedLastestUserId; };
 		int GetReceivedLastestRoomId() const { return m_ReceivedRoomIndex; };
-		bool GetRoomInfoFromQueue(short* roomIndex, short* roomUserCount, std::wstring* roomTitle);
-		// TODO :: 유저 인포 받는 방식 고쳐야함.
+		bool GetRoomInfoFromQueue(
+			short* pRoomIndex,
+			short* pRoomUserCount,
+			std::wstring* pRoomTitle);
+		bool GetChangedRoomInfoFromQueue(
+			short* pRoomIndex,
+			short* pRoomUserCount,
+			std::wstring* pRoomTitle);
+		// TODO :: 유저 인포 받는 방식 고쳐야함. list ref를 넘겨주는 건 너무 자유도가 높음.
 		std::list<std::wstring>& GetUserInfoList() { return m_UserInfoList; };
 		void PushChatData(std::wstring id, std::wstring chatMsg);
 		std::wstring GetDataFromChatQueue();
@@ -34,11 +40,13 @@ namespace ClientLogic
 		void LobbyLeaveRes(std::shared_ptr<RecvPacketInfo> packet);
 		void LobbyLeaveUserNtf(std::shared_ptr<RecvPacketInfo> packet);
 		void RoomEnterRes(std::shared_ptr<RecvPacketInfo> packet);
+		void RoomChangedInfoNtf(std::shared_ptr<RecvPacketInfo> packet);
 
 		std::list<std::wstring> m_UserInfoList;
-		std::queue<std::shared_ptr<RoomSmallInfo>> m_RoomInfoQueue;
 		std::queue<std::shared_ptr<ChatData>> m_WaitResQueue;
 		std::queue<std::shared_ptr<ChatData>> m_ChatQueue;
+		std::queue<std::shared_ptr<RoomSmallInfo>> m_RoomInfoQueue;
+		std::queue<std::shared_ptr<RoomSmallInfo>> m_ChangedRoomInfoQueue;
 
 		void InitializeData();
 		bool m_IsUserDataRequestNeeded = false;

@@ -5,7 +5,7 @@ struct Room : MyApp::Scene
 	GUI m_ChattingGui;
 	GUI m_UserGui;
 	GUI m_InputGui;
-	std::vector<UserInfo*> m_UserInfoVector;
+	std::vector<std::shared_ptr<UserInfo>> m_UserInfoVector;
 	String m_ChatString;
 
 	void init() override;
@@ -14,9 +14,7 @@ struct Room : MyApp::Scene
 
 	void draw() const override;
 
-	void SetUserData();
-
-	void DrawUser();
+	void InitialUserDataSetting();
 
 	void CheckSendPushed();
 

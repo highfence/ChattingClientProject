@@ -10,12 +10,13 @@ namespace ClientLogic
 		m_pPacketMessenger->Init();
 		m_pPacketDistributer = std::make_unique<PacketDistributer>();
 
-		m_pLoginData = std::make_shared<LoginData>();
+		m_pLoginData = std::make_unique<LoginData>();
 		m_pLoginData->SetSubscribe(m_pPacketDistributer.get());
-		m_pLobbyListData = std::make_shared<LobbyListData>();
+		m_pLobbyListData = std::make_unique<LobbyListData>();
 		m_pLobbyListData->SetSubscribe(m_pPacketDistributer.get());
-		m_pRoomListData = std::make_shared<RoomListData>();
+		m_pRoomListData = std::make_unique<RoomListData>();
 		m_pRoomListData->SetSubscribe(m_pPacketDistributer.get());
+		m_pRoomData = std::make_unique<RoomData>();
 
 		RegisterQueueToProcessor();
 	}
@@ -55,19 +56,19 @@ namespace ClientLogic
 		return m_pRoomListData->GetDataFromChatQueue();
 	}
 
-	std::shared_ptr<LoginData> DataContainer::GetLoginData() const
+	LoginData * DataContainer::GetLoginData() const
 	{
-		return m_pLoginData;
+		return m_pLoginData.get();
 	}
 
-	std::shared_ptr<LobbyListData> DataContainer::GetLobbyListData() const
+	LobbyListData * DataContainer::GetLobbyListData() const
 	{
-		return m_pLobbyListData;
+		return m_pLobbyListData.get();
 	}
 
-	std::shared_ptr<RoomListData> DataContainer::GetRoomListData() const
+	RoomListData * DataContainer::GetRoomListData() const
 	{
-		return m_pRoomListData;
+		return m_pRoomListData.get();
 	}
 
 	void DataContainer::RegisterQueueToProcessor()

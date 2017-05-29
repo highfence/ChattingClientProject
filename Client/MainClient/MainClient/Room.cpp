@@ -2,7 +2,7 @@
 #include "Room.h"
 
 const std::wstring userName = L"User";
-const int userMaxNumber = 5;
+const int userMaxNumber = 6;
 
 void Room::init()
 {
@@ -19,13 +19,12 @@ void Room::init()
 	Graphics::SetBackground(Color(95, 0, 255));
 
 	/* Data Setting */
-	SetUserData();
+	InitialUserDataSetting();
 
 	/* Input data in GUI */
 	m_ChattingGui.add(L"RoomChatting", GUITextArea::Create(10, 22));
 	m_InputGui.add(L"InputField", GUITextArea::Create(1, 28));
 	m_InputGui.add(L"InputButton", GUIButton::Create(L"Send"));
-	DrawUser();
 }
 
 void Room::update()
@@ -35,29 +34,21 @@ void Room::update()
 
 void Room::draw() const
 {
-
 }
 
-void Room::SetUserData()
+void Room::InitialUserDataSetting()
 {
-	std::mt19937 rng((unsigned int)time(NULL));
-	std::uniform_int_distribution<int> userRange(1, userMaxNumber);
+	m_UserInfoVector.clear();
+	m_UserInfoVector.reserve(userMaxNumber);
 
-	int currentUserNumber = userRange(rng);
-
-	for (int i = 0; i < currentUserNumber; ++i)
+	for (int i = 0; i < userMaxNumber; ++i)
 	{
-		UserInfo* newUser = new UserInfo;
-		newUser->userName = userName + std::to_wstring(i + 1);
-		m_UserInfoVector.push_back(newUser);
-	}
-}
+		std::shared_ptr<UserInfo> userData = std::make_shared<UserInfo>();
+		userData->userIndex = i;
+		userData->userName = L"";
+		userData->isUserInfoValid = false;
 
-void Room::DrawUser()
-{
-	for (const auto& i : m_UserInfoVector)
-	{
-		m_UserGui.addln(L"RoomUsingUser", GUIText::Create(i->userName, 150));
+		m_UserInfoVector.emplace_back(std::move(userData));
 	}
 }
 

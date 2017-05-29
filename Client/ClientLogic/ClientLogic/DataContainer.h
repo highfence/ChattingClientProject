@@ -25,6 +25,7 @@
 #include "LoginData.h"
 #include "LobbyListData.h"
 #include "RoomListData.h"
+#include "RoomData.h"
 
 #include "PacketMessenger.h"
 #include "PacketProcessor.h"
@@ -50,27 +51,31 @@ namespace ClientLogic
 		// 네트워크 관련 함수.
 		bool ConnectRequest();
 		bool DisconnectRequest();
-		bool SendRequest(const short packetId, const short packetSize, char* pData);
+		bool SendRequest(
+			const short packetId,
+			const short packetSize,
+			char* pData);
 
 		// 데이터 컨테이너 관련 함수.
 		void SendChatToRoomList(std::wstring id, std::wstring chatMsg);
 		std::wstring RequestMsgFromRoomList();
 
 		// 정보 관련 함수.
-		std::shared_ptr<LoginData> GetLoginData() const;
-		std::shared_ptr<LobbyListData> GetLobbyListData() const;
-		std::shared_ptr<RoomListData> GetRoomListData() const;
+		LoginData * GetLoginData() const;
+		LobbyListData * GetLobbyListData() const;
+		RoomListData * GetRoomListData() const;
 
 	private :
 
 		// Queue 등록 함수.
 		void RegisterQueueToProcessor();
 
-		std::unique_ptr<PacketMessenger> m_pPacketMessenger = nullptr;
-		std::unique_ptr<PacketDistributer> m_pPacketDistributer = nullptr;
-		std::shared_ptr<LoginData> m_pLoginData = nullptr;
-		std::shared_ptr<LobbyListData> m_pLobbyListData = nullptr;
-		std::shared_ptr<RoomListData> m_pRoomListData = nullptr;
+		std::unique_ptr<PacketMessenger> m_pPacketMessenger;
+		std::unique_ptr<PacketDistributer> m_pPacketDistributer;
+		std::unique_ptr<LoginData> m_pLoginData;
+		std::unique_ptr<LobbyListData> m_pLobbyListData;
+		std::unique_ptr<RoomListData> m_pRoomListData;
+		std::unique_ptr<RoomData> m_pRoomData;
 
 		std::deque<std::shared_ptr<RecvPacketInfo>> m_PacketDeque;
 

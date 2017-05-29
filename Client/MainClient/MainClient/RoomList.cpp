@@ -72,28 +72,47 @@ void RoomList::update()
 		// Room 정보 업데이트.
 		auto UpdateRoomData = [this]()
 		{
-			// 가지고 있던 RoomInfo를 초기화해준다.
-			RoomInfoInitialize();
-
+			// TODO :: 구조가 좀 이상함
+			// 만약 ChangedRoomInfo가 왔다면, 구지 Room정보 전체를 업데이트 하지 않아도 된다.
+			RoomInfo changedRoomInfo;
 			auto roomListData = m_data->dataContainer->GetRoomListData();
-
-			for (auto& i : m_RoomInfoVector)
+			auto retval = roomListData->GetChangedRoomInfoFromQueue(
+				&changedRoomInfo.roomIndex,
+				&changedRoomInfo.roomUserCount,
+				&changedRoomInfo.roomTitle);
+				
+			// ChangedRoomInfo가 왔다면, RoomList정보 전체를 업데이트 하지 않아도 된다.
+			if (retval == true)
 			{
-				// 벡터를 순회하며 데이터를 받아온다.
-				auto retval = roomListData->GetRoomInfoFromQueue(
-					&i->roomIndex,
-					&i->roomUserCount,
-					&i->roomTitle);
+				// 바뀐 정보만 업데이트 해준다.
+				m_RoomInfoVector.at(changedRoomInfo.roomIndex)->roomUserCount = changedRoomInfo.roomUserCount;
+				m_RoomInfoVector.at(changedRoomInfo.roomIndex)->roomTitle = changedRoomInfo.roomTitle;
+			}
+			// 그게 아니라면, 룸 정보 전체를 업데이트 한다.
+			else
+			{
+				// 가지고 있던 RoomInfo를 초기화해준다.
+				RoomInfoInitialize();
 
-				// 데이터가 유효하면 true를, 마지막 실패는 false 상태로 놔둔다.
-				if (!retval) break;
-				else
+				for (auto& i : m_RoomInfoVector)
 				{
-					i->isRoomInfoValid = true;
-					++m_ExistRoomIdx;
+					// 벡터를 순회하며 데이터를 받아온다.
+					auto retval = roomListData->GetRoomInfoFromQueue(
+						&i->roomIndex,
+						&i->roomUserCount,
+						&i->roomTitle);
+
+					// 데이터가 유효하면 true를, 마지막 실패는 false 상태로 놔둔다.
+					if (!retval) break;
+					else
+					{
+						i->isRoomInfoValid = true;
+						++m_ExistRoomIdx;
+					}
 				}
 			}
 		};
+
 
 		// 유저 창 업데이트.
 		auto UserGuiUpdate = [this]()
@@ -158,6 +177,7 @@ void RoomList::update()
 			auto isRoomEntered = m_data->dataContainer->GetRoomListData()->GetIsRoomSuccesslyEntered();
 			if (isRoomEntered)
 			{
+
 				ExitScene(L"Room");
 			}
 		};

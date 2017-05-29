@@ -33,4 +33,6 @@ struct RoomInfo
 struct UserInfo
 {
 	std::wstring userName;
+	int userIndex = -1;
+	bool isUserInfoValid = false;
 };

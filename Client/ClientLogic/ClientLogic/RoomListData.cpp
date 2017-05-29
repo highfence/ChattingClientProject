@@ -11,6 +11,7 @@
 
 namespace ClientLogic
 {
+	// RoomListData가 관심있는 패킷과 대응되는 처리 함수를 등록하는 함수.
 	void RoomListData::SetSubscribe(PacketDistributer * publisher)
 	{
 		publisher->Subscribe(
@@ -44,8 +45,13 @@ namespace ClientLogic
 		publisher->Subscribe(
 			(short)PACKET_ID::ROOM_ENTER_RES,
 			std::bind(&RoomListData::RoomEnterRes, this, std::placeholders::_1));
+
+		publisher->Subscribe(
+			(short)PACKET_ID::ROOM_CHANGED_INFO_NTF,
+			std::bind(&RoomListData::RoomChangedInfoNtf, this, std::placeholders::_1));
 	}
 
+	// 채팅이 성공적으로 보내졌다는 패킷을 받았는지 반환해주는 함수.
 	bool RoomListData::GetIsChatDelivered()
 	{
 		if (m_IsChatDelivered == false)
@@ -59,6 +65,7 @@ namespace ClientLogic
 		}
 	}
 
+	// 룸에 성공적으로 입장했다는 패킷을 받았는지 반환해주는 함수.
 	bool RoomListData::GetIsRoomSuccesslyEntered()
 	{
 		if (m_IsRoomSuccesslyEntered)
@@ -69,6 +76,7 @@ namespace ClientLogic
 		return false;
 	}
 
+	// 룸 정보 리퀘스트가 필요한지를 반환해주는 함수.
 	bool RoomListData::GetIsRoomDataRequestNeeded()
 	{
 		if (m_IsRoomRequestNeeded)
@@ -79,8 +87,18 @@ namespace ClientLogic
 		return false;
 	}
 
-	bool RoomListData::GetRoomInfoFromQueue(short* roomIndex, short* roomUserCount, std::wstring* roomTitle)
+	// 데이터 컨테이너에 받아놓은 룸 정보를 반환해주는 함수.
+	bool RoomListData::GetRoomInfoFromQueue(
+		short * pRoomIndex,
+		short * pRoomUserCount,
+		std::wstring * pRoomTitle)
 	{
+		// Out 데이터의 유효성 검사.
+		if (pRoomIndex == nullptr || pRoomUserCount == nullptr || pRoomTitle == nullptr)
+		{
+			return false;
+		}
+
 		// 남아있는 RoomInfo가 없을 경우.
 		if (m_RoomInfoQueue.empty())
 		{
@@ -91,14 +109,42 @@ namespace ClientLogic
 		auto roomInfo = m_RoomInfoQueue.front();
 		m_RoomInfoQueue.pop();
 
-		*roomIndex = roomInfo->RoomIndex;
-		*roomUserCount = roomInfo->RoomUserCount;
-		*roomTitle = roomInfo->RoomTitle;
+		*pRoomIndex = roomInfo->RoomIndex;
+		*pRoomUserCount = roomInfo->RoomUserCount;
+		*pRoomTitle = roomInfo->RoomTitle;
 
 		return true;
 	}
 
-	/* 채팅 데이터를 응답 대기열에 밀어넣어주는 함수. */
+	// 데이터 컨테이너에 받아놓은 변경된 룸 정보를 반환해주는 함수.
+	// 룸 정보가 있다면 true를, 없다면 false를 반환한다.
+	bool RoomListData::GetChangedRoomInfoFromQueue(
+		short * pRoomIndex,
+		short * pRoomUserCount,
+		std::wstring * pRoomTitle)
+	{
+		// Out 데이터의 유효성 검사.
+		if (pRoomIndex == nullptr || pRoomUserCount == nullptr || pRoomTitle == nullptr)
+		{
+			return false;
+		}
+
+		// 남아있는 RoomInfo가 없을 경우.
+		if (m_RoomInfoQueue.empty())
+		{
+			return false;
+		}
+
+		// 큐에서 변경된 RoomInfo를 하나 빼준다.
+		auto changedRoomInfo = m_ChangedRoomInfoQueue.front();
+		m_ChangedRoomInfoQueue.pop();
+
+		*pRoomIndex = changedRoomInfo->RoomIndex;
+		*pRoomUserCount = changedRoomInfo->RoomUserCount;
+		*pRoomTitle = changedRoomInfo->RoomTitle;
+	}
+
+	// 채팅 데이터를 응답 대기열에 밀어넣어주는 함수. 
 	void RoomListData::PushChatData(std::wstring id, std::wstring chatMsg)
 	{
 		std::shared_ptr<ChatData> newMsg = std::make_shared<ChatData>();
@@ -107,7 +153,7 @@ namespace ClientLogic
 		m_WaitResQueue.emplace(std::move(newMsg));
 	}
 
-	/* 저장된 채팅 큐에서 한 라인을 뽑아주는 함수. */
+	// 저장된 채팅 큐에서 한 라인을 뽑아주는 함수. 
 	std::wstring RoomListData::GetDataFromChatQueue()
 	{
 		if (m_ChatQueue.empty()) return L"";
@@ -117,6 +163,9 @@ namespace ClientLogic
 		return returnString->GetInLine();
 	}
 
+	/*
+	  패킷 처리 관련 함수들.
+	*/
 	void RoomListData::LobbyEnterUserNtf(std::shared_ptr<RecvPacketInfo> packet)
 	{
 		OutputDebugString(L"[RoomListData] 유저 정보 수령 성공\n");
@@ -203,6 +252,7 @@ namespace ClientLogic
 			return;
 		}
 		OutputDebugString(L"[RoomListData] 룸 목록 성공적으로 수령. \n");
+
 		// RoomQueue를 비워준다.
 		std::queue<std::shared_ptr<RoomSmallInfo>> emptyQueue;
 		std::swap(m_RoomInfoQueue, emptyQueue);
@@ -305,6 +355,16 @@ namespace ClientLogic
 		}
 	}
 
+	void RoomListData::RoomChangedInfoNtf(std::shared_ptr<RecvPacketInfo> packet)
+	{
+		auto recvData = (PktChangedRoomInfoNtf*)packet->pData;
+	
+		// 패킷을 받았다면, 그대로 큐에 밀어넣어준다.
+		auto changedRoomInfo = std::make_shared<RoomSmallInfo>(recvData->RoomInfo);
+		m_ChangedRoomInfoQueue.emplace(std::move(changedRoomInfo));
+	}
+
+	// RoomListData의 정보를 초기화해주는 함수.
 	void RoomListData::InitializeData()
 	{
 		m_IsUserDataRequestNeeded = false;
