@@ -64,6 +64,8 @@ namespace ClientLogic
 		LoginData * GetLoginData() const;
 		LobbyListData * GetLobbyListData() const;
 		RoomListData * GetRoomListData() const;
+		RoomData * GetRoomData() const;
+
 
 	private :
 

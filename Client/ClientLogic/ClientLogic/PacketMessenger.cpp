@@ -22,8 +22,10 @@ namespace ClientLogic
 	void PacketMessenger::Release()
 	{
 		/* WSA Release */
+		m_ConnectState = CONNECT_STATE::DISCONNECT;
 		WSACleanup();
 		closesocket(m_ClientSock);
+		m_RecvThread.join();
 	}
 
 	std::shared_ptr<RecvPacketInfo> PacketMessenger::GetPacketFromDeque()

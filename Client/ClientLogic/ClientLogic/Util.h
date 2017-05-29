@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string>
 #include <stack>
+#include <memory>
 #include "Definition.h"
 
 namespace ClientLogic

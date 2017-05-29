@@ -130,7 +130,7 @@ namespace ClientLogic
 		}
 
 		// 남아있는 RoomInfo가 없을 경우.
-		if (m_RoomInfoQueue.empty())
+		if (m_ChangedRoomInfoQueue.empty())
 		{
 			return false;
 		}
@@ -142,6 +142,7 @@ namespace ClientLogic
 		*pRoomIndex = changedRoomInfo->RoomIndex;
 		*pRoomUserCount = changedRoomInfo->RoomUserCount;
 		*pRoomTitle = changedRoomInfo->RoomTitle;
+		return true;
 	}
 
 	// 채팅 데이터를 응답 대기열에 밀어넣어주는 함수. 
@@ -163,9 +164,9 @@ namespace ClientLogic
 		return returnString->GetInLine();
 	}
 
-	/*
-	  패킷 처리 관련 함수들.
-	*/
+	//-------------------------------------------------------------------------
+	// 패킷 처리 관련 함수들. 
+	//-------------------------------------------------------------------------
 	void RoomListData::LobbyEnterUserNtf(std::shared_ptr<RecvPacketInfo> packet)
 	{
 		OutputDebugString(L"[RoomListData] 유저 정보 수령 성공\n");

@@ -16,8 +16,8 @@ namespace ClientLogic
 		bool GetIsRoomSuccesslyEntered();
 		bool GetIsRoomDataRequestNeeded();
 		bool GetIsUserDataRequestNeeded() const { return m_IsUserDataRequestNeeded; };
-		int GetReceivedLastestUserId() const { return m_ReceivedLastestUserId; };
-		int GetReceivedLastestRoomId() const { return m_ReceivedRoomIndex; };
+		short GetReceivedLastestUserId() const { return m_ReceivedLastestUserId; };
+		short GetReceivedLastestRoomId() const { return m_ReceivedRoomIndex; };
 		bool GetRoomInfoFromQueue(
 			short* pRoomIndex,
 			short* pRoomUserCount,
@@ -26,8 +26,8 @@ namespace ClientLogic
 			short* pRoomIndex,
 			short* pRoomUserCount,
 			std::wstring* pRoomTitle);
-		// TODO :: 유저 인포 받는 방식 고쳐야함. list ref를 넘겨주는 건 너무 자유도가 높음.
-		std::list<std::wstring>& GetUserInfoList() { return m_UserInfoList; };
+
+		std::list<std::wstring>& GetRefUserInfoList() { return m_UserInfoList; };
 		void PushChatData(std::wstring id, std::wstring chatMsg);
 		std::wstring GetDataFromChatQueue();
 
@@ -52,8 +52,8 @@ namespace ClientLogic
 		bool m_IsUserDataRequestNeeded = false;
 		bool m_IsChatDelivered = false;
 		bool m_IsRoomSuccesslyEntered = false;
-		int m_ReceivedLastestUserId = 0;
-		int m_ReceivedRoomIndex = 0;
+		short m_ReceivedLastestUserId = 0;
+		short m_ReceivedRoomIndex = 0;
 		bool m_IsRoomRequestNeeded = false;
 	};
 }

@@ -5,8 +5,9 @@ struct Room : MyApp::Scene
 	GUI m_ChattingGui;
 	GUI m_UserGui;
 	GUI m_InputGui;
-	std::vector<std::shared_ptr<UserInfo>> m_UserInfoVector;
+	std::vector<UserInfo*> m_UserInfoVector;
 	String m_ChatString;
+	int m_CurrentDataVersion = -1;
 
 	void init() override;
 	
@@ -16,6 +17,5 @@ struct Room : MyApp::Scene
 
 	void InitialUserDataSetting();
 
-	void CheckSendPushed();
 
 };

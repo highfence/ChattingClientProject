@@ -10,7 +10,7 @@ struct RoomList : MyApp::Scene
 	GUI m_ChattingGui;
 	TextScorllBox* m_pChatTextBox;
 	int m_CurrentDataVersion = -1;
-	int m_ExistRoomIdx = -1;
+	short m_ExistRoomIdx = -1;
 	String m_ChatString;
 	std::wstring m_ChattingGuiString;
 

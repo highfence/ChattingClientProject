@@ -17,6 +17,7 @@ namespace ClientLogic
 		m_pRoomListData = std::make_unique<RoomListData>();
 		m_pRoomListData->SetSubscribe(m_pPacketDistributer.get());
 		m_pRoomData = std::make_unique<RoomData>();
+		m_pRoomData->SetSubscribe(m_pPacketDistributer.get());
 
 		RegisterQueueToProcessor();
 	}
@@ -69,6 +70,11 @@ namespace ClientLogic
 	RoomListData * DataContainer::GetRoomListData() const
 	{
 		return m_pRoomListData.get();
+	}
+
+	RoomData * DataContainer::GetRoomData() const
+	{
+		return m_pRoomData.get();
 	}
 
 	void DataContainer::RegisterQueueToProcessor()

@@ -48,11 +48,11 @@ void RoomList::update()
 	{
 #pragma region Update Functions...
 
-		// 유저 정보 벡터 업데이트.
+		// 유저 정보 리스트 업데이트.
 		auto UpdateUserData = [this]()
 		{
 			m_UserListVector.clear();
-			for (auto i : m_data->dataContainer->GetRoomListData()->GetUserInfoList())
+			for (const auto& i : m_data->dataContainer->GetRoomListData()->GetRefUserInfoList())
 			{
 				m_UserListVector.push_back(i);
 			}
@@ -76,13 +76,13 @@ void RoomList::update()
 			// 만약 ChangedRoomInfo가 왔다면, 구지 Room정보 전체를 업데이트 하지 않아도 된다.
 			RoomInfo changedRoomInfo;
 			auto roomListData = m_data->dataContainer->GetRoomListData();
-			auto retval = roomListData->GetChangedRoomInfoFromQueue(
+			auto isRoomInfoChanged = roomListData->GetChangedRoomInfoFromQueue(
 				&changedRoomInfo.roomIndex,
 				&changedRoomInfo.roomUserCount,
 				&changedRoomInfo.roomTitle);
 				
 			// ChangedRoomInfo가 왔다면, RoomList정보 전체를 업데이트 하지 않아도 된다.
-			if (retval == true)
+			if (isRoomInfoChanged == true)
 			{
 				// 바뀐 정보만 업데이트 해준다.
 				m_RoomInfoVector.at(changedRoomInfo.roomIndex)->roomUserCount = changedRoomInfo.roomUserCount;
@@ -350,7 +350,7 @@ void RoomList::RoomInfoInitialize()
 {
 	m_RoomInfoVector.clear();
 	const std::wstring roomName = L"NONE";
-	for (int i = 0; i < roomInfoMaxNum; ++i)
+	for (short i = 0; i < roomInfoMaxNum; ++i)
 	{
 		std::shared_ptr<RoomInfo> newRoomInfo = std::make_shared<RoomInfo>();
 		newRoomInfo->roomTitle = roomName + std::to_wstring(i);
@@ -385,8 +385,8 @@ void RoomList::MakeUsers()
 	}
 
 	m_UserListGui.add(L"UserListDivider", GUIHorizontalLine::Create(1));
-	m_UserListGui.add(L"BackButton", GUIButton::Create(L"Back", 33));
-	m_UserListGui.addln(L"CreateButton", GUIButton::Create(L"Create", 33));
+	m_UserListGui.add(L"BackButton", GUIButton::Create(L"Back", true));
+	m_UserListGui.addln(L"CreateButton", GUIButton::Create(L"Create", true));
 }
 
 void RoomList::MakeChattingGui()
