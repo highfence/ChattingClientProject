@@ -238,11 +238,18 @@ void RoomList::update()
 		{
 			if (m_RoomListGui.button(std::to_wstring(i->roomIndex)).pushed)
 			{
-				// TODO :: Res를 기다렸다가 Room으로 상태 변경.
+				// Room 입장 요청을 보낸다.
+				PktRoomEnterReq enterReq;
+				enterReq.IsCreate = false;
+				enterReq.RoomIndex = i->roomIndex;
+				wcscpy_s(enterReq.RoomTitle, MAX_ROOM_TITLE_SIZE, i->roomTitle.c_str());
 
-				//m_data->dataContainer->SendRequest((short)PACKET_ID::ROOM_ENTER_REQ, );
-				// TODO :: 벡터 안에서 돌다가 ExitScene을 하니까 에러가 난다. 기록해 놓은다음 다 돌고 ExitScene해주기.
-				ExitScene(L"Room");
+				m_data->dataContainer->SendRequest(
+					(short)PACKET_ID::ROOM_ENTER_REQ,
+					sizeof(PktRoomEnterReq),
+					(char*)&enterReq);
+
+				OutputDebugString(L"[RoomList] 방 입장 요청. \n");
 			}
 		}
 	};
@@ -329,6 +336,7 @@ void RoomList::RoomInfoInitialize()
 		newRoomInfo->roomTitle = roomName + std::to_wstring(i);
 		std::wstring buttonName = L"Button" + std::to_wstring(i);
 		newRoomInfo->buttonName = buttonName;
+		newRoomInfo->roomIndex = i;
 		newRoomInfo->isRoomInfoValid = false;
 
 		m_RoomInfoVector.emplace_back(std::move(newRoomInfo));
