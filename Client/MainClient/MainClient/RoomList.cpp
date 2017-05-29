@@ -139,8 +139,14 @@ void RoomList::update()
 			{
 				if (m_RoomInfoVector.at(i)->isRoomInfoValid)
 				{
-					auto buttonName = m_RoomInfoVector.at(i)->buttonName;
-					m_RoomListGui.button(buttonName).enabled = true;
+					// TODO :: 인원수도 적어주기.
+					m_RoomListGui.button(std::to_wstring(i)).enabled = true;
+					m_RoomListGui.text(std::to_wstring(i)).text = m_RoomInfoVector.at(i)->roomTitle;
+				}
+				else
+				{
+					m_RoomListGui.button(std::to_wstring(i)).enabled = false;
+					m_RoomListGui.text(std::to_wstring(i)).text = L"";
 				}
 			}
 		};
@@ -212,6 +218,7 @@ void RoomList::update()
 			// 데이터 업데이트.
 			UpdateUserData();
 			UpdateChatData();
+			UpdateRoomData();
 
 			// 업데이트가 되었으므로, GUI에 표현되는 데이터를 바꾸어준다.
 			UserGuiUpdate();
@@ -229,11 +236,12 @@ void RoomList::update()
 	{
 		for (const auto i : m_RoomInfoVector)
 		{
-			if (m_RoomListGui.button(i->buttonName).pushed)
+			if (m_RoomListGui.button(std::to_wstring(i->roomIndex)).pushed)
 			{
 				// TODO :: Res를 기다렸다가 Room으로 상태 변경.
 
 				//m_data->dataContainer->SendRequest((short)PACKET_ID::ROOM_ENTER_REQ, );
+				// TODO :: 벡터 안에서 돌다가 ExitScene을 하니까 에러가 난다. 기록해 놓은다음 다 돌고 ExitScene해주기.
 				ExitScene(L"Room");
 			}
 		}
@@ -318,7 +326,7 @@ void RoomList::RoomInfoInitialize()
 	for (int i = 0; i < roomInfoMaxNum; ++i)
 	{
 		std::shared_ptr<RoomInfo> newRoomInfo = std::make_shared<RoomInfo>();
-		newRoomInfo->roomTitle = roomName;
+		newRoomInfo->roomTitle = roomName + std::to_wstring(i);
 		std::wstring buttonName = L"Button" + std::to_wstring(i);
 		newRoomInfo->buttonName = buttonName;
 		newRoomInfo->isRoomInfoValid = false;
@@ -333,10 +341,10 @@ void RoomList::MakeRooms()
 	for (const auto& i : m_RoomInfoVector)
 	{
 		/* Make Rooms */
-		m_RoomListGui.add(i->roomTitle, GUIText::Create(i->roomTitle, roomWidth));
+		m_RoomListGui.add(std::to_wstring(i->roomIndex), GUIText::Create(L"", roomWidth));
 		
 		/* Make Buttons */	
-		m_RoomListGui.addln(i->buttonName, GUIButton::Create(L"Create", false));
+		m_RoomListGui.addln(std::to_wstring(i->roomIndex), GUIButton::Create(L"ENTER", false));
 	}
 }
 
