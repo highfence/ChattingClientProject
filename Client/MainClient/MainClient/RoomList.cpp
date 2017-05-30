@@ -60,11 +60,11 @@ void RoomList::update()
 		// 채팅 정보 리스트 업데이트.
 		auto UpdateChatData = [this]()
 		{
-			auto recvMsgString = m_data->dataContainer->RequestMsgFromRoomList();
+			auto recvMsgString = m_data->dataContainer->RequestMsgFromRoomListData();
 			while (recvMsgString != L"")
 			{
 				m_ChatList.push_back(recvMsgString);
-				recvMsgString = m_data->dataContainer->RequestMsgFromRoomList();
+				recvMsgString = m_data->dataContainer->RequestMsgFromRoomListData();
 			}
 		};
 
@@ -175,8 +175,7 @@ void RoomList::update()
 			auto isRoomEntered = m_data->dataContainer->GetRoomListData()->GetIsRoomSuccesslyEntered();
 			if (isRoomEntered)
 			{
-
-				ExitScene(L"Room");
+				ExitScene(L"Room", false);
 			}
 		};
 
@@ -394,10 +393,13 @@ void RoomList::MakeChattingGui()
 	m_ChattingGui.add(L"InputButton", GUIButton::Create(L"Send"));
 }
 
-void RoomList::ExitScene(wchar_t* changeSceneName)
+void RoomList::ExitScene(wchar_t* changeSceneName, bool isLeaveRequestNeeded)
 {
-	// 서버에게 나간다는 메시지를 보낸 뒤, 씬을 바꾸어 준다.			
-	m_data->dataContainer->SendRequest((short)PACKET_ID::LOBBY_LEAVE_REQ, 0, nullptr);
+	if (isLeaveRequestNeeded)
+	{
+		// 서버에게 나간다는 메시지를 보낸 뒤, 씬을 바꾸어 준다.			
+		m_data->dataContainer->SendRequest((short)PACKET_ID::LOBBY_LEAVE_REQ, 0, nullptr);
+	}
 	m_RoomInfoVector.clear();
 	m_UserListVector.clear();
 
@@ -413,10 +415,6 @@ void RoomList::SendChatting(std::wstring chatMsg)
 		(short)PACKET_ID::LOBBY_CHAT_REQ,
 		sizeof(newChatReq),
 		(char*)&newChatReq);
-
-	m_data->dataContainer->SendChatToRoomList(
-		m_data->id,
-		chatMsg);
 }
 
 void RoomList::RequestUserInfo(const short startUserIndex)

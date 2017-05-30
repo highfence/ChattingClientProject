@@ -99,6 +99,17 @@ void Room::update()
 			}
 		};
 
+		// 채팅 데이터를 갱신하는 함수.
+		auto UpdateChattingData = [this]()
+		{
+			auto recvMsgString = m_data->dataContainer->RequestMsgFromRoomData();
+			while (recvMsgString != L"")
+			{
+				m_ChatList.push_back(recvMsgString);
+				recvMsgString = m_data->dataContainer->RequestMsgFromRoomData();
+			}
+		};
+
 		// 유저 GUI를 갱신하는 함수.
 		auto UpdateUserGui = [this]()
 		{
@@ -129,7 +140,7 @@ void Room::update()
 				chatMsg = chatMsg + (*iter);
 			}
 
-			m_ChattingGui.textArea(L"ChattingWIndow").setText(chatMsg);
+			m_ChattingGui.textArea(L"ChattingWindow").setText(chatMsg);
 		};
 
 		// 버전을 업데이트 해주는 함수.
@@ -147,6 +158,9 @@ void Room::update()
 
 		// 유저벡터를 갱신한다.
 		UpdateUserData();
+
+		// 채팅 리스트를 갱신한다.
+		UpdateChattingData();
 
 		// 갱신한 데이터에 상응하여 GUI를 바꾸어준다.
 		UpdateUserGui();
@@ -168,8 +182,10 @@ void Room::update()
 
 			m_ChatString = m_InputGui.textArea(L"InputField").text;
 
-			// Send 버튼이 눌리면 리퀘스트를 보내놓고, 응답을 기다린다.
-
+			// Send 버튼이 눌리면 리퀘스트를 보내놓고, 채팅 데이터를 응답 대기열에 밀어넣어 준다.
+			SendChatting(m_ChatString.c_str());
+			m_data->dataContainer->PushChatDataToRoomData(m_data->id, m_ChatString.c_str());
+			m_ChatString.erase();
 			m_InputGui.textArea(L"InputField").setText(L"");
 		}
 	};
@@ -234,7 +250,7 @@ void Room::ExitScene(wchar_t * changeSceneName)
 	changeScene(changeSceneName);
 }
 
-void Room::SendChatting(std::wstring & chatMsg)
+void Room::SendChatting(std::wstring chatMsg)
 {
 	PktRoomChatReq newChatReq;
 	memcpy(newChatReq.Msg, chatMsg.c_str(), MAX_ROOM_CHAT_MSG_SIZE);
@@ -245,8 +261,4 @@ void Room::SendChatting(std::wstring & chatMsg)
 		sizeof(newChatReq),
 		(char*)&newChatReq);
 
-	// 보내는 채팅 데이터는 데이터 컨테이너에서 응답을 기다리도록 한다.
-	m_data->dataContainer->SendChatToRoom(
-		m_data->id,
-		chatMsg);
 }

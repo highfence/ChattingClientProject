@@ -30,21 +30,20 @@ namespace ClientLogic
 			std::bind(&RoomData::RoomChatNtf, this, std::placeholders::_1));
 	}
 
-	// 보낸 채팅 데이터를 응답 대기열에 넣어주는 함수.
-	void RoomData::PushChatDataWaitingLine(std::wstring & id, std::wstring & chatMsg)
+	// 채팅을 보내놓고 응답이 오기를 기다리도록 하는 함수.
+	void RoomData::PushChatDataForWaitRes(std::wstring id, std::wstring chatMsg)
 	{
-		m_ResWaitingChatQueue.emplace(std::make_shared<ChatData>(id, chatMsg));
+		m_WaitingResChatQueue.emplace(std::make_shared<ChatData>(id, chatMsg));
 	}
 
 	// 저장된 채팅 큐에서 한 라인을 뽑아주는 함수.
-	bool RoomData::GetChatDataFromQueue(std::wstring& refOutChatData)
+	std::wstring RoomData::GetChatDataFromQueue()
 	{
-		// 실패의 경우.
-		if (m_ChatQueue.empty()) return false;
+		if (m_ChatQueue.empty()) return L"";
 
-		refOutChatData = m_ChatQueue.front()->GetInLine();
+		auto returnString = m_ChatQueue.front()->GetInLine();
 		m_ChatQueue.pop();
-		return true;
+		return returnString;
 	}
 
 	// 룸을 잘 나갔는지 확인하는 함수.
@@ -126,13 +125,15 @@ namespace ClientLogic
 		else
 		{
 			OutputDebugString(L"[RoomData] 채팅 성공적으로 송신. \n");
-			// 채팅이 수신 완료되었으므로 답변을 기다리던 채팅 구조체를 옮겨준다.
-			m_ChatQueue.emplace(m_ResWaitingChatQueue.front());
+
+			// 채팅 데이터를 응답 대기열에서 채팅 큐로 옮겨준다.
+			auto getResChatData = m_WaitingResChatQueue.front();
+			m_WaitingResChatQueue.pop();
+
+			m_ChatQueue.emplace(std::move(getResChatData));
+
 			VersionUp();
 		}
-
-		// 성공이든 실패든 큐에서 하나를 빼준다.
-		m_ResWaitingChatQueue.pop();
 	}
 
 	void RoomData::RoomChatNtf(std::shared_ptr<RecvPacketInfo> packet)

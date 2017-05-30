@@ -47,9 +47,19 @@ namespace ClientLogic
 		return m_pPacketMessenger->Send(packetId, packetSize, pData);
 	}
 
-	std::wstring DataContainer::RequestMsgFromRoomList()
+	std::wstring DataContainer::RequestMsgFromRoomListData()
 	{
 		return m_pRoomListData->GetChatDataFromQueue();
+	}
+
+	std::wstring DataContainer::RequestMsgFromRoomData()
+	{
+		return m_pRoomData->GetChatDataFromQueue();
+	}
+
+	void DataContainer::PushChatDataToRoomData(std::wstring id, std::wstring chatMsg)
+	{
+		m_pRoomData->PushChatDataForWaitRes(id, chatMsg);
 	}
 
 	LoginData * DataContainer::GetLoginData() const

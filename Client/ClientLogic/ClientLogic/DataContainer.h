@@ -56,15 +56,9 @@ namespace ClientLogic
 			char* pData);
 
 		// 데이터 컨테이너 관련 함수.
-		void SendChatToRoomList(std::wstring id, std::wstring chatMsg)
-		{
-			m_pRoomListData->PushChatDataWaitingLine(id, chatMsg);
-		};
-		void SendChatToRoom(std::wstring id, std::wstring chatMsg)
-		{
-			m_pRoomData->PushChatDataWaitingLine(id, chatMsg);
-		};
-		std::wstring RequestMsgFromRoomList();
+		std::wstring RequestMsgFromRoomListData();
+		std::wstring RequestMsgFromRoomData();
+		void PushChatDataToRoomData(std::wstring id, std::wstring chatMsg);
 
 		// 정보 관련 함수.
 		LoginData * GetLoginData() const;

@@ -20,5 +20,5 @@ struct Room : MyApp::Scene
 	void ExitScene(wchar_t* changeSceneName);
 
 	// Network Request
-	void SendChatting(std::wstring& chatMsg);
+	void SendChatting(std::wstring chatMsg);
 };

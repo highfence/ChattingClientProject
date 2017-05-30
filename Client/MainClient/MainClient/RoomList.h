@@ -30,7 +30,7 @@ struct RoomList : MyApp::Scene
 	void MakeChattingGui();
 
 	/* Function must be called when scene changed */
-	void ExitScene(wchar_t* changeSceneName);
+	void ExitScene(wchar_t* changeSceneName, bool isLeaveRequestNeeded = true);
 
 	/* Network Function */
 	void SendChatting(std::wstring chat);
