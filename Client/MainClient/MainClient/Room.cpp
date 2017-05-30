@@ -182,9 +182,8 @@ void Room::update()
 
 			m_ChatString = m_InputGui.textArea(L"InputField").text;
 
-			// Send 버튼이 눌리면 리퀘스트를 보내놓고, 채팅 데이터를 응답 대기열에 밀어넣어 준다.
+			// Send 버튼이 눌리면 리퀘스트를 보내놓고, 응답을 기다린다.
 			SendChatting(m_ChatString.c_str());
-			m_data->dataContainer->PushChatDataToRoomData(m_data->id, m_ChatString.c_str());
 			m_ChatString.erase();
 			m_InputGui.textArea(L"InputField").setText(L"");
 		}

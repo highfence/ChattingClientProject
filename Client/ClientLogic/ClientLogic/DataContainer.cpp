@@ -57,11 +57,6 @@ namespace ClientLogic
 		return m_pRoomData->GetChatDataFromQueue();
 	}
 
-	void DataContainer::PushChatDataToRoomData(std::wstring id, std::wstring chatMsg)
-	{
-		m_pRoomData->PushChatDataForWaitRes(id, chatMsg);
-	}
-
 	LoginData * DataContainer::GetLoginData() const
 	{
 		return m_pLoginData.get();

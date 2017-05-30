@@ -30,12 +30,6 @@ namespace ClientLogic
 			std::bind(&RoomData::RoomChatNtf, this, std::placeholders::_1));
 	}
 
-	// 채팅을 보내놓고 응답이 오기를 기다리도록 하는 함수.
-	void RoomData::PushChatDataForWaitRes(std::wstring id, std::wstring chatMsg)
-	{
-		m_WaitingResChatQueue.emplace(std::make_shared<ChatData>(id, chatMsg));
-	}
-
 	// 저장된 채팅 큐에서 한 라인을 뽑아주는 함수.
 	std::wstring RoomData::GetChatDataFromQueue()
 	{
@@ -125,14 +119,6 @@ namespace ClientLogic
 		else
 		{
 			OutputDebugString(L"[RoomData] 채팅 성공적으로 송신. \n");
-
-			// 채팅 데이터를 응답 대기열에서 채팅 큐로 옮겨준다.
-			auto getResChatData = m_WaitingResChatQueue.front();
-			m_WaitingResChatQueue.pop();
-
-			m_ChatQueue.emplace(std::move(getResChatData));
-
-			VersionUp();
 		}
 	}
 

@@ -58,7 +58,6 @@ namespace ClientLogic
 		// 데이터 컨테이너 관련 함수.
 		std::wstring RequestMsgFromRoomListData();
 		std::wstring RequestMsgFromRoomData();
-		void PushChatDataToRoomData(std::wstring id, std::wstring chatMsg);
 
 		// 정보 관련 함수.
 		LoginData * GetLoginData() const;

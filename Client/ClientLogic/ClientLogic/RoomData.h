@@ -14,7 +14,6 @@ namespace ClientLogic
 		~RoomData() = default;
 
 		void SetSubscribe(PacketDistributer* publisher);
-		void PushChatDataForWaitRes(std::wstring id, std::wstring chatMsg);
 
 		//----------------------------------------------------------
 		// Getter, Setter
@@ -35,7 +34,6 @@ namespace ClientLogic
 
 		std::list<std::wstring> m_UserInfoList;
 		std::queue<std::shared_ptr<ChatData>> m_ChatQueue;
-		std::queue<std::shared_ptr<ChatData>> m_WaitingResChatQueue;
 
 		bool m_IsLeaveRoomSuccessed = false;
 	};
