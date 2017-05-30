@@ -21,15 +21,15 @@ namespace ClientLogic
 		bool GetRoomInfoFromQueue(
 			short* pRoomIndex,
 			short* pRoomUserCount,
-			std::wstring* pRoomTitle);
+			std::wstring& pRoomTitle);
 		bool GetChangedRoomInfoFromQueue(
 			short* pRoomIndex,
 			short* pRoomUserCount,
-			std::wstring* pRoomTitle);
+			std::wstring& pRoomTitle);
 
 		std::list<std::wstring>& GetRefUserInfoList() { return m_UserInfoList; };
-		void PushChatData(std::wstring id, std::wstring chatMsg);
-		std::wstring GetDataFromChatQueue();
+		void PushChatDataWaitingLine(std::wstring id, std::wstring chatMsg);
+		std::wstring GetChatDataFromQueue();
 
 	private:
 		void LobbyEnterUserNtf(std::shared_ptr<RecvPacketInfo> packet);
@@ -43,7 +43,7 @@ namespace ClientLogic
 		void RoomChangedInfoNtf(std::shared_ptr<RecvPacketInfo> packet);
 
 		std::list<std::wstring> m_UserInfoList;
-		std::queue<std::shared_ptr<ChatData>> m_WaitResQueue;
+		std::queue<std::shared_ptr<ChatData>> m_ResWaitingChatQueue;
 		std::queue<std::shared_ptr<ChatData>> m_ChatQueue;
 		std::queue<std::shared_ptr<RoomSmallInfo>> m_RoomInfoQueue;
 		std::queue<std::shared_ptr<RoomSmallInfo>> m_ChangedRoomInfoQueue;

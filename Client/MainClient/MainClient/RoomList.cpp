@@ -79,7 +79,7 @@ void RoomList::update()
 			auto isRoomInfoChanged = roomListData->GetChangedRoomInfoFromQueue(
 				&changedRoomInfo.roomIndex,
 				&changedRoomInfo.roomUserCount,
-				&changedRoomInfo.roomTitle);
+				changedRoomInfo.roomTitle);
 				
 			// ChangedRoomInfo가 왔다면, RoomList정보 전체를 업데이트 하지 않아도 된다.
 			if (isRoomInfoChanged == true)
@@ -100,7 +100,7 @@ void RoomList::update()
 					auto retval = roomListData->GetRoomInfoFromQueue(
 						&i->roomIndex,
 						&i->roomUserCount,
-						&i->roomTitle);
+						i->roomTitle);
 
 					// 데이터가 유효하면 true를, 마지막 실패는 false 상태로 놔둔다.
 					if (!retval) break;
@@ -112,7 +112,6 @@ void RoomList::update()
 				}
 			}
 		};
-
 
 		// 유저 창 업데이트.
 		auto UserGuiUpdate = [this]()
@@ -284,16 +283,9 @@ void RoomList::update()
 				return;
 			}
 
-			if (m_ChatString == L"")
-			{
-				m_ChatString = m_ChatString + m_ChattingGui.textArea(L"InputField").text;
-			}
-			else
-			{
-				m_ChatString = m_ChatString + L"\n" + m_ChattingGui.textArea(L"InputField").text;
-			}
+			m_ChatString = m_ChattingGui.textArea(L"InputField").text;
 
-			// Send버튼이 눌리면 리퀘스트를 보내놓고, 일단 Queue에 저장해 놓는다.
+			// Send 버튼이 눌리면 리퀘스트를 보내놓고, 응답을 기다린다.
 			SendChatting(m_ChatString.c_str());
 			m_ChatString.erase();
 			m_ChattingGui.textArea(L"InputField").setText(L"");
@@ -413,10 +405,10 @@ void RoomList::ExitScene(wchar_t* changeSceneName)
 	changeScene(changeSceneName);
 }
 
-void RoomList::SendChatting(std::wstring chat)
+void RoomList::SendChatting(std::wstring chatMsg)
 {
 	PktLobbyChatReq newChatReq;
-	memcpy(newChatReq.Msg, chat.c_str(), MAX_LOBBY_CHAT_MSG_SIZE);
+	memcpy(newChatReq.Msg, chatMsg.c_str(), MAX_LOBBY_CHAT_MSG_SIZE);
 
 	m_data->dataContainer->SendRequest(
 		(short)PACKET_ID::LOBBY_CHAT_REQ,
@@ -425,7 +417,7 @@ void RoomList::SendChatting(std::wstring chat)
 
 	m_data->dataContainer->SendChatToRoomList(
 		m_data->id,
-		chat);
+		chatMsg);
 }
 
 void RoomList::RequestUserInfo(const short startUserIndex)

@@ -1,4 +1,8 @@
 #pragma once
+#include <list>
+#include <queue>
+#include <string>
+#include "Definition.h"
 
 
 namespace ClientLogic
@@ -10,12 +14,14 @@ namespace ClientLogic
 		~RoomData() = default;
 
 		void SetSubscribe(PacketDistributer* publisher);
+		void PushChatDataWaitingLine(std::wstring& id, std::wstring& chatMsg);
 
 		//----------------------------------------------------------
 		// Getter, Setter
 		//----------------------------------------------------------
 		std::list<std::wstring>& GetRefUserInfoList() { return m_UserInfoList; };
-
+		bool GetChatDataFromQueue(std::wstring& pOutChatData);
+		bool GetIsLeaveRoomSuccessed();
 
 	private:
 
@@ -28,5 +34,9 @@ namespace ClientLogic
 		void RoomChatNtf(std::shared_ptr<RecvPacketInfo> packet);
 
 		std::list<std::wstring> m_UserInfoList;
+		std::queue<std::shared_ptr<ChatData>> m_ResWaitingChatQueue;
+		std::queue<std::shared_ptr<ChatData>> m_ChatQueue;
+
+		bool m_IsLeaveRoomSuccessed = false;
 	};
 }

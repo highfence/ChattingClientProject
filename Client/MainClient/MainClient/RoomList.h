@@ -1,18 +1,14 @@
 #pragma once
 
-class TextScorllBox;
-
 
 struct RoomList : MyApp::Scene
 {
 	GUI m_RoomListGui;
 	GUI m_UserListGui;
 	GUI m_ChattingGui;
-	TextScorllBox* m_pChatTextBox;
 	int m_CurrentDataVersion = -1;
 	short m_ExistRoomIdx = -1;
 	String m_ChatString;
-	std::wstring m_ChattingGuiString;
 
 	std::vector<std::shared_ptr<RoomInfo>> m_RoomInfoVector;
 	std::vector<std::wstring> m_UserListVector;

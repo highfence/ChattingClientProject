@@ -91,10 +91,10 @@ namespace ClientLogic
 	bool RoomListData::GetRoomInfoFromQueue(
 		short * pRoomIndex,
 		short * pRoomUserCount,
-		std::wstring * pRoomTitle)
+		std::wstring & refRoomTitle)
 	{
 		// Out 데이터의 유효성 검사.
-		if (pRoomIndex == nullptr || pRoomUserCount == nullptr || pRoomTitle == nullptr)
+		if (pRoomIndex == nullptr || pRoomUserCount == nullptr)
 		{
 			return false;
 		}
@@ -111,7 +111,7 @@ namespace ClientLogic
 
 		*pRoomIndex = roomInfo->RoomIndex;
 		*pRoomUserCount = roomInfo->RoomUserCount;
-		*pRoomTitle = roomInfo->RoomTitle;
+		refRoomTitle = roomInfo->RoomTitle;
 
 		return true;
 	}
@@ -121,10 +121,10 @@ namespace ClientLogic
 	bool RoomListData::GetChangedRoomInfoFromQueue(
 		short * pRoomIndex,
 		short * pRoomUserCount,
-		std::wstring * pRoomTitle)
+		std::wstring & refRoomTitle)
 	{
 		// Out 데이터의 유효성 검사.
-		if (pRoomIndex == nullptr || pRoomUserCount == nullptr || pRoomTitle == nullptr)
+		if (pRoomIndex == nullptr || pRoomUserCount == nullptr)
 		{
 			return false;
 		}
@@ -141,21 +141,21 @@ namespace ClientLogic
 
 		*pRoomIndex = changedRoomInfo->RoomIndex;
 		*pRoomUserCount = changedRoomInfo->RoomUserCount;
-		*pRoomTitle = changedRoomInfo->RoomTitle;
+		refRoomTitle = changedRoomInfo->RoomTitle;
 		return true;
 	}
 
 	// 채팅 데이터를 응답 대기열에 밀어넣어주는 함수. 
-	void RoomListData::PushChatData(std::wstring id, std::wstring chatMsg)
+	void RoomListData::PushChatDataWaitingLine(std::wstring id, std::wstring chatMsg)
 	{
 		std::shared_ptr<ChatData> newMsg = std::make_shared<ChatData>();
 		newMsg->DataSetting(id, chatMsg);
 
-		m_WaitResQueue.emplace(std::move(newMsg));
+		m_ResWaitingChatQueue.emplace(std::move(newMsg));
 	}
 
 	// 저장된 채팅 큐에서 한 라인을 뽑아주는 함수. 
-	std::wstring RoomListData::GetDataFromChatQueue()
+	std::wstring RoomListData::GetChatDataFromQueue()
 	{
 		if (m_ChatQueue.empty()) return L"";
 
@@ -285,11 +285,11 @@ namespace ClientLogic
 		else
 		{
 			OutputDebugString(L"[RoomListData] 채팅 보내기 성공\n");
-			m_ChatQueue.emplace(m_WaitResQueue.front());
+			m_ChatQueue.emplace(m_ResWaitingChatQueue.front());
 			VersionUp();
 		}
 
-		m_WaitResQueue.pop();
+		m_ResWaitingChatQueue.pop();
 	}
 
 	void RoomListData::LobbyChatNtf(std::shared_ptr<RecvPacketInfo> packet)
@@ -377,7 +377,7 @@ namespace ClientLogic
 		m_UserInfoList.clear();
 
 		std::queue<std::shared_ptr<ChatData>> emptyQueue1;
-		std::swap(m_WaitResQueue, emptyQueue1);
+		std::swap(m_ResWaitingChatQueue, emptyQueue1);
 
 		std::queue<std::shared_ptr<ChatData>> emptyQueue2;
 		std::swap(m_ChatQueue, emptyQueue2);

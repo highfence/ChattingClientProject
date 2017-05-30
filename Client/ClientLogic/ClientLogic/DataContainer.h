@@ -57,7 +57,8 @@ namespace ClientLogic
 			char* pData);
 
 		// 데이터 컨테이너 관련 함수.
-		void SendChatToRoomList(std::wstring id, std::wstring chatMsg);
+		void SendChatToRoomList(std::wstring& id, std::wstring& chatMsg);
+		void SendChatToRoom(std::wstring& id, std::wstring& chatMsg);
 		std::wstring RequestMsgFromRoomList();
 
 		// 정보 관련 함수.

@@ -1,4 +1,7 @@
 #pragma once
+#include <vector>
+#include <list>
+#include <string>
 
 struct Room : MyApp::Scene
 {
@@ -6,6 +9,7 @@ struct Room : MyApp::Scene
 	GUI m_UserGui;
 	GUI m_InputGui;
 	std::vector<UserInfo*> m_UserInfoVector;
+	std::list<std::wstring> m_ChatList;
 	String m_ChatString;
 	int m_CurrentDataVersion = -1;
 
@@ -17,5 +21,6 @@ struct Room : MyApp::Scene
 
 	void InitialUserDataSetting();
 
-
+	// Network Request
+	void SendChatting(std::wstring& chatMsg);
 };

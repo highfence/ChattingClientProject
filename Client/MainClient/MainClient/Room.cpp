@@ -150,19 +150,14 @@ void Room::update()
 				return;
 			}
 
-			if (m_ChatString == L"")
-			{
-				m_ChatString = m_ChatString + m_InputGui.textArea(L"InputField").text;
-			}
-			else
-			{
-				m_ChatString = m_ChatString + L"\n" + m_InputGui.textArea(L"InputField").text;
-			}
+			m_ChatString = m_InputGui.textArea(L"InputField").text;
 
-			m_ChattingGui.textArea(L"RoomChatting").setText(m_ChatString);
+			// Send 버튼이 눌리면 리퀘스트를 보내놓고, 응답을 기다린다.
+
 			m_InputGui.textArea(L"InputField").setText(L"");
 		}
 	};
+
 
 #pragma endregion
 
@@ -190,4 +185,22 @@ void Room::InitialUserDataSetting()
 
 		m_UserInfoVector.emplace_back(std::move(userData));
 	}
+}
+
+void Room::SendChatting(std::wstring & chatMsg)
+{
+	PktRoomChatReq newChatReq;
+	memcpy(newChatReq.Msg, chatMsg.c_str(), MAX_ROOM_CHAT_MSG_SIZE);
+
+	// 채팅 수신 요청을 보낸다.
+	m_data->dataContainer->SendRequest(
+		(short)PACKET_ID::ROOM_CHAT_REQ,
+		sizeof(newChatReq),
+		(char*)&newChatReq);
+
+	// 보내는 채팅 데이터는 데이터 컨테이너에서 응답을 기다리도록 한다.
+	m_data->dataContainer->SendChatToRoom(
+		m_data->id,
+		chatMsg);
+
 }
