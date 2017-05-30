@@ -1,7 +1,6 @@
 #pragma once
 
 #include <WinSock2.h>
-//#include <WS2tcpip.h>
 #include <stdlib.h>
 
 #include <Windows.h>
@@ -57,8 +56,14 @@ namespace ClientLogic
 			char* pData);
 
 		// 데이터 컨테이너 관련 함수.
-		void SendChatToRoomList(std::wstring& id, std::wstring& chatMsg);
-		void SendChatToRoom(std::wstring& id, std::wstring& chatMsg);
+		void SendChatToRoomList(std::wstring id, std::wstring chatMsg)
+		{
+			m_pRoomListData->PushChatDataWaitingLine(id, chatMsg);
+		};
+		void SendChatToRoom(std::wstring id, std::wstring chatMsg)
+		{
+			m_pRoomData->PushChatDataWaitingLine(id, chatMsg);
+		};
 		std::wstring RequestMsgFromRoomList();
 
 		// 정보 관련 함수.

@@ -1,4 +1,3 @@
-#include <string>
 #include "stdafx.h"
 #include "Room.h"
 
@@ -38,10 +37,12 @@ void Room::init()
 	// Input data in GUI 
 	RegisterUserData();
 
-	m_ChattingGui.add(L"RoomChatting", GUITextArea::Create(10, 22));
+	m_ChattingGui.add(L"ChattingWindow", GUITextArea::Create(10, 22));
 	m_InputGui.add(L"InputField", GUITextArea::Create(1, 28));
 	m_InputGui.add(L"InputButton", GUIButton::Create(L"Send"));
 
+	m_UserGui.add(L"Divider", GUIHorizontalLine::Create());
+	m_UserGui.add(L"BackButton", GUIButton::Create(L"Back"));
 }
 
 void Room::update()
@@ -117,6 +118,20 @@ void Room::update()
 			}
 		};
 
+		// 채팅 GUI를 갱신하는 함수.
+		auto UpdateChattingGui = [this]()
+		{
+			// 채팅 메시지를 담을 wstring
+			std::wstring chatMsg;
+
+			for (auto iter = m_ChatList.begin(); iter != m_ChatList.end(); ++iter)
+			{
+				chatMsg = chatMsg + (*iter);
+			}
+
+			m_ChattingGui.textArea(L"ChattingWIndow").setText(chatMsg);
+		};
+
 		// 버전을 업데이트 해주는 함수.
 		auto UpdateVersion = [this]()
 		{
@@ -135,6 +150,7 @@ void Room::update()
 
 		// 갱신한 데이터에 상응하여 GUI를 바꾸어준다.
 		UpdateUserGui();
+		UpdateChattingGui();
 
 		// 업데이트가 모두 끝났으므로 버전을 갱신시킨다.
 		UpdateVersion();
@@ -158,6 +174,26 @@ void Room::update()
 		}
 	};
 
+	// Back 버튼이 눌렸는지 체크하는 함수.
+	auto CheckBackButtonPushed = [this]()
+	{
+		if (m_UserGui.button(L"BackButton").pressed)
+		{
+			// 서버에게 나간다는 메시지를 요청한다.
+			m_data->dataContainer->SendRequest((short)PACKET_ID::ROOM_LEAVE_REQ, 0, nullptr);
+		}
+	};
+
+	// Room을 떠난 상황인지 확인해주는 함수.
+	auto CheckRoomLeaved = [this]()
+	{
+		// 서버로부터 룸을 떠났다는 패킷을 받았다면,
+		if (m_data->dataContainer->GetRoomData()->GetIsLeaveRoomSuccessed())
+		{
+			// 씬을 바꾸어준다.
+			ExitScene(L"RoomList");
+		}
+	};
 
 #pragma endregion
 
@@ -165,6 +201,8 @@ void Room::update()
 
 	UpdateData();
 	CheckSendButtonPushed();
+	CheckBackButtonPushed();
+	CheckRoomLeaved();
 }
 
 void Room::draw() const
@@ -187,6 +225,15 @@ void Room::InitialUserDataSetting()
 	}
 }
 
+void Room::ExitScene(wchar_t * changeSceneName)
+{
+	// 서버에게 나간다는 메시지를 보낸 뒤, 씬을 바꾸어 준다.
+	m_UserInfoVector.clear();
+	m_ChatList.clear();
+
+	changeScene(changeSceneName);
+}
+
 void Room::SendChatting(std::wstring & chatMsg)
 {
 	PktRoomChatReq newChatReq;
@@ -202,5 +249,4 @@ void Room::SendChatting(std::wstring & chatMsg)
 	m_data->dataContainer->SendChatToRoom(
 		m_data->id,
 		chatMsg);
-
 }

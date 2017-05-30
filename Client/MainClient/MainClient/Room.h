@@ -1,7 +1,4 @@
 #pragma once
-#include <vector>
-#include <list>
-#include <string>
 
 struct Room : MyApp::Scene
 {
@@ -20,6 +17,7 @@ struct Room : MyApp::Scene
 	void draw() const override;
 
 	void InitialUserDataSetting();
+	void ExitScene(wchar_t* changeSceneName);
 
 	// Network Request
 	void SendChatting(std::wstring& chatMsg);

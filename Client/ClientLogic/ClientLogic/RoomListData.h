@@ -43,7 +43,6 @@ namespace ClientLogic
 		void RoomChangedInfoNtf(std::shared_ptr<RecvPacketInfo> packet);
 
 		std::list<std::wstring> m_UserInfoList;
-		std::queue<std::shared_ptr<ChatData>> m_ResWaitingChatQueue;
 		std::queue<std::shared_ptr<ChatData>> m_ChatQueue;
 		std::queue<std::shared_ptr<RoomSmallInfo>> m_RoomInfoQueue;
 		std::queue<std::shared_ptr<RoomSmallInfo>> m_ChangedRoomInfoQueue;

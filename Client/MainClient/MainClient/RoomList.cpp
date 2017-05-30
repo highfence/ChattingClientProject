@@ -1,4 +1,3 @@
-#include <string>
 #include "stdafx.h"
 #include "RoomList.h"
 
@@ -137,17 +136,17 @@ void RoomList::update()
 		};
 
 		// 채팅창 업데이트.
-		auto UserChatWindowUpdate = [this]()
+		auto ChatGuiUpdate = [this]()
 		{
 			// 채팅 메시지를 담을 wstring
-			std::wstring ChatMsg;
+			std::wstring chatMsg;
 
 			for (auto iter = m_ChatList.begin(); iter != m_ChatList.end(); ++iter)
 			{
-				ChatMsg = ChatMsg + (*iter);
+				chatMsg = chatMsg + (*iter);
 			}
 
-			m_ChattingGui.textArea(L"ChattingWindow").setText(ChatMsg);
+			m_ChattingGui.textArea(L"ChattingWindow").setText(chatMsg);
 		};
 
 		// Room Gui 업데이트.
@@ -241,7 +240,7 @@ void RoomList::update()
 
 			// 업데이트가 되었으므로, GUI에 표현되는 데이터를 바꾸어준다.
 			UserGuiUpdate();
-			UserChatWindowUpdate();
+			ChatGuiUpdate();
 			RoomGuiUpdate();
 			RoomEnterDataUpdate();
 
@@ -397,7 +396,7 @@ void RoomList::MakeChattingGui()
 
 void RoomList::ExitScene(wchar_t* changeSceneName)
 {
-	// 서버에게 나간다는 메시지를 보낸뒤, 씬을 바꾸어 준다.			
+	// 서버에게 나간다는 메시지를 보낸 뒤, 씬을 바꾸어 준다.			
 	m_data->dataContainer->SendRequest((short)PACKET_ID::LOBBY_LEAVE_REQ, 0, nullptr);
 	m_RoomInfoVector.clear();
 	m_UserListVector.clear();

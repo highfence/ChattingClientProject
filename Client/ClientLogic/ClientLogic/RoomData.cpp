@@ -88,15 +88,16 @@ namespace ClientLogic
 		auto recvData = (PktRoomLeaveUserInfoNtf*)packet->pData;
 		std::wstring leavedUserId = Util::CharToWstring(recvData->UserID);
 
-		// 퇴장한 유저의 아이디를 삭제해준다.
-		m_UserInfoList.remove_if((
-			m_UserInfoList.begin(),
-			m_UserInfoList.end(),
-			[leavedUserId](std::wstring existedUserId)
+		// 아이디가 같은지 판별해줄 람다 함수식.
+		auto IsIdEqual = [&leavedUserId](const std::wstring existedUserId)->bool
 		{
-			return leavedUserId == existedUserId;
-		},
-			m_UserInfoList.end()));
+			return existedUserId == leavedUserId;
+		};
+
+		// 퇴장한 유저의 아이디를 찾아 삭제해준다.
+		m_UserInfoList.remove_if(IsIdEqual);
+
+		VersionUp();
 	}
 
 	void RoomData::RoomLeaveRes(std::shared_ptr<RecvPacketInfo> packet)

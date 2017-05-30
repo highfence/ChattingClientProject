@@ -6,6 +6,8 @@
 #include <string>
 #include <stack>
 #include <array>
+#include <list>
+#include <memory>
 #include "InlineFrame.h"
 #include "DataContainer.h"
 

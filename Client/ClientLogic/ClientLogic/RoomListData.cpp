@@ -151,7 +151,6 @@ namespace ClientLogic
 		std::shared_ptr<ChatData> newMsg = std::make_shared<ChatData>();
 		newMsg->DataSetting(id, chatMsg);
 
-		m_ResWaitingChatQueue.emplace(std::move(newMsg));
 	}
 
 	// 저장된 채팅 큐에서 한 라인을 뽑아주는 함수. 
@@ -285,11 +284,8 @@ namespace ClientLogic
 		else
 		{
 			OutputDebugString(L"[RoomListData] 채팅 보내기 성공\n");
-			m_ChatQueue.emplace(m_ResWaitingChatQueue.front());
 			VersionUp();
 		}
-
-		m_ResWaitingChatQueue.pop();
 	}
 
 	void RoomListData::LobbyChatNtf(std::shared_ptr<RecvPacketInfo> packet)
@@ -377,12 +373,9 @@ namespace ClientLogic
 		m_UserInfoList.clear();
 
 		std::queue<std::shared_ptr<ChatData>> emptyQueue1;
-		std::swap(m_ResWaitingChatQueue, emptyQueue1);
+		std::swap(m_ChatQueue, emptyQueue1);
 
-		std::queue<std::shared_ptr<ChatData>> emptyQueue2;
-		std::swap(m_ChatQueue, emptyQueue2);
-
-		std::queue<std::shared_ptr<RoomSmallInfo>> emptyQueue3;
-		std::swap(m_RoomInfoQueue, emptyQueue3);
+		std::queue<std::shared_ptr<RoomSmallInfo>> emptyQueue2;
+		std::swap(m_RoomInfoQueue, emptyQueue2);
 	}
 }
